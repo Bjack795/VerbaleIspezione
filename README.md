@@ -1,5 +1,18 @@
-# Vue 3 + TypeScript + Vite
+# Verbale di Ispezione
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+Applicazione web per la gestione e la generazione di verbali di ispezione.
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+## Funzionalità
+
+- Compilazione form per verbali di ispezione
+- Generazione PDF
+- Interfaccia responsive
+- Supporto per immagini (in arrivo)
+
+## Tecnologie utilizzate
+
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- @react-pdf/renderer
