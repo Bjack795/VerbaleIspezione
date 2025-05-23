@@ -8,20 +8,20 @@
     <meta name="description" content="Verbale di Ispezione Redesco Progetti" />
     <link rel="apple-touch-icon" href="./icon-192x192.svg" />
     <link rel="manifest" href="./manifest.json" />
-    <title>Verbale di Ispezione</title>
+    <title>Verbale Ispezione</title>
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="./src/main.tsx"></script>
+    <script type="module" src="/src/main.tsx"></script>
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('./sw.js')
             .then(registration => {
-              console.log('ServiceWorker registration successful');
+              console.log('ServiceWorker registrato con successo:', registration.scope);
             })
-            .catch(err => {
-              console.log('ServiceWorker registration failed: ', err);
+            .catch(error => {
+              console.log('Registrazione ServiceWorker fallita:', error);
             });
         });
       }
