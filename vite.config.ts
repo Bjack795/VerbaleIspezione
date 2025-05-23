@@ -10,7 +10,10 @@ export default defineConfig({
     assetsDir: 'assets',
     rollupOptions: {
       output: {
-        manualChunks: undefined
+        manualChunks: undefined,
+        assetFileNames: 'assets/[name][extname]',
+        chunkFileNames: 'assets/[name].js',
+        entryFileNames: 'assets/[name].js'
       }
     }
   },
