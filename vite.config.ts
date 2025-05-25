@@ -27,7 +27,8 @@ export default defineConfig({
             type: 'image/png'
           }
         ]
-      }
+      },
+      base: '/VerbaleIspezione/'
     })
   ],
   base: '/VerbaleIspezione/',
