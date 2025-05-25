@@ -30,7 +30,7 @@ export default defineConfig({
       }
     })
   ],
-  base: '/',
+  base: '/VerbaleIspezione/',
   resolve: {
     alias: {
       '@': resolve(__dirname, './src')
