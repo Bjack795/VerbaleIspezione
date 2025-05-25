@@ -1,40 +1,59 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
+import { resolve } from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), VitePWA({
-    registerType: 'autoUpdate',
-    includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
-    manifest: {
-      name: 'Verbale di Ispezione',
-      short_name: 'Verbale',
-      description: 'Applicazione per la gestione dei verbali di ispezione',
-      theme_color: '#ffffff',
-      start_url: '/VerbaleIspezione/',
-      icons: [
-        {
-          src: '/VerbaleIspezione/icon-192x192.png',
-          sizes: '192x192',
-          type: 'image/png'
-        },
-        {
-          src: '/VerbaleIspezione/icon-512x512.png',
-          sizes: '512x512',
-          type: 'image/png'
-        }
-      ]
-    },
-    devOptions: {
-      enabled: true
+  plugins: [
+    react(),
+    VitePWA({
+      registerType: 'autoUpdate',
+      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+      manifest: {
+        name: 'Verbale di Ispezione',
+        short_name: 'Verbale',
+        description: 'Verbale di Ispezione Redesco Progetti',
+        theme_color: '#ffffff',
+        icons: [
+          {
+            src: 'pwa-192x192.png',
+            sizes: '192x192',
+            type: 'image/png'
+          },
+          {
+            src: 'pwa-512x512.png',
+            sizes: '512x512',
+            type: 'image/png'
+          }
+        ]
+      }
+    })
+  ],
+  base: '/',
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, './src')
     }
-  })],
-  base: '/VerbaleIspezione/', // Nome del repository
+  },
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html')
+      },
+      output: {
+        manualChunks: undefined,
+        assetFileNames: 'assets/[name][extname]',
+        chunkFileNames: 'assets/[name].js',
+        entryFileNames: 'assets/[name].js'
+      }
+    }
+  },
   server: {
     host: '0.0.0.0',
-    port: 5173,
-    strictPort: true,
-    https: true
+    port: 3000,
+    strictPort: true
   }
 })
