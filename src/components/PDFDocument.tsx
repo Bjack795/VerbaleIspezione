@@ -172,7 +172,7 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => (
   <Document>
     <Page size="A4" style={styles.page}>
       {/* Header */}
-      <View style={styles.header} >
+      <View style={styles.header} fixed>
         <View style={styles.logoRow}>
           <Image
             src={`${import.meta.env.BASE_URL}logo.png`}
@@ -180,19 +180,15 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => (
           />
           <Text style={styles.companyName}>Redesco Progetti srl</Text>
         </View>
-        <View style={styles.headerDividerThick}></View>
-        <View style={styles.headerTitleContainer}>
-           <Text style={styles.headerTitle}>SCHEDA DI VERIFICA</Text>
-           <Text style={styles.headerSubtitle}>Posa/Installazione/Lavoro</Text>
-        </View>
-         <View style={styles.headerDividerThin}></View>
+        <View style={styles.headerDividerThick}></View>         
       </View>
 
       {/* Content */}
       <View style={styles.content}>
         {/* Rimuovo i vecchi titoli che ora sono nell'header */}
-        {/* <Text style={styles.title}>SCHEDA DI VERIFICA</Text> */}
-        {/* <Text style={styles.subtitle}>Posa/Installazione/Lavoro</Text> */}
+        <Text style={styles.title}>SCHEDA DI VERIFICA</Text>
+        <Text style={styles.subtitle}>Posa/Installazione/Lavoro</Text>
+        <View style={styles.headerDividerThin}></View>
 
         {/* Sezione PROGETTO */}
         <View style={styles.borderedSection}>
