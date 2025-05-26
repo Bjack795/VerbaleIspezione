@@ -36,6 +36,15 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: List dist contents (prima della copia immagini)
+        run: ls -l dist || dir dist
+
+      - name: Copy static images
+        run: cp public/*.png dist/ || echo "Nessuna PNG da copiare"
+
+      - name: List dist contents (dopo la copia immagini)
+        run: ls -l dist || dir dist
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
