@@ -25,14 +25,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 10,
-    backgroundColor: 'rgb(255, 0, 0)', // test visivo
 
   },
   logo: {
     width: 40, // Dimensione aggiustata per evitare deformazione
     height: 'auto', // Altezza automatica per mantenere proporzioni
     marginRight: 10,
-    backgroundColor: 'rgb(0, 255, 60)', // test visivo
   },
   companyName: {
     fontSize: 10,
@@ -44,15 +42,15 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   headerTitleContainer: {
-    paddingTop: 10,
-    marginBottom: 15,
+    MarginTop: 10,
+    marginBottom: 10,
   },
   headerTitle: {
     fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
-    paddingBottom: 8,
-    marginTop: 10,
+    //paddingBottom: 8,
+    //marginTop: 10,
     
     //color: colors.on_background,
   },
