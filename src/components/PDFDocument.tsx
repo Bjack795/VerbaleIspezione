@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
 
   },
   logo: {
-    width: 60, // Dimensione aggiustata per evitare deformazione
+    width: 40, // Dimensione aggiustata per evitare deformazione
     height: 'auto', // Altezza automatica per mantenere proporzioni
     marginRight: 10,
   },
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   headerTitleContainer: {
-    paddingTop: 24,
+    paddingTop: 10,
     marginBottom: 15,
   },
   headerTitle: {
@@ -73,11 +73,10 @@ const styles = StyleSheet.create({
     color: colors.on_surface_variant,
     borderTop: '1 solid #000',
     paddingTop: 10,
-    backgroundColor: 'rgb(0, 255, 60)', // test visivo
   },
   content: {
-    marginTop: 200, // Aumento lo spazio per il nuovo header
-    marginBottom: 60,
+    marginTop: 15, // Aumento lo spazio per il nuovo header
+    marginBottom: 15,
   },
   title: {
     fontSize: 16,
