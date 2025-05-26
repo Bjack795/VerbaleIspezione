@@ -15,18 +15,17 @@ const styles = StyleSheet.create({
     lineHeight: 1.5, // Migliora la leggibilità
   },
   header: {
-    position: 'absolute',
-    top: 30,
-    left: 30,
-    right: 30,
-    // Rimuovo display flex qui per gestire layout interno diversamente
-    // borderBottom: '1 solid #000', // Sposto il bordo più in basso
-    // paddingBottom: 10,
+    flexDirection: 'column',
+    marginBottom: 20,
+    paddingTop: 20,
+    paddingBottom: 10,
+    borderBottom: '1 solid #000',
   },
   logoRow: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 10,
+
   },
   logo: {
     width: 60, // Dimensione aggiustata per evitare deformazione
@@ -43,14 +42,17 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   headerTitleContainer: {
-     marginBottom: 15,
+    paddingTop: 24,
+    marginBottom: 15,
   },
   headerTitle: {
     fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 3,
-    color: colors.on_background,
+    paddingBottom: 8,
+    marginTop: 10,
+    
+    //color: colors.on_background,
   },
   headerSubtitle: {
     fontSize: 10,
@@ -71,9 +73,10 @@ const styles = StyleSheet.create({
     color: colors.on_surface_variant,
     borderTop: '1 solid #000',
     paddingTop: 10,
+    backgroundColor: 'rgb(0, 255, 60)', // test visivo
   },
   content: {
-    marginTop: 100, // Aumento lo spazio per il nuovo header
+    marginTop: 200, // Aumento lo spazio per il nuovo header
     marginBottom: 60,
   },
   title: {
@@ -93,6 +96,7 @@ const styles = StyleSheet.create({
   borderedSection: {
     border: '1 solid #000',
     marginBottom: 15,
+    marginTop: 15,
   },
   // Stile per le sezioni con sfondo grigio
   grayBackground: {
@@ -170,7 +174,7 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => (
   <Document>
     <Page size="A4" style={styles.page}>
       {/* Header */}
-      <View style={styles.header} fixed>
+      <View style={styles.header} >
         <View style={styles.logoRow}>
           <Image
             src={`${import.meta.env.BASE_URL}logo.png`}
