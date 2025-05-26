@@ -173,7 +173,7 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => (
       <View style={styles.header} fixed>
         <View style={styles.logoRow}>
           <Image
-            src="/image001.png"
+            src="image001.png"
             style={styles.logo}
           />
           <Text style={styles.companyName}>Redesco Progetti srl</Text>
