@@ -57,7 +57,6 @@ const styles = StyleSheet.create({
   headerSubtitle: {
     fontSize: 10,
     textAlign: 'center',
-    marginBottom: 10,
     color: colors.on_surface_variant,
   },
    headerDividerThin: {
