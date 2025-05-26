@@ -1,7 +1,11 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
-import { resolve } from 'path'
+import { resolve, dirname } from 'path'
+import { fileURLToPath } from 'node:url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -27,8 +31,7 @@ export default defineConfig({
             type: 'image/png'
           }
         ]
-      },
-      base: '/VerbaleIspezione/'
+      }
     })
   ],
   base: '/VerbaleIspezione/',
