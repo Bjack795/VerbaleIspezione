@@ -39,7 +39,6 @@ const styles = StyleSheet.create({
   },
   headerDividerThick: {
     borderBottom: '1 solid #000',
-    marginBottom: 10,
   },
   headerTitleContainer: {
     MarginTop: 10,
