@@ -31,6 +31,18 @@ export default defineConfig({
             type: 'image/png'
           }
         ]
+      },
+      workbox: {
+        navigateFallback: '/VerbaleIspezione/index.html',
+        runtimeCaching: [
+          {
+            urlPattern: /\\.(?:png|jpg|jpeg|svg|gif|txt)$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'static-resources',
+            },
+          },
+        ],
       }
     })
   ],
