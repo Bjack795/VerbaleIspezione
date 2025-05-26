@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     paddingTop: 20,
     paddingBottom: 10,
-    borderBottom: '1 solid #000',
+    //borderBottom: '1 solid #000',
   },
   logoRow: {
     flexDirection: 'row',
