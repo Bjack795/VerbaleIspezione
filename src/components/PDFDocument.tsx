@@ -186,7 +186,6 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => (
       <View style={styles.content}>
         <Text style={styles.title}>SCHEDA DI VERIFICA</Text>
         <Text style={styles.subtitle}>Posa/Installazione/Lavoro</Text>
-        <View style={styles.headerDividerThick}></View>   
         <View style={styles.headerDividerThin}></View>
 
         {/* Sezione PROGETTO */}
