@@ -180,14 +180,14 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => (
           />
           <Text style={styles.companyName}>Redesco Progetti srl</Text>
         </View>
-        <View style={styles.headerDividerThick}></View>         
+      
       </View>
 
       {/* Content */}
       <View style={styles.content}>
-        {/* Rimuovo i vecchi titoli che ora sono nell'header */}
         <Text style={styles.title}>SCHEDA DI VERIFICA</Text>
         <Text style={styles.subtitle}>Posa/Installazione/Lavoro</Text>
+        <View style={styles.headerDividerThick}></View>   
         <View style={styles.headerDividerThin}></View>
 
         {/* Sezione PROGETTO */}
