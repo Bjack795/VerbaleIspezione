@@ -97,6 +97,10 @@ const styles = StyleSheet.create({
     /*marginBottom: 15,*/
     marginTop: 15,
   },
+  unBorderedSection: {
+    /*marginBottom: 15,*/
+    marginTop: 15,
+  },
   // Stile per le sezioni con sfondo grigio
   grayBackground: {
     backgroundColor: colors.surface_container_highest, // Utilizzo un colore simile al grigio
@@ -158,7 +162,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   checkboxOption: {
-    // marginBottom: 3,
+    marginTop: 1,
     color: colors.on_surface,
   },
   noteText: {
@@ -264,7 +268,7 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => (
 
 
         {/* Sezione METODO DI VERIFICA */}
-        <View style={styles.borderedSection}>
+        <View style={styles.unBorderedSection}>
            <Text style={styles.sectionTitle}>METODO DI VERIFICA</Text>
            <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: 12, gap: 20 }}>
              {Object.entries(data.tipoIspezione).map(([key, value]) => (
