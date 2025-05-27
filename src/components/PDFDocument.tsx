@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
   // Stili per le sezioni con bordo come nello screenshot
   borderedSection: {
     border: '1 solid #000',
-    marginBottom: 15,
+    /*marginBottom: 15,*/
     marginTop: 15,
   },
   // Stile per le sezioni con sfondo grigio
