@@ -152,7 +152,6 @@ const styles = StyleSheet.create({
     fontSize: 9,
     textAlign: 'left',
     color: colors.on_surface_variant,
-    margin: 9,
 
    },
   checkboxGroup: {
