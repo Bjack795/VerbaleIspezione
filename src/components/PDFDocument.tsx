@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     color: colors.on_surface_variant,
   },
    headerDividerThin: {
-    borderBottom: '0.5 solid #ccc',
+    borderBottom: '0.8 solid #ccc',
   },
   footer: {
     position: 'absolute',
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
   grayBackground: {
     backgroundColor: colors.surface_container_highest, // Utilizzo un colore simile al grigio
     padding: 8,
-    borderBottom: '1 solid #000',
+    borderBottom: '0.8 solid #000',
   },
   // Stile per le righe all'interno delle sezioni
   sectionRow: {
