@@ -285,7 +285,7 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => (
            </View>
         </View>
 
-        {/* Sezione OGGETTO DEL SOPRALLUOGO */}
+        {/* Sezione OGGETTO DEL SOPRALLUOGO E ESITO CONTROLLO*/}
         <View style={styles.borderedSection}>
            <Text style={styles.sectionTitle}>OGGETTO DEL SOPRALLUOGO</Text>
            <View style={styles.sectionRowLast}> {/* Ultima riga senza bordo inferiore */}
@@ -293,20 +293,20 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => (
                 <Text style={styles.value}>{data.oggettoSopralluogo}</Text>
              </View>
            </View>
-        </View>
 
-         {/* Sezione ESITO CONTROLLO */}
-        <View style={styles.borderedSection}>
            <Text style={styles.sectionTitle}>ESITO CONTROLLO</Text>
-           <View style={styles.sectionRow}> {/* Ultima riga senza bordo inferiore */}
-              <View style={[styles.sectionColumn, styles.verticalDivider]}>
-                 {Object.entries(data.esito).map(([key, value]) => value && 
-                  <Text key={key} style={styles.checkboxOption}>▢ {key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1').trim()}</Text>
-                 )}
-              </View>
-               <View style={styles.sectionColumn}>
-                 {/* Colonna vuota per allineamento */}
+           <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: 12, gap: 20 , alignItems: 'center' }}>
+             {Object.entries(data.esito).map(([key, value]) => (
+               <View key={key} style={{ flexDirection: 'row'}}>
+                 <Image
+                   src={`${import.meta.env.BASE_URL}images/${value ? 'checkbox_checked' : 'checkbox_unchecked'}.png`}
+                   style={{ width: 12, height: 12, marginRight: 6 }}
+                 />
+                 <Text style={styles.checkboxOption}>
+                   {key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1').trim()}
+                 </Text>
                </View>
+             ))}
            </View>
             <Text style={styles.noteText}>* Tale osservazione è da considerarsi prescrittiva – da ottemperare</Text>
         </View>
