@@ -83,13 +83,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     color: colors.on_background,
-    margin: 10,
+    marginTop: 5,
   },
   subtitle: {
     fontSize: 10,
     textAlign: 'center',
     color: colors.on_surface_variant,
-    margin: 10,
+    marginTop: 5,
   },
   // Stili per le sezioni con bordo come nello screenshot
   borderedSection: {
