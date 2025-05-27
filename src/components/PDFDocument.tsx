@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    textAlign: 'center',
+    textAlign: 'left',
     //paddingBottom: 8,
     //marginTop: 10,
     
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
   },
   headerSubtitle: {
     fontSize: 10,
-    textAlign: 'center',
+    textAlign: 'left',
     color: colors.on_surface_variant,
   },
    headerDividerThin: {
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     bottom: 30,
     left: 30,
     right: 30,
-    textAlign: 'center',
+    textAlign: 'left',
     fontSize: 8,
     color: colors.on_surface_variant,
     borderTop: '1 solid #000',
@@ -81,13 +81,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: 'bold',
-    textAlign: 'center',
+    textAlign: 'left',
     marginBottom: 5,
     color: colors.on_background,
   },
   subtitle: {
     fontSize: 10,
-    textAlign: 'center',
+    textAlign: 'left',
     marginBottom: 20,
     color: colors.on_surface_variant,
   },
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 12,
     fontWeight: 'bold',
-    textAlign: 'center',
+    textAlign: 'left',
     color: colors.on_background,
     marginBottom: 5,
     marginTop: 5,
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
   },
    sectionSubtitle: {
     fontSize: 9,
-    textAlign: 'center',
+    textAlign: 'left',
     color: colors.on_surface_variant,
     marginBottom: 5,
     marginLeft: 8,
