@@ -83,13 +83,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     color: colors.on_background,
-    marginTop: 5,
   },
   subtitle: {
     fontSize: 10,
     textAlign: 'center',
     color: colors.on_surface_variant,
     marginTop: 5,
+    marginBottom: 15,
   },
   // Stili per le sezioni con bordo come nello screenshot
   borderedSection: {
@@ -116,17 +116,17 @@ const styles = StyleSheet.create({
   sectionColumn: {
     flexGrow: 1,
     flexBasis: '50%',
-    paddingHorizontal: 8,
+    paddingHorizontal: 9,
   },
    sectionColumnFull: {
     flexGrow: 1,
     flexBasis: '100%',
-    paddingHorizontal: 8,
+    paddingHorizontal: 9,
   },
    sectionColumnThird: {
     flexGrow: 1,
     flexBasis: '33.33%',
-    paddingHorizontal: 8,
+    paddingHorizontal: 9,
   },
   // Stile per i bordi verticali tra le colonne
   verticalDivider: {
@@ -145,14 +145,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'left',
     color: colors.on_background,
-    margin: 10,
+    margin: 9,
 
   },
    sectionSubtitle: {
     fontSize: 9,
     textAlign: 'left',
     color: colors.on_surface_variant,
-    margin: 10,
+    margin: 9,
 
    },
   checkboxGroup: {
