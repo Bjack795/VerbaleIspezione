@@ -16,9 +16,9 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'column',
-    marginBottom: 20,
-    paddingTop: 20,
-    paddingBottom: 10,
+    marginBottom: 15,
+    paddingTop: 15,
+    paddingBottom: 7,
     borderBottom: '1 solid #000',
   },
   logoRow: {
@@ -41,8 +41,8 @@ const styles = StyleSheet.create({
     borderBottom: '1 solid #000',
   },
   headerTitleContainer: {
-    MarginTop: 10,
-    marginBottom: 10,
+    MarginTop: 8,
+    marginBottom: 8,
   },
   headerTitle: {
     fontSize: 16,
@@ -187,7 +187,7 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => (
       <View style={styles.content}>
         <Text style={styles.title}>SCHEDA DI VERIFICA</Text>
         <Text style={styles.subtitle}>Posa/Installazione/Lavoro</Text>
-        <View style={styles.headerDividerThick}></View>
+        {/*<View style={styles.headerDividerThick}></View>*/}
         <View style={styles.headerDividerThin}></View>
 
         {/* Sezione PROGETTO */}
