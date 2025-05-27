@@ -2,6 +2,8 @@ import React from 'react'
 import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer'
 import { FormInputs } from '../types/form'
 import { colors } from '../constants/theme'
+import { format } from 'date-fns'
+import { it } from 'date-fns/locale'
 
 // Registra un font (opzionale, dipende se vuoi usare un font specifico)
 // Font.register({ family: 'Roboto', src: '/fonts/Roboto-Regular.ttf' });
@@ -99,7 +101,7 @@ const styles = StyleSheet.create({
   grayBackground: {
     backgroundColor: colors.surface_container_highest, // Utilizzo un colore simile al grigio
     padding: 8,
-    borderBottom: '0.8 solid #000',
+    borderBottom: '0.5 solid #000',
   },
   // Stile per le righe all'interno delle sezioni
   sectionRow: {
@@ -198,7 +200,9 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => (
            <View style={styles.sectionRowLast}> {/* Ultima riga senza bordo inferiore */}
              <View style={[styles.sectionColumn, styles.verticalDivider]}>
                <Text style={styles.sectionSubtitle}>Data</Text>
-               <Text style={styles.value}>{data.dataIspezione}</Text>
+               <Text style={styles.value}>
+                 {format(new Date(data.dataIspezione), 'dd/MM/yyyy', { locale: it })}
+               </Text>
              </View>
              <View style={[styles.sectionColumn, styles.verticalDivider]}>
                <Text style={styles.sectionSubtitle}>N. progressivo</Text>
