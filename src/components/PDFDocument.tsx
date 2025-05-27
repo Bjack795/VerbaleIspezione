@@ -144,6 +144,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 12,
     fontWeight: 'bold',
+    textAlign: 'center',
     color: colors.on_background,
     marginBottom: 5,
     marginTop: 5,
@@ -151,8 +152,10 @@ const styles = StyleSheet.create({
   },
    sectionSubtitle: {
     fontSize: 9,
+    textAlign: 'center',
     color: colors.on_surface_variant,
     marginBottom: 5,
+    marginLeft: 8,
    },
   checkboxGroup: {
     marginTop: 5,
