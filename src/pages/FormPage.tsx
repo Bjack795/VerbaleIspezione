@@ -27,11 +27,11 @@ const esitoOptions = [
 ]
 
 const dlOptions = [
-  { id: 'generale', label: 'D.L. Generale' },
-  { id: 'strutture', label: 'D.L. Strutture' },
-  { id: 'facciate', label: 'D.L. Facciate' },
-  { id: 'elettrici', label: 'D.L. Imp. Elettrici/Speciali' },
-  { id: 'meccanici', label: 'D.L. Imp. Meccanici' }
+  { id: 'DLG', label: 'D.L. Generale' },
+  { id: 'DLS', label: 'D.L. Strutture' },
+  { id: 'DL_FACCIATE', label: 'D.L. Facciate' },
+  { id: 'DL_ELETTRICI', label: 'D.L. Imp. Elettrici/Speciali' },
+  { id: 'DL_MECCANICI', label: 'D.L. Imp. Meccanici' }
 ]
 
 const getTodayDate = (): string => {
@@ -66,11 +66,11 @@ const FormPage: React.FC = () => {
       osservazione: false,
     },
     dl: {
-      generale: false,
-      strutture: true,
-      facciate: false,
-      elettrici: false,
-      meccanici: false,
+      DLG: false,
+      DLS: true,
+      DL_FACCIATE: false,
+      DL_ELETTRICI: false,
+      DL_MECCANICI: false,
     },
   })
 

@@ -21,10 +21,10 @@ export interface FormInputs {
     osservazione: boolean;
   };
   dl: {
-    generale: boolean;
-    strutture: boolean;
-    facciate: boolean;
-    elettrici: boolean;
-    meccanici: boolean;
+    DLG: boolean;
+    DLS: boolean;
+    DL_FACCIATE: boolean;
+    DL_ELETTRICI: boolean;
+    DL_MECCANICI: boolean;
   };
 } 

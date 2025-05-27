@@ -212,7 +212,7 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => (
              </View>
              <View style={styles.sectionColumn}>
                 {Object.entries(data.dl).map(([key, value]) => value && 
-                  <Text key={key} style={styles.checkboxOption}>▢ {key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1').trim()}</Text>
+                  <Text key={key} style={styles.sectionSubtitle}>{key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1').trim()}</Text>
                 )}
              </View>
            </View>
