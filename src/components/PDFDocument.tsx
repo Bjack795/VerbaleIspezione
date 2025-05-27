@@ -268,12 +268,12 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => (
            <Text style={styles.sectionTitle}>METODO DI VERIFICA</Text>
            <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: 12, gap: 12 }}>
              {Object.entries(data.tipoIspezione).map(([key, value]) => (
-               <View key={key} style={{ flexDirection: 'row', alignItems: 'center' }}>
+               <View key={key} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                  <Image
                    src={`${import.meta.env.BASE_URL}images/${value ? 'checkbox_checked' : 'checkbox_unchecked'}.png`}
-                   style={{ width: 12, height: 12, marginRight: 6 }}
+                   style={{ width: 12, height: 12, marginRight: 6, alignSelf: 'center' }}
                  />
-                 <Text style={styles.checkboxOption}>
+                 <Text style={[styles.checkboxOption, { lineHeight: 12 }]}>
                    {key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1').trim()}
                  </Text>
                </View>
