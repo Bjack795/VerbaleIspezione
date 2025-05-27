@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'column',
-    marginBottom: 15,
+    marginBottom: 10,
     paddingTop: 15,
     paddingBottom: 7,
     borderBottom: '1 solid #000',
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: colors.on_surface_variant,
     marginTop: 5,
-    marginBottom: 15,
+    marginBottom: 10,
   },
   // Stili per le sezioni con bordo come nello screenshot
   borderedSection: {
