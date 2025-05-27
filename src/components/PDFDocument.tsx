@@ -82,14 +82,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 5,
     color: colors.on_background,
+    margin: 10,
   },
   subtitle: {
     fontSize: 10,
     textAlign: 'center',
-    marginBottom: 20,
     color: colors.on_surface_variant,
+    margin: 10,
   },
   // Stili per le sezioni con bordo come nello screenshot
   borderedSection: {
@@ -145,16 +145,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'left',
     color: colors.on_background,
-    marginBottom: 5,
-    marginTop: 13,
-    marginLeft: 16,
+    margin: 10,
+
   },
    sectionSubtitle: {
     fontSize: 9,
     textAlign: 'left',
     color: colors.on_surface_variant,
-    marginBottom: 5,
-    marginLeft: 16,
+    margin: 10,
+
    },
   checkboxGroup: {
     marginTop: 5,
@@ -166,7 +165,7 @@ const styles = StyleSheet.create({
   noteText: {
     fontSize: 8,
     color: colors.on_surface_variant,
-    marginTop: 10,
+
   }
 });
 
