@@ -124,8 +124,11 @@ const FormPage: React.FC = () => {
     setFormData(prev => ({
       ...prev,
       [section]: {
-        ...prev[section],
-        [field]: !prev[section][field as keyof typeof prev[typeof section]]
+        ...(section === 'dl' 
+          ? Object.fromEntries(Object.keys(prev[section]).map(key => [key, false]))
+          : prev[section]
+        ),
+        [field]: section === 'dl' ? true : !prev[section][field as keyof typeof prev[typeof section]]
       }
     }))
   }
