@@ -269,7 +269,7 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => (
            <View style={[styles.sectionRowLast, { justifyContent: 'space-around' }]}>
               {Object.entries(data.tipoIspezione).map(([key, value]) => 
                  <Text key={key} style={styles.checkboxOption}>
-                    {value ? '■' : '□'} {key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1').trim()}
+                    {value ? '☑' : '☐'} {key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1').trim()}
                  </Text>
               )}
            </View>
