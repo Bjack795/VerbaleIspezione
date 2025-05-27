@@ -211,9 +211,9 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => (
                <Text style={styles.value}>{data.numero}</Text>
              </View>
              <View style={styles.sectionColumn}>
-               <Text style={styles.sectionSubtitle}>DLS</Text>
-                {/* Spazio per DLS, non nel form */}
-               <Text style={styles.value}></Text>
+                {Object.entries(data.dl).map(([key, value]) => value && 
+                  <Text key={key} style={styles.checkboxOption}>▢ {key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1').trim()}</Text>
+                )}
              </View>
            </View>
         </View>
