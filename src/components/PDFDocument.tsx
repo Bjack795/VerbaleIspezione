@@ -266,9 +266,9 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => (
         {/* Sezione METODO DI VERIFICA */}
         <View style={styles.borderedSection}>
            <Text style={styles.sectionTitle}>METODO DI VERIFICA</Text>
-           <View style={{ flexDirection: 'column', marginLeft: 12 }}>
+           <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: 12, gap: 12 }}>
              {Object.entries(data.tipoIspezione).map(([key, value]) => (
-               <View key={key} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 3 }}>
+               <View key={key} style={{ flexDirection: 'row', alignItems: 'center' }}>
                  <Image
                    src={`${import.meta.env.BASE_URL}images/${value ? 'checkbox_checked' : 'checkbox_unchecked'}.png`}
                    style={{ width: 12, height: 12, marginRight: 6 }}
