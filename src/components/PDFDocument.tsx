@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   checkboxOption: {
-    marginBottom: 3,
+    // marginBottom: 3,
     color: colors.on_surface,
   },
   noteText: {
@@ -266,14 +266,14 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => (
         {/* Sezione METODO DI VERIFICA */}
         <View style={styles.borderedSection}>
            <Text style={styles.sectionTitle}>METODO DI VERIFICA</Text>
-           <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: 12, gap: 12 }}>
+           <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: 12, gap: 20 }}>
              {Object.entries(data.tipoIspezione).map(([key, value]) => (
-               <View key={key} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+               <View key={key} style={{ flexDirection: 'row', alignItems: 'center' }}>
                  <Image
                    src={`${import.meta.env.BASE_URL}images/${value ? 'checkbox_checked' : 'checkbox_unchecked'}.png`}
-                   style={{ width: 12, height: 12, marginRight: 6, alignSelf: 'center' }}
+                   style={{ width: 12, height: 12, marginRight: 6 }}
                  />
-                 <Text style={[styles.checkboxOption, { lineHeight: 12 }]}>
+                 <Text style={styles.checkboxOption}>
                    {key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1').trim()}
                  </Text>
                </View>
