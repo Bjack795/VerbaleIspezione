@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   content: {
-    marginTop: 15, // Aumento lo spazio per il nuovo header
+    marginTop: 8, // Aumento lo spazio per il nuovo header
     marginBottom: 15,
   },
   title: {
@@ -186,6 +186,7 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => (
       <View style={styles.content}>
         <Text style={styles.title}>SCHEDA DI VERIFICA</Text>
         <Text style={styles.subtitle}>Posa/Installazione/Lavoro</Text>
+        <View style={styles.headerDividerThick}></View>
         <View style={styles.headerDividerThin}></View>
 
         {/* Sezione PROGETTO */}
