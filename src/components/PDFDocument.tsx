@@ -99,6 +99,7 @@ const styles = StyleSheet.create({
   grayBackground: {
     backgroundColor: colors.surface_container_highest, // Utilizzo un colore simile al grigio
     padding: 8,
+    borderBottom: '1 solid #000',
   },
   // Stile per le righe all'interno delle sezioni
   sectionRow: {
@@ -143,7 +144,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: colors.on_background,
     marginBottom: 5,
-    borderBottom: '1 solid #ccc',
   },
    sectionSubtitle: {
     fontSize: 9,
