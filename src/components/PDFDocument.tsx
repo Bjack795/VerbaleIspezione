@@ -266,9 +266,11 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => (
         {/* Sezione METODO DI VERIFICA */}
         <View style={styles.borderedSection}>
            <Text style={styles.sectionTitle}>METODO DI VERIFICA</Text>
-           <View style={[styles.sectionRowLast, { justifyContent: 'space-around' }]}> {/* Ultima riga senza bordo inferiore */}
-              {Object.entries(data.tipoIspezione).map(([key, value]) => value && 
-                 <Text key={key} style={styles.checkboxOption}>▢ {key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1').trim()}</Text>
+           <View style={[styles.sectionRowLast, { justifyContent: 'space-around' }]}>
+              {Object.entries(data.tipoIspezione).map(([key, value]) => 
+                 <Text key={key} style={styles.checkboxOption}>
+                    {value ? '■' : '□'} {key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1').trim()}
+                 </Text>
               )}
            </View>
         </View>
