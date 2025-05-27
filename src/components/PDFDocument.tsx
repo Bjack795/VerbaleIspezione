@@ -168,6 +168,7 @@ const styles = StyleSheet.create({
   noteText: {
     fontSize: 8,
     color: colors.on_surface_variant,
+    margin: 8,
 
   }
 });
