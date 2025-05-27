@@ -100,7 +100,6 @@ const styles = StyleSheet.create({
   // Stile per le sezioni con sfondo grigio
   grayBackground: {
     backgroundColor: colors.surface_container_highest, // Utilizzo un colore simile al grigio
-    padding: 8,
     borderBottom: '0.5 solid #000',
   },
   // Stile per le righe all'interno delle sezioni
