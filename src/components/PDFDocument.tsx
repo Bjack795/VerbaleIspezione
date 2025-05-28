@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
   },
   content: {
     marginTop: 8, // Aumento lo spazio per il nuovo header
-    marginBottom: 15,
+    marginBottom: 50,
   },
   title: {
     fontSize: 16,
@@ -96,22 +96,6 @@ const styles = StyleSheet.create({
     border: '1 solid #000',
     /*marginBottom: 15,*/
     marginTop: 15,
-  },
-  topBorderedSection: {
-    borderTop: '1 solid #000',
-    borderLeft: '1 solid #000',
-    borderRight: '1 solid #000',
-    /*marginBottom: 15,*/
-    marginTop: 15,
-  },
-  bodySection: {
-    /*marginBottom: 15,*/
-  },
-  bottomBorderedSection: {
-    borderBottom: '1 solid #000',
-    borderLeft: '1 solid #000',
-    borderRight: '1 solid #000',
-    /*marginBottom: 15,*/
   },
   unBorderedSection: {
     /*marginBottom: 15,*/
@@ -303,17 +287,14 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => (
         </View>
 
         {/* Sezione OGGETTO DEL SOPRALLUOGO E ESITO CONTROLLO*/}
-        <View style={styles.topBorderedSection}>
+        <View style={styles.borderedSection}>
            <Text style={styles.sectionTitle}>OGGETTO DEL SOPRALLUOGO</Text>
-        </View>
-        <View style={styles.bodySection}>
            <View style={styles.sectionRowLast}> {/* Ultima riga senza bordo inferiore */}
              <View style={styles.sectionColumnFull}>
                 <Text style={styles.value}>{data.oggettoSopralluogo}</Text>
              </View>
            </View>
-        </View>
-        <View style={styles.bottomBorderedSection}>
+
            <Text style={styles.sectionTitle}>ESITO CONTROLLO</Text>
            <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: 12, gap: 20 , alignItems: 'center' }}>
              {Object.entries(data.esito).map(([key, value]) => (
