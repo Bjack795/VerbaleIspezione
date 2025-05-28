@@ -343,7 +343,8 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => (
 
       {/* Footer */}
       <View style={styles.footer} fixed>
-        <Text render={({ pageNumber, totalPages }) => `Pagina ${pageNumber} di ${totalPages}`} />
+        {/* <Text render={({ pageNumber, totalPages }) => `Pagina ${pageNumber} di ${totalPages}`} /> */}
+        <Text>Data</Text>
       </View>
     </Page>
   </Document>
