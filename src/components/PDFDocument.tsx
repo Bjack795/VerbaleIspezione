@@ -105,8 +105,6 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
   bodySection: {
-    borderLeft: '1 solid #000',
-    borderRight: '1 solid #000',
     /*marginBottom: 15,*/
   },
   bottomBorderedSection: {
