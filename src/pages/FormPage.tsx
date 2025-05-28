@@ -307,7 +307,7 @@ const FormPage: React.FC = () => {
       )}
     
       {formData && activeTab === 'dati' && (
-        <div className="mt-20 text-center">
+        <div className="text-center" style={{ marginTop: 120 }}>
           <PDFDownloadLink
             document={<PDFDocument data={formData} />}
             fileName="verbale-ispezione.pdf"
