@@ -312,13 +312,38 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => (
            </View>
             <Text style={styles.noteText}>* Tale osservazione è da considerarsi prescrittiva – da ottemperare</Text>
         </View>
-
+        
+        <View style={styles.borderedSection}>
+           <View style={styles.sectionRowLast}> {/* Ultima riga senza bordo inferiore */}
+             <View style={[styles.sectionColumn, styles.verticalDivider]}>
+               <Text style={styles.value}>Nome</Text>
+             </View>
+             <View style={[styles.sectionColumn, styles.verticalDivider]}>
+               <Text style={styles.value}>!!!!!!!!!</Text>
+             </View>
+             <View style={[styles.sectionColumn, styles.verticalDivider]}>
+               <Text style={styles.value}>Firma</Text>
+             </View>
+             <View style={[styles.sectionColumn, styles.verticalDivider]}>
+               <Text style={styles.value}>!!!!!!!!!</Text>
+             </View>
+             <View style={[styles.sectionColumn, styles.verticalDivider]}>
+               <Text style={styles.value}>Data</Text>
+             </View>
+             <View style={[styles.sectionColumn, styles.verticalDivider]}>
+                <Text style={styles.value}>
+                    {format(new Date(data.dataVerbale), 'dd/MM/yyyy', { locale: it })}
+                </Text>
+             </View>
+     
+           </View>
+        </View>
 
       </View>
 
       {/* Footer */}
       <View style={styles.footer} fixed>
-        <Text>Pagina <Text render={({ pageNumber, totalPages }) => `${pageNumber} di ${totalPages}`} /></Text>
+        <Text render={({ pageNumber, totalPages }) => `Pagina ${pageNumber} di ${totalPages}`} />
       </View>
     </Page>
   </Document>
