@@ -305,9 +305,9 @@ const FormPage: React.FC = () => {
           <p style={{ color: colors.on_surface_variant }}>Gestione immagini in arrivo...</p>
         </div>
       )}
-
+    
       {formData && activeTab === 'dati' && (
-        <div className="mt-4 text-center">
+        <div className="mt-8 text-center">
           <PDFDownloadLink
             document={<PDFDocument data={formData} />}
             fileName="verbale-ispezione.pdf"
