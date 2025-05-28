@@ -11,7 +11,7 @@ import { it } from 'date-fns/locale'
 const styles = StyleSheet.create({
   page: {
     padding: 30,
-    paddingBottom: 70,
+    paddingBottom: 40,
     fontSize: 10,
     fontFamily: 'Helvetica',
     position: 'relative',
