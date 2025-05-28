@@ -11,6 +11,7 @@ import { it } from 'date-fns/locale'
 const styles = StyleSheet.create({
   page: {
     padding: 30,
+    paddingBottom: 80,
     fontSize: 10,
     fontFamily: 'Helvetica',
     position: 'relative',
@@ -76,7 +77,7 @@ const styles = StyleSheet.create({
   },
   content: {
     marginTop: 8, // Aumento lo spazio per il nuovo header
-    marginBottom: 50,
+    marginBottom: 15,
   },
   title: {
     fontSize: 16,
