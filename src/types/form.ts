@@ -1,3 +1,12 @@
+export interface ImageData {
+  id: string;
+  file: File;
+  preview: string; // URL.createObjectURL per l'anteprima
+  caption: string;
+  rotation: number; // 0, 90, 180, 270 gradi
+  timestamp: number;
+}
+
 export interface FormInputs {
   dataIspezione: string;
   dataVerbale: string;
@@ -9,6 +18,7 @@ export interface FormInputs {
   ubicazione: string;
   schedaControllo: string;
   oggettoSopralluogo: string;
+  images: ImageData[]; // Aggiungo array delle immagini
   tipoIspezione: {
     visivo: boolean;
     rilievo: boolean;

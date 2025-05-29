@@ -18,7 +18,7 @@ const PDFDownloadButton: React.FC<PDFDownloadButtonProps> = ({
 
   const handleDownload = async () => {
     try {
-      const pdfBlob = await generatePDFWithFooter(<PDFDocument data={data} />);
+      const pdfBlob = await generatePDFWithFooter(<PDFDocument data={data} />, data.images);
       
       // Crea URL e scarica il file
       const url = URL.createObjectURL(pdfBlob);

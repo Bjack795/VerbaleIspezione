@@ -4,7 +4,8 @@ import CheckboxGroup from '../components/CheckboxGroup'
 import FormLayout from '../components/FormLayout'
 import Tabs from '../components/Tabs'
 import PDFDownloadButton from '../components/PDFDownloadButton'
-import { FormInputs } from '../types/form'
+import ImageManager from '../components/ImageManager'
+import { FormInputs, ImageData } from '../types/form'
 import { colors, styling } from '../constants/theme'
 
 const tabs = [
@@ -53,6 +54,7 @@ const FormPage: React.FC = () => {
     ubicazione: '-',
     schedaControllo: '-',
     oggettoSopralluogo: '-',
+    images: [],
     tipoIspezione: {
       visivo: true,
       rilievo: false,
@@ -129,6 +131,13 @@ const FormPage: React.FC = () => {
         ),
         [field]: section === 'dl' ? true : !prev[section][field as keyof typeof prev[typeof section]]
       }
+    }))
+  }
+
+  const handleImagesChange = (images: ImageData[]) => {
+    setFormData(prev => ({
+      ...prev,
+      images
     }))
   }
 
@@ -300,8 +309,12 @@ const FormPage: React.FC = () => {
       )}
 
       {activeTab === 'immagini' && (
-        <div className="text-center py-8">
-          <p style={{ color: colors.on_surface_variant }}>Gestione immagini in arrivo...</p>
+        <div className="space-y-6">
+          <ImageManager
+            images={formData.images}
+            onImagesChange={handleImagesChange}
+            colors={colors}
+          />
         </div>
       )}
     

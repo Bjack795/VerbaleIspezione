@@ -153,7 +153,7 @@ const createPagedContent = (data: FormInputs) => {
          <Text style={styles.sectionTitle}>OGGETTO DEL SOPRALLUOGO</Text>
          <View style={styles.sectionRowLast}>
            <View style={styles.sectionColumnFull}>
-              <Text style={[styles.value, styles.longText]}>{data.oggettoSopralluogo}</Text>
+              <Text style={[styles.value]}>{data.oggettoSopralluogo}</Text>
            </View>
          </View>
 
@@ -372,12 +372,6 @@ const styles = StyleSheet.create({
     color: colors.on_surface_variant,
     margin: 8,
 
-  },
-  longText: {
-    minHeight: 30,
-    textAlign: 'justify',
-    lineHeight: 1.4,
-    paddingVertical: 5,
   },
 });
 
