@@ -54,11 +54,12 @@ const calculateExpectedPages = (data: FormInputs): number => {
 const styles = StyleSheet.create({
   page: {
     padding: 30,
-    paddingBottom: 70,
     fontSize: 10,
     fontFamily: 'Helvetica',
-    position: 'relative',
-    lineHeight: 1.5, // Migliora la leggibilità
+    lineHeight: 1.5,
+    display: 'flex',
+    flexDirection: 'column',
+    minHeight: '100vh',
   },
   header: {
     flexDirection: 'column',
@@ -108,19 +109,17 @@ const styles = StyleSheet.create({
     borderBottom: '0.8 solid #ccc',
   },
   footer: {
-    position: 'absolute',
-    bottom: 30,
-    left: 30,
-    right: 30,
+    marginTop: 'auto',
+    paddingTop: 10,
+    borderTop: '1 solid #000',
     textAlign: 'left',
     fontSize: 8,
     color: colors.on_surface_variant,
-    borderTop: '1 solid #000',
-    paddingTop: 10,
   },
   content: {
-    marginTop: 8, // Aumento lo spazio per il nuovo header
+    marginTop: 8,
     marginBottom: 15,
+    flex: 1,
   },
   title: {
     fontSize: 16,
@@ -385,7 +384,7 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => (
       </View>
 
       {/* Footer */}
-      <View style={styles.footer} fixed>
+      <View style={styles.footer}>
         <Text>Redesco Progetti srl - Scheda di Verifica | Pagina 1</Text>
       </View>
     </Page>
