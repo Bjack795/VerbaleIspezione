@@ -5,6 +5,81 @@ import { colors } from '../constants/theme'
 import { format } from 'date-fns'
 import { it } from 'date-fns/locale'
 
+// Funzione per calcolare il numero stimato di pagine
+const calculateExpectedPages = (data: FormInputs): number => {
+  let estimatedHeight = 0;
+  const pageHeight = 841; // A4 height in points (210mm * 72/25.4)
+  const usableHeight = pageHeight - 160; // margins + header/footer (30pt top/bottom + 70pt footer + header)
+  
+  // Header fisso (~ 50pt)
+  estimatedHeight += 50;
+  
+  // Titolo principale (~ 40pt)
+  estimatedHeight += 40;
+  
+  // Sezione progetto (~ 80pt)
+  estimatedHeight += 80;
+  
+  // Dati lavorazione - 5 righe fisse (~ 100pt)
+  estimatedHeight += 100;
+  
+  // Metodo verifica (dipende da opzioni selezionate)
+  const selectedMethods = Object.values(data.tipoIspezione).filter(Boolean).length;
+  const methodsRows = Math.ceil(selectedMethods / 3); // ~3 metodi per riga
+  estimatedHeight += methodsRows * 20 + 40; // 20pt per riga + titolo e margini
+  
+  // Oggetto sopralluogo (dipende dalla lunghezza del testo)
+  const textLength = data.oggettoSopralluogo?.length || 0;
+  const estimatedLines = Math.max(3, Math.ceil(textLength / 70)); // Min 3 righe, ~70 caratteri per riga
+  estimatedHeight += estimatedLines * 14 + 60; // 14pt per riga + titolo e margini
+  
+  // Esito controllo (~ 60pt)
+  const selectedResults = Object.values(data.esito).filter(Boolean).length;
+  const resultsRows = Math.ceil(selectedResults / 2); // ~2 risultati per riga
+  estimatedHeight += resultsRows * 20 + 60; // 20pt per riga + titolo e note
+  
+  // Firme (~ 40pt)
+  estimatedHeight += 40;
+  
+  // Calcola il numero di pagine
+  const pages = Math.ceil(estimatedHeight / usableHeight);
+  return Math.max(1, pages); // Almeno 1 pagina
+};
+
+// Funzione per rilevare se siamo su GitHub Pages
+const isGitHubPages = (): boolean => {
+  if (typeof window === 'undefined') return false;
+  return window.location.hostname.includes('github.io') || 
+         window.location.hostname.includes('github.dev') ||
+         process.env.NODE_ENV === 'production';
+};
+
+// Componente per footer con numerazione intelligente per multi-pagina
+const SmartFooter: React.FC<{ data: FormInputs }> = ({ data }) => {
+  const estimatedPages = calculateExpectedPages(data);
+  const isProduction = isGitHubPages();
+  
+  return (
+    <View style={styles.footer} fixed>
+      {isProduction ? (
+        // In produzione usiamo il calcolo stimato
+        <Text 
+          render={({ pageNumber }: { pageNumber: number }) => 
+            `Redesco Progetti srl - Scheda di Verifica | Pagina ${pageNumber} di ${estimatedPages}`
+          } 
+        />
+      ) : (
+        // In development usiamo la funzione render normale
+        <Text 
+          render={({ pageNumber, totalPages }: { pageNumber: number; totalPages: number }) => 
+            `Redesco Progetti srl - Scheda di Verifica | Pagina ${pageNumber} di ${totalPages}`
+          } 
+        />
+      )}
+    </View>
+  );
+};
+
 // Registra un font (opzionale, dipende se vuoi usare un font specifico)
 // Font.register({ family: 'Roboto', src: '/fonts/Roboto-Regular.ttf' });
 
@@ -342,9 +417,7 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => (
       </View>
 
       {/* Footer */}
-      <View style={styles.footer} fixed>
-        <Text render={({ pageNumber, totalPages }) => `Pagina ${pageNumber} di ${totalPages}`} />
-      </View>
+      <SmartFooter data={data} />
     </Page>
   </Document>
 );
