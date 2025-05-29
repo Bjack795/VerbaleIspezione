@@ -33,6 +33,7 @@ export default defineConfig({
         ]
       },
       workbox: {
+        maximumFileSizeToCacheInBytes: 3 * 1024 * 1024, // 3 MB invece del default 2 MB
         navigateFallback: '/VerbaleIspezione/index.html',
         runtimeCaching: [
           {
