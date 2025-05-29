@@ -54,32 +54,6 @@ const isGitHubPages = (): boolean => {
          process.env.NODE_ENV === 'production';
 };
 
-// Componente per footer con numerazione intelligente per multi-pagina
-const SmartFooter: React.FC<{ data: FormInputs }> = ({ data }) => {
-  const estimatedPages = calculateExpectedPages(data);
-  const isProduction = isGitHubPages();
-  
-  return (
-    <View style={styles.footer} fixed>
-      {isProduction ? (
-        // In produzione usiamo il calcolo stimato
-        <Text 
-          render={({ pageNumber }: { pageNumber: number }) => 
-            `Redesco Progetti srl - Scheda di Verifica | Pagina ${pageNumber} di ${estimatedPages}`
-          } 
-        />
-      ) : (
-        // In development usiamo la funzione render normale
-        <Text 
-          render={({ pageNumber, totalPages }: { pageNumber: number; totalPages: number }) => 
-            `Redesco Progetti srl - Scheda di Verifica | Pagina ${pageNumber} di ${totalPages}`
-          } 
-        />
-      )}
-    </View>
-  );
-};
-
 // Registra un font (opzionale, dipende se vuoi usare un font specifico)
 // Font.register({ family: 'Roboto', src: '/fonts/Roboto-Regular.ttf' });
 
@@ -252,6 +226,32 @@ const styles = StyleSheet.create({
 interface PDFDocumentProps {
   data: FormInputs;
 }
+
+// Componente per footer con numerazione intelligente per multi-pagina
+const SmartFooter: React.FC<{ data: FormInputs }> = ({ data }) => {
+  const estimatedPages = calculateExpectedPages(data);
+  const isProduction = isGitHubPages();
+  
+  return (
+    <View style={styles.footer} fixed>
+      {isProduction ? (
+        // In produzione usiamo il calcolo stimato
+        <Text 
+          render={({ pageNumber }: { pageNumber: number }) => 
+            `Redesco Progetti srl - Scheda di Verifica | Pagina ${pageNumber} di ${estimatedPages}`
+          } 
+        />
+      ) : (
+        // In development usiamo la funzione render normale
+        <Text 
+          render={({ pageNumber, totalPages }: { pageNumber: number; totalPages: number }) => 
+            `Redesco Progetti srl - Scheda di Verifica | Pagina ${pageNumber} di ${totalPages}`
+          } 
+        />
+      )}
+    </View>
+  );
+};
 
 const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => (
   <Document>
