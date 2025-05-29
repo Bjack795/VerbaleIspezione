@@ -153,7 +153,7 @@ const createPagedContent = (data: FormInputs) => {
          <Text style={styles.sectionTitle}>OGGETTO DEL SOPRALLUOGO</Text>
          <View style={styles.sectionRowLast}>
            <View style={styles.sectionColumnFull}>
-              <Text style={styles.value}>{data.oggettoSopralluogo}</Text>
+              <Text style={[styles.value, styles.longText]}>{data.oggettoSopralluogo}</Text>
            </View>
          </View>
 
@@ -372,7 +372,13 @@ const styles = StyleSheet.create({
     color: colors.on_surface_variant,
     margin: 8,
 
-  }
+  },
+  longText: {
+    minHeight: 30,
+    textAlign: 'justify',
+    lineHeight: 1.4,
+    paddingVertical: 5,
+  },
 });
 
 interface PDFDocumentProps {
@@ -401,9 +407,13 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => {
           {mainContent}
         </View>
 
-        {/* Footer con numerazione intelligente - versione semplificata */}
+        {/* Footer con numerazione stimata */}
         <View style={styles.footer} fixed>
-          <Text>{`Redesco Progetti srl - Scheda di Verifica | Pagina 1 di ${totalPages}`}</Text>
+          <Text 
+            render={({ pageNumber, totalPages: realTotal }: any) => 
+              `Redesco Progetti srl - Scheda di Verifica | Pagina ${pageNumber} di ${realTotal || totalPages}`
+            }
+          />
         </View>
       </Page>
     </Document>
