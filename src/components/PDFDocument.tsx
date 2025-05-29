@@ -386,14 +386,10 @@ interface PDFDocumentProps {
 }
 
 const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => {
-  const { mainContent, totalPages } = createPagedContent(data);
-
-  const handleRender = () => {
-    console.log('PDF rendering completed');
-  };
+  const { mainContent } = createPagedContent(data);
 
   return (
-    <Document onRender={handleRender}>
+    <Document>
       <Page size="A4" style={styles.page}>
         {/* Header */}
         <View style={styles.header} fixed>
@@ -409,15 +405,6 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => {
         {/* Content */}
         <View style={styles.content}>
           {mainContent}
-        </View>
-
-        {/* Footer compatibile con tutti gli ambienti */}
-        <View style={styles.footer} fixed>
-          <Text 
-            render={({ pageNumber, totalPages: realTotal }) => 
-              `Redesco Progetti srl - Scheda di Verifica | Pagina ${pageNumber} di ${realTotal || totalPages}`
-            }
-          />
         </View>
       </Page>
     </Document>

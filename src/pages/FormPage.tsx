@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
-import { PDFDownloadLink } from '@react-pdf/renderer'
 import FormInput from '../components/FormInput'
 import CheckboxGroup from '../components/CheckboxGroup'
 import FormLayout from '../components/FormLayout'
 import Tabs from '../components/Tabs'
-import PDFDocument from '../components/PDFDocument'
+import PDFDownloadButton from '../components/PDFDownloadButton'
 import { FormInputs } from '../types/form'
 import { colors, styling } from '../constants/theme'
 
@@ -308,15 +307,12 @@ const FormPage: React.FC = () => {
     
       {formData && activeTab === 'dati' && (
         <div className="text-center" style={{ marginTop: 40 }}>
-          <PDFDownloadLink
-            document={<PDFDocument data={formData} />}
-            fileName="verbale-ispezione.pdf"
+          <PDFDownloadButton
+            data={formData}
             className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
           >
-            {({ loading }) =>
-              loading ? 'Generazione PDF...' : 'Scarica PDF'
-            }
-          </PDFDownloadLink>
+            Scarica PDF
+          </PDFDownloadButton>
         </div>
       )}
     </FormLayout>
