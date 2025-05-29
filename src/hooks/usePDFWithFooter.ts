@@ -3,9 +3,6 @@ import { pdf } from '@react-pdf/renderer';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { ImageData } from '../types/form';
 
-// Funzione per convertire gradi in radianti
-const degreesToRadians = (degrees: number) => (degrees * Math.PI) / 180;
-
 // Funzione per correggere l'orientamento dell'immagine basato su EXIF
 const getImageWithCorrectOrientation = async (file: File): Promise<HTMLCanvasElement> => {
   return new Promise((resolve) => {
@@ -217,11 +214,6 @@ const addImageToPage = async (
     let imgWidth = image.width;
     let imgHeight = image.height;
     
-    // Applica la rotazione alle dimensioni se necessario
-    if (imageData.rotation === 90 || imageData.rotation === 270) {
-      [imgWidth, imgHeight] = [imgHeight, imgWidth];
-    }
-    
     // Calcola dimensioni mantenendo aspect ratio
     const imageAspectRatio = imgWidth / imgHeight;
     const maxWidth = pageWidth - 120; // margini 60px per lato
@@ -239,34 +231,16 @@ const addImageToPage = async (
     const xPosition = (pageWidth - finalWidth) / 2;
     const imageYPosition = yPosition + 30; // spazio per didascalia sotto
     
-    // Disegna l'immagine con rotazione se necessaria
-    if (imageData.rotation !== 0) {
-      // Usa il sistema di rotazione più semplice e compatibile
-      const centerX = xPosition + finalWidth / 2;
-      const centerY = imageYPosition + finalHeight / 2;
-      
-      // Salva stato, trasla al centro, ruota, disegna, ripristina
-      page.pushOperators(`q`); // save state
-      page.pushOperators(`1 0 0 1 ${centerX} ${centerY} cm`); // translate to center
-      page.pushOperators(`${Math.cos(degreesToRadians(imageData.rotation))} ${Math.sin(degreesToRadians(imageData.rotation))} ${-Math.sin(degreesToRadians(imageData.rotation))} ${Math.cos(degreesToRadians(imageData.rotation))} 0 0 cm`); // rotate
-      page.pushOperators(`1 0 0 1 ${-finalWidth / 2} ${-finalHeight / 2} cm`); // translate back
-      
-      page.drawImage(image, {
-        x: 0,
-        y: 0,
-        width: finalWidth,
-        height: finalHeight,
-      });
-      
-      page.pushOperators(`Q`); // restore state
-    } else {
-      page.drawImage(image, {
-        x: xPosition,
-        y: imageYPosition,
-        width: finalWidth,
-        height: finalHeight,
-      });
-    }
+    // Disegna l'immagine (per ora senza rotazione manuale per evitare errori)
+    // La rotazione manuale sarà visibile solo nell'anteprima
+    page.drawImage(image, {
+      x: xPosition,
+      y: imageYPosition,
+      width: finalWidth,
+      height: finalHeight,
+    });
+    
+    // TODO: Implementare rotazione manuale quando avremo la sintassi corretta di PDF-lib
     
     // Genera didascalia automatica
     const figureNumber = imageIndex + 1;

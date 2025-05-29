@@ -228,7 +228,7 @@ const ImageManager: React.FC<ImageManagerProps> = ({ images, onImagesChange, col
                   <img
                     src={image.preview}
                     alt={`Anteprima ${index + 1}`}
-                    className="w-full h-32 object-cover rounded-md"
+                    className="w-full h-24 object-cover rounded-md"
                     style={{
                       transform: `rotate(${image.rotation}deg)`,
                       transition: 'transform 0.3s ease'
@@ -274,10 +274,13 @@ const ImageManager: React.FC<ImageManagerProps> = ({ images, onImagesChange, col
 
       {/* Riassunto */}
       {images.length > 0 && (
-        <div className="bg-gray-50 p-4 rounded-lg">
+        <div className="bg-gray-50 p-4 rounded-lg space-y-2">
           <p className="text-sm" style={{ color: colors.on_surface_variant }}>
             {images.length} immagine{images.length !== 1 ? 'i' : ''} caricata{images.length !== 1 ? 'e' : ''}
             {images.length > 0 && ` • ${Math.ceil(images.length / 2)} pagina${Math.ceil(images.length / 2) !== 1 ? 'e' : ''} aggiuntive nel PDF`}
+          </p>
+          <p className="text-xs" style={{ color: colors.on_surface_variant }}>
+            ℹ️ Le rotazioni manuali sono visibili nell'anteprima ma temporaneamente non nel PDF finale
           </p>
         </div>
       )}
