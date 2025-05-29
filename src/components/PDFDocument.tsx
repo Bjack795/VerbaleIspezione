@@ -63,7 +63,7 @@ const createPagedContent = (data: FormInputs) => {
       <View style={styles.headerDividerThin}></View>
 
       {/* Sezione PROGETTO */}
-      <View style={styles.borderedSection}>
+      <View style={styles.borderedSection} wrap={false}>
         <View style={styles.grayBackground}>
            <Text style={styles.sectionTitle}>PROGETTO: {data.nomeProgetto}</Text>
         </View>
@@ -87,7 +87,7 @@ const createPagedContent = (data: FormInputs) => {
       </View>
 
       {/* Sezione Dati Lavorazione */}
-       <View style={styles.borderedSection}>
+       <View style={styles.borderedSection} wrap={false}>
           <View style={styles.sectionRow}>
             <View style={[styles.sectionColumn, styles.verticalDivider]}>
               <Text style={styles.label}>Lavorazione Verificata</Text>
@@ -131,7 +131,7 @@ const createPagedContent = (data: FormInputs) => {
        </View>
 
       {/* Sezione METODO DI VERIFICA */}
-      <View style={styles.unBorderedSection}>
+      <View style={styles.unBorderedSection} wrap={false}>
          <Text style={styles.sectionTitle}>METODO DI VERIFICA</Text>
          <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: 12, gap: 20 , alignItems: 'center' }}>
            {Object.entries(data.tipoIspezione).map(([key, value]) => (
@@ -158,7 +158,7 @@ const createPagedContent = (data: FormInputs) => {
          </View>
 
          <Text style={styles.sectionTitle}>ESITO CONTROLLO</Text>
-         <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: 12, gap: 20 , alignItems: 'center' }}>
+         <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: 12, gap: 20 , alignItems: 'center' }} wrap={false}>
            {Object.entries(data.esito).map(([key, value]) => (
              <View key={key} style={{ flexDirection: 'row'}}>
                <Image
@@ -174,7 +174,7 @@ const createPagedContent = (data: FormInputs) => {
           <Text style={styles.noteText}>* Tale osservazione è da considerarsi prescrittiva – da ottemperare</Text>
       </View>
       
-      <View style={styles.borderedSection}>
+      <View style={styles.borderedSection} wrap={false}>
          <View style={styles.sectionRowLast}>
            <View style={[styles.sectionColumn, styles.verticalDivider]}>
              <Text style={styles.value}>Nome</Text>
@@ -382,41 +382,9 @@ interface PDFDocumentProps {
 const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => {
   const { mainContent, totalPages } = createPagedContent(data);
 
-  // Per documenti con una sola pagina, usa il layout semplice
-  if (totalPages === 1) {
-    return (
-      <Document>
-        <Page size="A4" style={styles.page}>
-          {/* Header */}
-          <View style={styles.header} fixed>
-            <View style={styles.logoRow}>
-              <Image
-                src={`${import.meta.env.BASE_URL}logo.png`}
-                style={styles.logo}
-              />
-              <Text style={styles.companyName}>Redesco Progetti srl</Text>
-            </View>
-          </View>
-
-          {/* Content */}
-          <View style={styles.content}>
-            {mainContent}
-          </View>
-
-          {/* Footer */}
-          <View style={styles.footer} fixed>
-            <Text>Redesco Progetti srl - Scheda di Verifica | Pagina 1 di 1</Text>
-          </View>
-        </Page>
-      </Document>
-    );
-  }
-
-  // Per documenti multi-pagina, genera le pagine necessarie
-  const pages = [];
-  for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
-    pages.push(
-      <Page key={pageNum} size="A4" style={styles.page}>
+  return (
+    <Document>
+      <Page size="A4" style={styles.page}>
         {/* Header */}
         <View style={styles.header} fixed>
           <View style={styles.logoRow}>
@@ -428,24 +396,22 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => {
           </View>
         </View>
 
-        {/* Content - tutto nella prima pagina per ora, poi miglioreremo */}
-        {pageNum === 1 && (
-          <View style={styles.content}>
-            {mainContent}
-          </View>
-        )}
+        {/* Content */}
+        <View style={styles.content}>
+          {mainContent}
+        </View>
 
-        {/* Footer con numero pagina corretto */}
+        {/* Footer con numerazione intelligente */}
         <View style={styles.footer} fixed>
-          <Text>Redesco Progetti srl - Scheda di Verifica | Pagina {pageNum} di {totalPages}</Text>
+          <Text 
+            render={({ pageNumber, totalPages: realTotal }: { pageNumber: number; totalPages?: number }) => {
+              // Se totalPages non è disponibile (GitHub Pages), usa il calcolo stimato
+              const displayTotal = realTotal || totalPages;
+              return `Redesco Progetti srl - Scheda di Verifica | Pagina ${pageNumber} di ${displayTotal}`;
+            }}
+          />
         </View>
       </Page>
-    );
-  }
-
-  return (
-    <Document>
-      {pages}
     </Document>
   );
 };
