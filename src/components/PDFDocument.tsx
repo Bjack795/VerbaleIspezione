@@ -401,15 +401,9 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => {
           {mainContent}
         </View>
 
-        {/* Footer con numerazione intelligente */}
+        {/* Footer con numerazione intelligente - versione semplificata */}
         <View style={styles.footer} fixed>
-          <Text 
-            render={({ pageNumber, totalPages: realTotal }: { pageNumber: number; totalPages?: number }) => {
-              // Se totalPages non è disponibile (GitHub Pages), usa il calcolo stimato
-              const displayTotal = realTotal || totalPages;
-              return `Redesco Progetti srl - Scheda di Verifica | Pagina ${pageNumber} di ${displayTotal}`;
-            }}
-          />
+          <Text>{`Redesco Progetti srl - Scheda di Verifica | Pagina 1 di ${totalPages}`}</Text>
         </View>
       </Page>
     </Document>
