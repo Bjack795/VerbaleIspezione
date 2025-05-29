@@ -1,5 +1,5 @@
 import React from 'react'
-import { Document, Page, Text, View, StyleSheet, Image, usePDF } from '@react-pdf/renderer'
+import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer'
 import { FormInputs } from '../types/form'
 import { colors } from '../constants/theme'
 import { format } from 'date-fns'
