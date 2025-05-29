@@ -228,7 +228,7 @@ const ImageManager: React.FC<ImageManagerProps> = ({ images, onImagesChange, col
                   <img
                     src={image.preview}
                     alt={`Anteprima ${index + 1}`}
-                    className="w-full h-48 object-cover rounded-md"
+                    className="w-full h-32 object-cover rounded-md"
                     style={{
                       transform: `rotate(${image.rotation}deg)`,
                       transition: 'transform 0.3s ease'
@@ -244,7 +244,7 @@ const ImageManager: React.FC<ImageManagerProps> = ({ images, onImagesChange, col
                 {/* Campo didascalia */}
                 <div>
                   <label className="block text-sm font-medium mb-2" style={{ color: colors.on_surface }}>
-                    Didascalia
+                    Didascalia (Figura {index + 1})
                   </label>
                   <input
                     type="text"
@@ -254,6 +254,12 @@ const ImageManager: React.FC<ImageManagerProps> = ({ images, onImagesChange, col
                     className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     style={{ borderColor: colors.outline }}
                   />
+                  <div className="mt-1 text-xs" style={{ color: colors.on_surface_variant }}>
+                    {image.caption 
+                      ? `Nel PDF: "Figura ${index + 1} - ${image.caption}"`
+                      : `Nel PDF: "Figura ${index + 1}"`
+                    }
+                  </div>
                 </div>
 
                 {/* Info file */}

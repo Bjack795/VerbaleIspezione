@@ -6,21 +6,59 @@ import { ImageData } from '../types/form';
 // Funzione per convertire gradi in radianti
 const degreesToRadians = (degrees: number) => (degrees * Math.PI) / 180;
 
+// Funzione per correggere l'orientamento dell'immagine basato su EXIF
+const getImageWithCorrectOrientation = async (file: File): Promise<HTMLCanvasElement> => {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d')!;
+      
+      // Per ora assumiamo orientamento corretto, in futuro si può aggiungere lettura EXIF
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+      
+      resolve(canvas);
+    };
+    img.src = URL.createObjectURL(file);
+  });
+};
+
+// Funzione per convertire canvas in blob
+const canvasToBlob = (canvas: HTMLCanvasElement): Promise<Blob> => {
+  return new Promise((resolve) => {
+    canvas.toBlob((blob) => {
+      resolve(blob!);
+    }, 'image/jpeg', 0.9);
+  });
+};
+
 // Funzione per caricare e processare un'immagine
 const processImage = async (imageData: ImageData, pdfDoc: PDFDocument) => {
   try {
-    // Converti il file in array buffer
-    const arrayBuffer = await imageData.file.arrayBuffer();
+    // Correggi orientamento se necessario
+    const correctedCanvas = await getImageWithCorrectOrientation(imageData.file);
+    const correctedBlob = await canvasToBlob(correctedCanvas);
+    const arrayBuffer = await correctedBlob.arrayBuffer();
     
-    // Determina il tipo di immagine e caricala
+    // Carica l'immagine corretta in PDF-lib
     let image;
-    if (imageData.file.type === 'image/jpeg' || imageData.file.type === 'image/jpg') {
+    try {
       image = await pdfDoc.embedJpg(arrayBuffer);
-    } else if (imageData.file.type === 'image/png') {
-      image = await pdfDoc.embedPng(arrayBuffer);
-    } else {
-      // Per altri formati, prova PNG come fallback
-      image = await pdfDoc.embedPng(arrayBuffer);
+    } catch {
+      // Se JPEG fallisce, prova PNG
+      try {
+        image = await pdfDoc.embedPng(arrayBuffer);
+      } catch {
+        // Fallback: usa il file originale
+        const originalBuffer = await imageData.file.arrayBuffer();
+        if (imageData.file.type === 'image/jpeg' || imageData.file.type === 'image/jpg') {
+          image = await pdfDoc.embedJpg(originalBuffer);
+        } else {
+          image = await pdfDoc.embedPng(originalBuffer);
+        }
+      }
     }
     
     return image;
@@ -105,12 +143,12 @@ export const usePDFWithFooter = () => {
           
           // Prima immagine (in alto)
           if (images[i]) {
-            await addImageToPage(imagePage, images[i], 'top', font, pdfDoc);
+            await addImageToPage(imagePage, images[i], 'top', font, pdfDoc, i);
           }
           
           // Seconda immagine (in basso)
           if (images[i + 1]) {
-            await addImageToPage(imagePage, images[i + 1], 'bottom', font, pdfDoc);
+            await addImageToPage(imagePage, images[i + 1], 'bottom', font, pdfDoc, i + 1);
           }
           
           // Footer
@@ -160,7 +198,8 @@ const addImageToPage = async (
   imageData: ImageData, 
   position: 'top' | 'bottom', 
   font: any,
-  pdfDoc: PDFDocument
+  pdfDoc: PDFDocument,
+  imageIndex: number
 ) => {
   try {
     const { width: pageWidth, height: pageHeight } = page.getSize();
@@ -174,8 +213,17 @@ const addImageToPage = async (
       ? pageHeight - 100 - imageAreaHeight 
       : pageHeight - 100 - imageAreaHeight * 2 - 20;
     
+    // Ottieni dimensioni originali dell'immagine
+    let imgWidth = image.width;
+    let imgHeight = image.height;
+    
+    // Applica la rotazione alle dimensioni se necessario
+    if (imageData.rotation === 90 || imageData.rotation === 270) {
+      [imgWidth, imgHeight] = [imgHeight, imgWidth];
+    }
+    
     // Calcola dimensioni mantenendo aspect ratio
-    const imageAspectRatio = image.width / image.height;
+    const imageAspectRatio = imgWidth / imgHeight;
     const maxWidth = pageWidth - 120; // margini 60px per lato
     const maxHeight = imageAreaHeight - 60; // spazio per didascalia
     
@@ -193,12 +241,15 @@ const addImageToPage = async (
     
     // Disegna l'immagine con rotazione se necessaria
     if (imageData.rotation !== 0) {
-      page.pushOperators(
-        page.PDFDocument.pushGraphicsState(),
-        page.PDFDocument.translate(xPosition + finalWidth / 2, imageYPosition + finalHeight / 2),
-        page.PDFDocument.rotate(degreesToRadians(imageData.rotation)),
-        page.PDFDocument.translate(-finalWidth / 2, -finalHeight / 2)
-      );
+      // Usa il sistema di rotazione più semplice e compatibile
+      const centerX = xPosition + finalWidth / 2;
+      const centerY = imageYPosition + finalHeight / 2;
+      
+      // Salva stato, trasla al centro, ruota, disegna, ripristina
+      page.pushOperators(`q`); // save state
+      page.pushOperators(`1 0 0 1 ${centerX} ${centerY} cm`); // translate to center
+      page.pushOperators(`${Math.cos(degreesToRadians(imageData.rotation))} ${Math.sin(degreesToRadians(imageData.rotation))} ${-Math.sin(degreesToRadians(imageData.rotation))} ${Math.cos(degreesToRadians(imageData.rotation))} 0 0 cm`); // rotate
+      page.pushOperators(`1 0 0 1 ${-finalWidth / 2} ${-finalHeight / 2} cm`); // translate back
       
       page.drawImage(image, {
         x: 0,
@@ -207,7 +258,7 @@ const addImageToPage = async (
         height: finalHeight,
       });
       
-      page.pushOperators(page.PDFDocument.popGraphicsState());
+      page.pushOperators(`Q`); // restore state
     } else {
       page.drawImage(image, {
         x: xPosition,
@@ -217,17 +268,21 @@ const addImageToPage = async (
       });
     }
     
-    // Aggiungi didascalia se presente
-    if (imageData.caption) {
-      page.drawText(imageData.caption, {
-        x: 60,
-        y: yPosition + 5,
-        size: 10,
-        font,
-        color: rgb(0.2, 0.2, 0.2),
-        maxWidth: pageWidth - 120,
-      });
-    }
+    // Genera didascalia automatica
+    const figureNumber = imageIndex + 1;
+    const captionText = imageData.caption 
+      ? `Figura ${figureNumber} - ${imageData.caption}`
+      : `Figura ${figureNumber}`;
+    
+    // Aggiungi didascalia
+    page.drawText(captionText, {
+      x: 60,
+      y: yPosition + 5,
+      size: 10,
+      font,
+      color: rgb(0.2, 0.2, 0.2),
+      maxWidth: pageWidth - 120,
+    });
     
   } catch (error) {
     console.error('Errore nell\'aggiungere l\'immagine alla pagina:', error);
