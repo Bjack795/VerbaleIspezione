@@ -6,6 +6,7 @@ import { format } from 'date-fns'
 import { it } from 'date-fns/locale'
 
 // Funzione per calcolare il numero stimato di pagine
+/*
 const calculateExpectedPages = (data: FormInputs): number => {
   let estimatedHeight = 0;
   const pageHeight = 841; // A4 height in points (210mm * 72/25.4)
@@ -45,14 +46,7 @@ const calculateExpectedPages = (data: FormInputs): number => {
   const pages = Math.ceil(estimatedHeight / usableHeight);
   return Math.max(1, pages); // Almeno 1 pagina
 };
-
-// Funzione per rilevare se siamo su GitHub Pages
-const isGitHubPages = (): boolean => {
-  if (typeof window === 'undefined') return false;
-  return window.location.hostname.includes('github.io') || 
-         window.location.hostname.includes('github.dev') ||
-         process.env.NODE_ENV === 'production';
-};
+*/
 
 // Registra un font (opzionale, dipende se vuoi usare un font specifico)
 // Font.register({ family: 'Roboto', src: '/fonts/Roboto-Regular.ttf' });
@@ -227,32 +221,6 @@ interface PDFDocumentProps {
   data: FormInputs;
 }
 
-// Componente per footer con numerazione intelligente per multi-pagina
-const SmartFooter: React.FC<{ data: FormInputs }> = ({ data }) => {
-  const estimatedPages = calculateExpectedPages(data);
-  const isProduction = isGitHubPages();
-  
-  return (
-    <View style={styles.footer} fixed>
-      {isProduction ? (
-        // In produzione usiamo il calcolo stimato
-        <Text 
-          render={({ pageNumber }: { pageNumber: number }) => 
-            `Redesco Progetti srl - Scheda di Verifica | Pagina ${pageNumber} di ${estimatedPages}`
-          } 
-        />
-      ) : (
-        // In development usiamo la funzione render normale
-        <Text 
-          render={({ pageNumber, totalPages }: { pageNumber: number; totalPages: number }) => 
-            `Redesco Progetti srl - Scheda di Verifica | Pagina ${pageNumber} di ${totalPages}`
-          } 
-        />
-      )}
-    </View>
-  );
-};
-
 const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => (
   <Document>
     <Page size="A4" style={styles.page}>
@@ -417,7 +385,9 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => (
       </View>
 
       {/* Footer */}
-      <SmartFooter data={data} />
+      <View style={styles.footer} fixed>
+        <Text>Redesco Progetti srl - Scheda di Verifica | Pagina 1</Text>
+      </View>
     </Page>
   </Document>
 );
