@@ -384,7 +384,7 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => (
       </View>
 
       {/* Footer */}
-      <View style={styles.footer}>
+      <View style={styles.footer} fixed>
         <Text>Redesco Progetti srl - Scheda di Verifica | Pagina 1</Text>
       </View>
     </Page>
