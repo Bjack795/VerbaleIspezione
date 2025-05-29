@@ -9,40 +9,45 @@ import { it } from 'date-fns/locale'
 const calculateExpectedPages = (data: FormInputs): number => {
   let estimatedHeight = 0;
   const pageHeight = 841; // A4 height in points (210mm * 72/25.4)
-  const usableHeight = pageHeight - 160; // margins + header/footer (30pt top/bottom + 70pt footer + header)
+  const usableHeight = pageHeight - 200; // margins (30pt top/bottom) + header(50pt) + footer(70pt) = più realistico
   
-  // Header fisso (~ 50pt)
-  estimatedHeight += 50;
+  // Titolo principale + sottotitolo + linea (~ 35pt)
+  estimatedHeight += 35;
   
-  // Titolo principale (~ 40pt)
-  estimatedHeight += 40;
+  // Sezione progetto - header + 1 riga dati (~ 45pt)
+  estimatedHeight += 45;
   
-  // Sezione progetto (~ 80pt)
-  estimatedHeight += 80;
+  // Dati lavorazione - 5 righe fisse (~ 25pt per riga = 125pt totali)
+  estimatedHeight += 125;
   
-  // Dati lavorazione - 5 righe fisse (~ 100pt)
-  estimatedHeight += 100;
-  
-  // Metodo verifica (dipende da opzioni selezionate)
+  // Metodo verifica - dipende da opzioni selezionate (più compatto del previsto)
   const selectedMethods = Object.values(data.tipoIspezione).filter(Boolean).length;
-  const methodsRows = Math.ceil(selectedMethods / 3); // ~3 metodi per riga
-  estimatedHeight += methodsRows * 20 + 40; // 20pt per riga + titolo e margini
+  const methodsRows = Math.ceil(selectedMethods / 4); // 4 metodi per riga in realtà
+  estimatedHeight += methodsRows * 15 + 25; // 15pt per riga + titolo
   
-  // Oggetto sopralluogo (dipende dalla lunghezza del testo)
+  // Oggetto sopralluogo - dipende dalla lunghezza del testo (più realistico)
   const textLength = data.oggettoSopralluogo?.length || 0;
-  const estimatedLines = Math.max(3, Math.ceil(textLength / 70)); // Min 3 righe, ~70 caratteri per riga
-  estimatedHeight += estimatedLines * 14 + 60; // 14pt per riga + titolo e margini
+  if (textLength > 0) {
+    const estimatedLines = Math.ceil(textLength / 90); // ~90 caratteri per riga più realistici
+    estimatedHeight += estimatedLines * 12 + 35; // 12pt per riga + titolo e margini
+  } else {
+    estimatedHeight += 45; // Spazio minimo anche se vuoto
+  }
   
-  // Esito controllo (~ 60pt)
+  // Esito controllo - dipende da opzioni selezionate (più compatto)
   const selectedResults = Object.values(data.esito).filter(Boolean).length;
-  const resultsRows = Math.ceil(selectedResults / 2); // ~2 risultati per riga
-  estimatedHeight += resultsRows * 20 + 60; // 20pt per riga + titolo e note
+  const resultsRows = Math.ceil(selectedResults / 3); // 3 risultati per riga
+  estimatedHeight += resultsRows * 15 + 45; // 15pt per riga + titolo e note
   
-  // Firme (~ 40pt)
-  estimatedHeight += 40;
+  // Firme - 1 riga con 6 colonne (~ 35pt)
+  estimatedHeight += 35;
   
-  // Calcola il numero di pagine
+  // Calcola il numero di pagine (più conservativo)
   const pages = Math.ceil(estimatedHeight / usableHeight);
+  
+  // Debug: mostra il calcolo (rimuovere in produzione)
+  console.log(`Altezza stimata: ${estimatedHeight}pt, Altezza utile: ${usableHeight}pt, Pagine: ${pages}`);
+  
   return Math.max(1, pages); // Almeno 1 pagina
 };
 
@@ -261,17 +266,19 @@ const styles = StyleSheet.create({
     borderBottom: '0.8 solid #ccc',
   },
   footer: {
-    marginTop: 'auto',
-    paddingTop: 10,
-    borderTop: '1 solid #000',
+    position: 'absolute',
+    bottom: 30,
+    left: 30,
+    right: 30,
     textAlign: 'left',
     fontSize: 8,
     color: colors.on_surface_variant,
+    borderTop: '1 solid #000',
+    paddingTop: 10,
   },
   content: {
     marginTop: 8,
     marginBottom: 15,
-    flex: 1,
   },
   title: {
     fontSize: 16,
@@ -375,7 +382,37 @@ interface PDFDocumentProps {
 const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => {
   const { mainContent, totalPages } = createPagedContent(data);
 
-  // Genera le pagine necessarie
+  // Per documenti con una sola pagina, usa il layout semplice
+  if (totalPages === 1) {
+    return (
+      <Document>
+        <Page size="A4" style={styles.page}>
+          {/* Header */}
+          <View style={styles.header} fixed>
+            <View style={styles.logoRow}>
+              <Image
+                src={`${import.meta.env.BASE_URL}logo.png`}
+                style={styles.logo}
+              />
+              <Text style={styles.companyName}>Redesco Progetti srl</Text>
+            </View>
+          </View>
+
+          {/* Content */}
+          <View style={styles.content}>
+            {mainContent}
+          </View>
+
+          {/* Footer */}
+          <View style={styles.footer} fixed>
+            <Text>Redesco Progetti srl - Scheda di Verifica | Pagina 1 di 1</Text>
+          </View>
+        </Page>
+      </Document>
+    );
+  }
+
+  // Per documenti multi-pagina, genera le pagine necessarie
   const pages = [];
   for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
     pages.push(
@@ -391,7 +428,7 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => {
           </View>
         </View>
 
-        {/* Content - solo nella prima pagina per ora */}
+        {/* Content - tutto nella prima pagina per ora, poi miglioreremo */}
         {pageNum === 1 && (
           <View style={styles.content}>
             {mainContent}
