@@ -1,5 +1,5 @@
 import React from 'react'
-import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer'
+import { Document, Page, Text, View, StyleSheet, Image, usePDF } from '@react-pdf/renderer'
 import { FormInputs } from '../types/form'
 import { colors } from '../constants/theme'
 import { format } from 'date-fns'
@@ -388,8 +388,12 @@ interface PDFDocumentProps {
 const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => {
   const { mainContent, totalPages } = createPagedContent(data);
 
+  const handleRender = () => {
+    console.log('PDF rendering completed');
+  };
+
   return (
-    <Document>
+    <Document onRender={handleRender}>
       <Page size="A4" style={styles.page}>
         {/* Header */}
         <View style={styles.header} fixed>
@@ -407,10 +411,10 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => {
           {mainContent}
         </View>
 
-        {/* Footer con numerazione stimata */}
+        {/* Footer compatibile con tutti gli ambienti */}
         <View style={styles.footer} fixed>
           <Text 
-            render={({ pageNumber, totalPages: realTotal }: any) => 
+            render={({ pageNumber, totalPages: realTotal }) => 
               `Redesco Progetti srl - Scheda di Verifica | Pagina ${pageNumber} di ${realTotal || totalPages}`
             }
           />
