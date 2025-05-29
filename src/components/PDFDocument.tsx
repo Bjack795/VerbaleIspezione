@@ -6,7 +6,6 @@ import { format } from 'date-fns'
 import { it } from 'date-fns/locale'
 
 // Funzione per calcolare il numero stimato di pagine
-/*
 const calculateExpectedPages = (data: FormInputs): number => {
   let estimatedHeight = 0;
   const pageHeight = 841; // A4 height in points (210mm * 72/25.4)
@@ -46,7 +45,159 @@ const calculateExpectedPages = (data: FormInputs): number => {
   const pages = Math.ceil(estimatedHeight / usableHeight);
   return Math.max(1, pages); // Almeno 1 pagina
 };
-*/
+
+// Funzione per creare il contenuto suddiviso per pagine
+const createPagedContent = (data: FormInputs) => {
+  const totalPages = calculateExpectedPages(data);
+  
+  // Contenuto principale (quello che hai già)
+  const mainContent = (
+    <>
+      <Text style={styles.title}>SCHEDA DI VERIFICA</Text>
+      <Text style={styles.subtitle}>Posa/Installazione/Lavoro</Text>
+      <View style={styles.headerDividerThin}></View>
+
+      {/* Sezione PROGETTO */}
+      <View style={styles.borderedSection}>
+        <View style={styles.grayBackground}>
+           <Text style={styles.sectionTitle}>PROGETTO: {data.nomeProgetto}</Text>
+        </View>
+         <View style={styles.sectionRowLast}>
+           <View style={[styles.sectionColumn, styles.verticalDivider]}>
+             <Text style={styles.sectionSubtitle}>Data</Text>
+             <Text style={styles.value}>
+               {format(new Date(data.dataIspezione), 'dd/MM/yyyy', { locale: it })}
+             </Text>
+           </View>
+           <View style={[styles.sectionColumn, styles.verticalDivider]}>
+             <Text style={styles.sectionSubtitle}>N. progressivo</Text>
+             <Text style={styles.value}>{data.numero}</Text>
+           </View>
+           <View style={styles.sectionColumn}>
+              {Object.entries(data.dl).map(([key, value]) => value && 
+                <Text key={key} style={styles.sectionSubtitle}>{key.replace(/_/g, ' ').trim()}</Text>
+              )}
+           </View>
+         </View>
+      </View>
+
+      {/* Sezione Dati Lavorazione */}
+       <View style={styles.borderedSection}>
+          <View style={styles.sectionRow}>
+            <View style={[styles.sectionColumn, styles.verticalDivider]}>
+              <Text style={styles.label}>Lavorazione Verificata</Text>
+            </View>
+            <View style={styles.sectionColumn}>
+              <Text style={styles.value}>{data.lavorazioneVerificata}</Text>
+            </View>
+          </View>
+           <View style={styles.sectionRow}>
+            <View style={[styles.sectionColumn, styles.verticalDivider]}>
+              <Text style={styles.label}>Verifica materiale previsto</Text>
+            </View>
+            <View style={styles.sectionColumn}>
+              <Text style={styles.value}>{data.verificaMateriale}</Text>
+            </View>
+          </View>
+           <View style={styles.sectionRow}>
+            <View style={[styles.sectionColumn, styles.verticalDivider]}>
+              <Text style={styles.label}>Riferimento Progetto costruttivo</Text>
+            </View>
+            <View style={styles.sectionColumn}>
+              <Text style={styles.value}>{data.riferimentoProgetto}</Text>
+            </View>
+          </View>
+           <View style={styles.sectionRow}>
+            <View style={[styles.sectionColumn, styles.verticalDivider]}>
+              <Text style={styles.label}>Ubicazione - Localizzazione</Text>
+            </View>
+            <View style={styles.sectionColumn}>
+              <Text style={styles.value}>{data.ubicazione}</Text>
+            </View>
+          </View>
+           <View style={styles.sectionRowLast}>
+            <View style={[styles.sectionColumn, styles.verticalDivider]}>
+              <Text style={styles.label}>Scheda controllo lavorazione</Text>
+            </View>
+            <View style={styles.sectionColumn}>
+              <Text style={styles.value}>{data.schedaControllo}</Text>
+            </View>
+          </View>
+       </View>
+
+      {/* Sezione METODO DI VERIFICA */}
+      <View style={styles.unBorderedSection}>
+         <Text style={styles.sectionTitle}>METODO DI VERIFICA</Text>
+         <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: 12, gap: 20 , alignItems: 'center' }}>
+           {Object.entries(data.tipoIspezione).map(([key, value]) => (
+             <View key={key} style={{ flexDirection: 'row'}}>
+               <Image
+                 src={`${import.meta.env.BASE_URL}images/${value ? 'checkbox_checked' : 'checkbox_unchecked'}.png`}
+                 style={{ width: 12, height: 12, marginRight: 6 }}
+               />
+               <Text style={styles.checkboxOption}>
+                 {key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1').trim()}
+               </Text>
+             </View>
+           ))}
+         </View>
+      </View>
+
+      {/* Sezione OGGETTO DEL SOPRALLUOGO E ESITO CONTROLLO*/}
+      <View style={styles.borderedSection}>
+         <Text style={styles.sectionTitle}>OGGETTO DEL SOPRALLUOGO</Text>
+         <View style={styles.sectionRowLast}>
+           <View style={styles.sectionColumnFull}>
+              <Text style={styles.value}>{data.oggettoSopralluogo}</Text>
+           </View>
+         </View>
+
+         <Text style={styles.sectionTitle}>ESITO CONTROLLO</Text>
+         <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: 12, gap: 20 , alignItems: 'center' }}>
+           {Object.entries(data.esito).map(([key, value]) => (
+             <View key={key} style={{ flexDirection: 'row'}}>
+               <Image
+                 src={`${import.meta.env.BASE_URL}images/${value ? 'checkbox_checked' : 'checkbox_unchecked'}.png`}
+                 style={{ width: 12, height: 12, marginRight: 6 }}
+               />
+               <Text style={styles.checkboxOption}>
+                 {key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1').trim()}
+               </Text>
+             </View>
+           ))}
+         </View>
+          <Text style={styles.noteText}>* Tale osservazione è da considerarsi prescrittiva – da ottemperare</Text>
+      </View>
+      
+      <View style={styles.borderedSection}>
+         <View style={styles.sectionRowLast}>
+           <View style={[styles.sectionColumn, styles.verticalDivider]}>
+             <Text style={styles.value}>Nome</Text>
+           </View>
+           <View style={[styles.sectionColumn, styles.verticalDivider]}>
+             <Text style={styles.value}>!!!!!!!!!</Text>
+           </View>
+           <View style={[styles.sectionColumn, styles.verticalDivider]}>
+             <Text style={styles.value}>Firma</Text>
+           </View>
+           <View style={[styles.sectionColumn, styles.verticalDivider]}>
+             <Text style={styles.value}>!!!!!!!!!</Text>
+           </View>
+           <View style={[styles.sectionColumn, styles.verticalDivider]}>
+             <Text style={styles.value}>Data</Text>
+           </View>
+           <View style={[styles.sectionColumn, styles.verticalDivider]}>
+              <Text style={styles.value}>
+                  {format(new Date(data.dataVerbale), 'dd/MM/yyyy', { locale: it })}
+              </Text>
+           </View>
+         </View>
+      </View>
+    </>
+  );
+
+  return { mainContent, totalPages };
+};
 
 // Registra un font (opzionale, dipende se vuoi usare un font specifico)
 // Font.register({ family: 'Roboto', src: '/fonts/Roboto-Regular.ttf' });
@@ -54,6 +205,7 @@ const calculateExpectedPages = (data: FormInputs): number => {
 const styles = StyleSheet.create({
   page: {
     padding: 30,
+    paddingBottom: 70,
     fontSize: 10,
     fontFamily: 'Helvetica',
     lineHeight: 1.5,
@@ -220,175 +372,45 @@ interface PDFDocumentProps {
   data: FormInputs;
 }
 
-const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => (
-  <Document>
-    <Page size="A4" style={styles.page}>
-      {/* Header */}
-      <View style={styles.header} fixed>
-        <View style={styles.logoRow}>
-          <Image
-            src={`${import.meta.env.BASE_URL}logo.png`}
-            style={styles.logo}
-          />
-          <Text style={styles.companyName}>Redesco Progetti srl</Text>
-        </View>
-      
-      </View>
+const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => {
+  const { mainContent, totalPages } = createPagedContent(data);
 
-      {/* Content */}
-      <View style={styles.content}>
-        <Text style={styles.title}>SCHEDA DI VERIFICA</Text>
-        <Text style={styles.subtitle}>Posa/Installazione/Lavoro</Text>
-        {/*<View style={styles.headerDividerThick}></View>*/}
-        <View style={styles.headerDividerThin}></View>
-
-        {/* Sezione PROGETTO */}
-        <View style={styles.borderedSection}>
-          <View style={styles.grayBackground}>
-             <Text style={styles.sectionTitle}>PROGETTO: {data.nomeProgetto}</Text>
+  // Genera le pagine necessarie
+  const pages = [];
+  for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+    pages.push(
+      <Page key={pageNum} size="A4" style={styles.page}>
+        {/* Header */}
+        <View style={styles.header} fixed>
+          <View style={styles.logoRow}>
+            <Image
+              src={`${import.meta.env.BASE_URL}logo.png`}
+              style={styles.logo}
+            />
+            <Text style={styles.companyName}>Redesco Progetti srl</Text>
           </View>
-           <View style={styles.sectionRowLast}> {/* Ultima riga senza bordo inferiore */}
-             <View style={[styles.sectionColumn, styles.verticalDivider]}>
-               <Text style={styles.sectionSubtitle}>Data</Text>
-               <Text style={styles.value}>
-                 {format(new Date(data.dataIspezione), 'dd/MM/yyyy', { locale: it })}
-               </Text>
-             </View>
-             <View style={[styles.sectionColumn, styles.verticalDivider]}>
-               <Text style={styles.sectionSubtitle}>N. progressivo</Text>
-               <Text style={styles.value}>{data.numero}</Text>
-             </View>
-             <View style={styles.sectionColumn}>
-                {Object.entries(data.dl).map(([key, value]) => value && 
-                  <Text key={key} style={styles.sectionSubtitle}>{key.replace(/_/g, ' ').trim()}</Text>
-                )}
-             </View>
-           </View>
         </View>
 
-        {/* Sezione Dati Lavorazione */}
-         <View style={styles.borderedSection}>
-            <View style={styles.sectionRow}>
-              <View style={[styles.sectionColumn, styles.verticalDivider]}>
-                <Text style={styles.label}>Lavorazione Verificata</Text>
-              </View>
-              <View style={styles.sectionColumn}>
-                <Text style={styles.value}>{data.lavorazioneVerificata}</Text>
-              </View>
-            </View>
-             <View style={styles.sectionRow}>
-              <View style={[styles.sectionColumn, styles.verticalDivider]}>
-                <Text style={styles.label}>Verifica materiale previsto</Text>
-              </View>
-              <View style={styles.sectionColumn}>
-                <Text style={styles.value}>{data.verificaMateriale}</Text>
-              </View>
-            </View>
-             <View style={styles.sectionRow}>
-              <View style={[styles.sectionColumn, styles.verticalDivider]}>
-                <Text style={styles.label}>Riferimento Progetto costruttivo</Text>
-              </View>
-              <View style={styles.sectionColumn}>
-                <Text style={styles.value}>{data.riferimentoProgetto}</Text>
-              </View>
-            </View>
-             <View style={styles.sectionRow}>
-              <View style={[styles.sectionColumn, styles.verticalDivider]}>
-                <Text style={styles.label}>Ubicazione - Localizzazione</Text>
-              </View>
-              <View style={styles.sectionColumn}>
-                <Text style={styles.value}>{data.ubicazione}</Text>
-              </View>
-            </View>
-             <View style={styles.sectionRowLast}> {/* Ultima riga senza bordo inferiore */}
-              <View style={[styles.sectionColumn, styles.verticalDivider]}>
-                <Text style={styles.label}>Scheda controllo lavorazione</Text>
-              </View>
-              <View style={styles.sectionColumn}>
-                <Text style={styles.value}>{data.schedaControllo}</Text>
-              </View>
-            </View>
-         </View>
+        {/* Content - solo nella prima pagina per ora */}
+        {pageNum === 1 && (
+          <View style={styles.content}>
+            {mainContent}
+          </View>
+        )}
 
-
-        {/* Sezione METODO DI VERIFICA */}
-        <View style={styles.unBorderedSection}>
-           <Text style={styles.sectionTitle}>METODO DI VERIFICA</Text>
-           <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: 12, gap: 20 , alignItems: 'center' }}>
-             {Object.entries(data.tipoIspezione).map(([key, value]) => (
-               <View key={key} style={{ flexDirection: 'row'}}>
-                 <Image
-                   src={`${import.meta.env.BASE_URL}images/${value ? 'checkbox_checked' : 'checkbox_unchecked'}.png`}
-                   style={{ width: 12, height: 12, marginRight: 6 }}
-                 />
-                 <Text style={styles.checkboxOption}>
-                   {key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1').trim()}
-                 </Text>
-               </View>
-             ))}
-           </View>
+        {/* Footer con numero pagina corretto */}
+        <View style={styles.footer} fixed>
+          <Text>Redesco Progetti srl - Scheda di Verifica | Pagina {pageNum} di {totalPages}</Text>
         </View>
+      </Page>
+    );
+  }
 
-        {/* Sezione OGGETTO DEL SOPRALLUOGO E ESITO CONTROLLO*/}
-        <View style={styles.borderedSection}>
-           <Text style={styles.sectionTitle}>OGGETTO DEL SOPRALLUOGO</Text>
-           <View style={styles.sectionRowLast}> {/* Ultima riga senza bordo inferiore */}
-             <View style={styles.sectionColumnFull}>
-                <Text style={styles.value}>{data.oggettoSopralluogo}</Text>
-             </View>
-           </View>
-
-           <Text style={styles.sectionTitle}>ESITO CONTROLLO</Text>
-           <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: 12, gap: 20 , alignItems: 'center' }}>
-             {Object.entries(data.esito).map(([key, value]) => (
-               <View key={key} style={{ flexDirection: 'row'}}>
-                 <Image
-                   src={`${import.meta.env.BASE_URL}images/${value ? 'checkbox_checked' : 'checkbox_unchecked'}.png`}
-                   style={{ width: 12, height: 12, marginRight: 6 }}
-                 />
-                 <Text style={styles.checkboxOption}>
-                   {key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1').trim()}
-                 </Text>
-               </View>
-             ))}
-           </View>
-            <Text style={styles.noteText}>* Tale osservazione è da considerarsi prescrittiva – da ottemperare</Text>
-        </View>
-        
-        <View style={styles.borderedSection}>
-           <View style={styles.sectionRowLast}> {/* Ultima riga senza bordo inferiore */}
-             <View style={[styles.sectionColumn, styles.verticalDivider]}>
-               <Text style={styles.value}>Nome</Text>
-             </View>
-             <View style={[styles.sectionColumn, styles.verticalDivider]}>
-               <Text style={styles.value}>!!!!!!!!!</Text>
-             </View>
-             <View style={[styles.sectionColumn, styles.verticalDivider]}>
-               <Text style={styles.value}>Firma</Text>
-             </View>
-             <View style={[styles.sectionColumn, styles.verticalDivider]}>
-               <Text style={styles.value}>!!!!!!!!!</Text>
-             </View>
-             <View style={[styles.sectionColumn, styles.verticalDivider]}>
-               <Text style={styles.value}>Data</Text>
-             </View>
-             <View style={[styles.sectionColumn, styles.verticalDivider]}>
-                <Text style={styles.value}>
-                    {format(new Date(data.dataVerbale), 'dd/MM/yyyy', { locale: it })}
-                </Text>
-             </View>
-     
-           </View>
-        </View>
-
-      </View>
-
-      {/* Footer */}
-      <View style={styles.footer} fixed>
-        <Text>Redesco Progetti srl - Scheda di Verifica | Pagina 1</Text>
-      </View>
-    </Page>
-  </Document>
-);
+  return (
+    <Document>
+      {pages}
+    </Document>
+  );
+};
 
 export default PDFDocument 
