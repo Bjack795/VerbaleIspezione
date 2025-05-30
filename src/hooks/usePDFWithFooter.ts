@@ -152,15 +152,6 @@ export const usePDFWithFooter = () => {
             color: rgb(0, 0, 0),
           });
           
-          // Titolo "ALLEGATO FOTOGRAFICO" (riduco lo spazio)
-          imagePage.drawText('ALLEGATO FOTOGRAFICO', {
-            x: 30,
-            y: pageHeight - 80, // ridotto da -45 a -80
-            size: 14,
-            font,
-            color: rgb(0, 0, 0),
-          });
-          
           // Prima immagine (in alto) - margini ridotti
           if (images[i]) {
             await addImageToPage(imagePage, images[i], 'top', font, pdfDoc, i);
@@ -248,9 +239,9 @@ const addImageToPage = async (
     
     // STEP 2: Ridimensiona - MARGINI RIDOTTI
     // Riduco lo spazio header da 160 a 120 e il margine per didascalie da 60 a 40
-    const imageAreaHeight = (pageHeight - 120) / 2; // Spazio ridotto per 2 immagini
+    const imageAreaHeight = (pageHeight - 140) / 2; // Spazio ridotto per 2 immagini
     const maxWidth = pageWidth - 120; // margini 60px per lato  
-    const maxHeight = imageAreaHeight - 40; // spazio ridotto per didascalia
+    const maxHeight = imageAreaHeight - 60; // spazio ridotto per didascalia
     
     // Calcola il fattore di scala basato sul bounding box
     const scaleWidth = maxWidth / boundingWidth;
@@ -310,7 +301,7 @@ const addImageToPage = async (
     page.drawText(captionText, {
       x: centeredX,
       y: yAreaTop + 5,
-      size: 10,
+      size: 12,
       font,
       color: rgb(0.2, 0.2, 0.2),
     });
