@@ -67,6 +67,7 @@ const createPagedContent = (data: FormInputs) => {
         <View style={styles.grayBackground}>
            <Text style={styles.sectionTitle}>PROGETTO: {data.nomeProgetto}</Text>
         </View>
+        <View style={styles.sectionLine}></View>
          <View style={styles.sectionRowLast}>
            <View style={[styles.sectionColumn, styles.verticalDivider]}>
              <Text style={styles.sectionSubtitle}>Data</Text>
@@ -96,6 +97,7 @@ const createPagedContent = (data: FormInputs) => {
               <Text style={styles.value}>{data.lavorazioneVerificata}</Text>
             </View>
           </View>
+          <View style={styles.rowLine}></View>
            <View style={styles.sectionRow}>
             <View style={[styles.sectionColumn, styles.verticalDivider]}>
               <Text style={styles.label}>Verifica materiale previsto</Text>
@@ -104,6 +106,7 @@ const createPagedContent = (data: FormInputs) => {
               <Text style={styles.value}>{data.verificaMateriale}</Text>
             </View>
           </View>
+          <View style={styles.rowLine}></View>
            <View style={styles.sectionRow}>
             <View style={[styles.sectionColumn, styles.verticalDivider]}>
               <Text style={styles.label}>Riferimento Progetto costruttivo</Text>
@@ -112,6 +115,7 @@ const createPagedContent = (data: FormInputs) => {
               <Text style={styles.value}>{data.riferimentoProgetto}</Text>
             </View>
           </View>
+          <View style={styles.rowLine}></View>
            <View style={styles.sectionRow}>
             <View style={[styles.sectionColumn, styles.verticalDivider]}>
               <Text style={styles.label}>Ubicazione - Localizzazione</Text>
@@ -120,6 +124,7 @@ const createPagedContent = (data: FormInputs) => {
               <Text style={styles.value}>{data.ubicazione}</Text>
             </View>
           </View>
+          <View style={styles.rowLine}></View>
            <View style={styles.sectionRowLast}>
             <View style={[styles.sectionColumn, styles.verticalDivider]}>
               <Text style={styles.label}>Scheda controllo lavorazione</Text>
@@ -223,7 +228,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingTop: 15,
     paddingBottom: 7,
-    borderBottom: '1 solid #000',
+  },
+  headerLine: {
+    height: 1,
+    backgroundColor: '#000',
+    marginTop: 7,
   },
   logoRow: {
     flexDirection: 'row',
@@ -242,7 +251,8 @@ const styles = StyleSheet.create({
     color: colors.on_background,
   },
   headerDividerThick: {
-    borderBottom: '1 solid #000',
+    height: 1,
+    backgroundColor: '#000',
   },
   headerTitleContainer: {
     MarginTop: 8,
@@ -263,7 +273,8 @@ const styles = StyleSheet.create({
     color: colors.on_surface_variant,
   },
    headerDividerThin: {
-    borderBottom: '0.8 solid #ccc',
+    height: 0.8,
+    backgroundColor: '#ccc',
   },
   footer: {
     position: 'absolute',
@@ -273,8 +284,12 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     fontSize: 8,
     color: colors.on_surface_variant,
-    borderTop: '1 solid #000',
     paddingTop: 10,
+  },
+  footerLine: {
+    height: 1,
+    backgroundColor: '#000',
+    marginBottom: 10,
   },
   content: {
     marginTop: 8,
@@ -306,13 +321,19 @@ const styles = StyleSheet.create({
   // Stile per le sezioni con sfondo grigio
   grayBackground: {
     backgroundColor: colors.surface_container_highest, // Utilizzo un colore simile al grigio
-    borderBottom: '0.5 solid #000',
+  },
+  sectionLine: {
+    height: 0.5,
+    backgroundColor: '#000',
   },
   // Stile per le righe all'interno delle sezioni
   sectionRow: {
     flexDirection: 'row',
-    borderBottom: '0.5 solid #ccc',
     paddingVertical: 5,
+  },
+  rowLine: {
+    height: 0.5,
+    backgroundColor: '#ccc',
   },
   sectionRowLast: {
     flexDirection: 'row',
@@ -394,6 +415,8 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => {
             />
             <Text style={styles.companyName}>Redesco Progetti srl</Text>
           </View>
+          {/* Linea sotto header - COMPATIBILE */}
+          <View style={styles.headerLine}></View>
         </View>
 
         {/* Content */}
