@@ -127,27 +127,36 @@ export const usePDFWithFooter = () => {
           const logoBytes = await fetch(`${import.meta.env.BASE_URL}logo.png`).then(r => r.arrayBuffer());
           const logoImage = await pdfDoc.embedPng(logoBytes);
           
-          // Disegna il logo
+          // Calcola le dimensioni del logo mantenendo le proporzioni (come height: auto)
+          const logoWidth = 40;
+          const logoAspectRatio = logoImage.width / logoImage.height;
+          const logoHeight = logoWidth / logoAspectRatio;
+          
+          // Header con padding equivalente (paddingTop: 15, paddingBottom: 7)
+          const headerTop = pageHeight - 15; // equivale a paddingTop: 15
+          const headerBottom = pageHeight - 15 - 7 - 10; // paddingTop + paddingBottom + marginBottom logoRow
+          
+          // Disegna il logo con dimensioni proporzionali
           imagePage.drawImage(logoImage, {
             x: 30,
-            y: pageHeight - 50,
-            width: 40,
-            height: 30, // altezza proporzionale
+            y: headerTop - logoHeight - 10, // 10 è il marginBottom della logoRow
+            width: logoWidth,
+            height: logoHeight,
           });
           
-          // Testo company name
+          // Testo company name allineato verticalmente con il logo
           imagePage.drawText('Redesco Progetti srl', {
-            x: 80,
-            y: pageHeight - 35,
+            x: 30 + logoWidth + 10, // 10 è il marginRight del logo
+            y: headerTop - logoHeight/2 - 5, // centrato verticalmente rispetto al logo
             size: 10,
             font,
             color: rgb(0, 0, 0),
           });
           
-          // Linea sotto l'header
+          // Linea sotto l'header esattamente come nelle altre pagine
           imagePage.drawLine({
-            start: { x: 30, y: pageHeight - 60 },
-            end: { x: pageWidth - 30, y: pageHeight - 60 },
+            start: { x: 30, y: headerBottom },
+            end: { x: pageWidth - 30, y: headerBottom },
             thickness: 1,
             color: rgb(0, 0, 0),
           });
