@@ -99,7 +99,7 @@ export const usePDFWithFooter = () => {
         page.drawLine({
           start: { x: 30, y: 40 },
           end: { x: width - 30, y: 40 },
-          thickness: 1.5,
+          thickness: 1,
           color: rgb(0, 0, 0),
         });
         
@@ -137,13 +137,17 @@ export const usePDFWithFooter = () => {
           // Replica esatta della struttura delle prime pagine
           const pageTopPadding = 30; // page padding
           const headerPaddingTop = 15; // header paddingTop
-          const logoRowMarginBottom = 10; // logoRow marginBottom  
-          const headerPaddingBottom = 7; // header paddingBottom
           
-          // Calcola posizioni esatte
-          const headerStart = pageHeight - pageTopPadding - headerPaddingTop;
-          const logoY = headerStart - logoHeight - logoRowMarginBottom;
-          const headerLineY = headerStart - logoHeight - logoRowMarginBottom - headerPaddingBottom;
+          // Calcola la posizione del logo come nelle prime pagine
+          // Il logo deve essere posizionato dentro l'area dell'header
+          const headerTopY = pageHeight - pageTopPadding; // Top dell'area header
+          const logoStartY = headerTopY - headerPaddingTop; // Inizio area contenuto header
+          const logoY = logoStartY - logoHeight; // Posizione finale logo
+          
+          // La linea è alla fine dell'header dopo marginBottom e paddingBottom
+          const logoRowMarginBottom = 10;
+          const headerPaddingBottom = 7;
+          const headerLineY = logoY - logoRowMarginBottom - headerPaddingBottom;
           
           // Disegna il logo con dimensioni proporzionali
           imagePage.drawImage(logoImage, {
@@ -166,7 +170,7 @@ export const usePDFWithFooter = () => {
           imagePage.drawLine({
             start: { x: 30, y: headerLineY },
             end: { x: pageWidth - 30, y: headerLineY },
-            thickness: 1.5,
+            thickness: 1,
             color: rgb(0, 0, 0),
           });
           
@@ -186,7 +190,7 @@ export const usePDFWithFooter = () => {
           imagePage.drawLine({
             start: { x: 30, y: 40 },
             end: { x: pageWidth - 30, y: 40 },
-            thickness: 1.5,
+            thickness: 1,
             color: rgb(0, 0, 0),
           });
           
