@@ -237,16 +237,10 @@ const addImageToPage = async (
     const finalWidth = originalWidth * scale;
     const finalHeight = originalHeight * scale;
     
-    // Dimensioni del bounding box finale
-    const finalBoundingWidth = boundingWidth * scale;
-    const finalBoundingHeight = boundingHeight * scale;
-    
     // STEP 3: Calcola la posizione dell'area dell'immagine
     const yAreaTop = position === 'top' 
       ? pageHeight - 100 - imageAreaHeight 
       : pageHeight - 100 - imageAreaHeight * 2 - 20;
-    
-    const yAreaBottom = yAreaTop + imageAreaHeight;
     
     // Centro dell'area dove deve stare il bounding box
     const centerX = pageWidth / 2;
