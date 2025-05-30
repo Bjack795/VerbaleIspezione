@@ -224,11 +224,11 @@ const ImageManager: React.FC<ImageManagerProps> = ({ images, onImagesChange, col
                 </div>
 
                 {/* Anteprima immagine */}
-                <div className="relative mb-3">
+                <div className="relative mb-3 flex justify-center">
                   <img
                     src={image.preview}
                     alt={`Anteprima ${index + 1}`}
-                    className="w-full max-w-xs h-24 object-cover rounded-md mx-auto"
+                    className="w-32 h-24 object-cover rounded-md"
                     style={{
                       transform: `rotate(${image.rotation}deg)`,
                       transition: 'transform 0.3s ease'
