@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { pdf } from '@react-pdf/renderer';
-import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import { PDFDocument, rgb, StandardFonts, degrees } from 'pdf-lib';
 import { ImageData } from '../types/form';
 
 // Funzione per correggere l'orientamento dell'immagine basato su EXIF
@@ -214,6 +214,12 @@ const addImageToPage = async (
     let imgWidth = image.width;
     let imgHeight = image.height;
     
+    // Se l'immagine è ruotata di 90° o 270°, scambia le dimensioni per il calcolo dell'aspect ratio
+    const needsDimensionSwap = imageData.rotation === 90 || imageData.rotation === 270;
+    if (needsDimensionSwap) {
+      [imgWidth, imgHeight] = [imgHeight, imgWidth];
+    }
+    
     // Calcola dimensioni mantenendo aspect ratio
     const imageAspectRatio = imgWidth / imgHeight;
     const maxWidth = pageWidth - 120; // margini 60px per lato
@@ -231,16 +237,17 @@ const addImageToPage = async (
     const xPosition = (pageWidth - finalWidth) / 2;
     const imageYPosition = yPosition + 30; // spazio per didascalia sotto
     
-    // Disegna l'immagine (per ora senza rotazione manuale per evitare errori)
-    // La rotazione manuale sarà visibile solo nell'anteprima
+    // Converti rotazione in radianti per PDF-lib
+    const rotationInDegrees = imageData.rotation || 0;
+    
+    // Disegna l'immagine con rotazione applicata
     page.drawImage(image, {
       x: xPosition,
       y: imageYPosition,
       width: finalWidth,
       height: finalHeight,
+      rotate: degrees(rotationInDegrees)
     });
-    
-    // TODO: Implementare rotazione manuale quando avremo la sintassi corretta di PDF-lib
     
     // Genera didascalia automatica
     const figureNumber = imageIndex + 1;
