@@ -116,7 +116,7 @@ const ImageManager: React.FC<ImageManagerProps> = ({ images, onImagesChange, col
               Carica le tue immagini
             </p>
             <p className="text-sm" style={{ color: colors.on_surface_variant }}>
-              Trascina qui le immagini o clicca per selezionarle
+              Trascina qui le immagini, carica dalla galleria o scatta una foto
             </p>
           </div>
           
@@ -124,18 +124,17 @@ const ImageManager: React.FC<ImageManagerProps> = ({ images, onImagesChange, col
             type="file"
             multiple
             accept="image/*"
-            capture="environment" // Preferisce fotocamera posteriore su mobile
             className="hidden"
-            id="image-upload"
+            id="gallery-upload"
             onChange={(e) => handleFileChange(e.target.files)}
           />
           
           <div className="flex flex-col sm:flex-row gap-2 justify-center">
             <label
-              htmlFor="image-upload"
+              htmlFor="gallery-upload"
               className="cursor-pointer bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
             >
-              Seleziona File
+              📂 Carica da Galleria
             </label>
             
             {/* Pulsante fotocamera per mobile */}

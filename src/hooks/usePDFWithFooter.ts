@@ -133,13 +133,15 @@ export const usePDFWithFooter = () => {
           const logoHeight = logoWidth / logoAspectRatio;
           
           // Header con padding equivalente (paddingTop: 15, paddingBottom: 7)
-          const headerTop = pageHeight - 15; // equivale a paddingTop: 15
-          const headerBottom = pageHeight - 15 - 7 - 10; // paddingTop + paddingBottom + marginBottom logoRow
+          const headerTop = pageHeight - 30; // Equivale al page padding 30
+          const logoAreaTop = headerTop - 15; // Equivale a paddingTop: 15
+          const logoAreaBottom = logoAreaTop - 10; // marginBottom logoRow: 10
+          const headerLineY = logoAreaBottom - 7; // paddingBottom: 7
           
           // Disegna il logo con dimensioni proporzionali
           imagePage.drawImage(logoImage, {
             x: 30,
-            y: headerTop - logoHeight - 10, // 10 è il marginBottom della logoRow
+            y: logoAreaBottom, // Posizionato nella logoRow
             width: logoWidth,
             height: logoHeight,
           });
@@ -147,7 +149,7 @@ export const usePDFWithFooter = () => {
           // Testo company name allineato verticalmente con il logo
           imagePage.drawText('Redesco Progetti srl', {
             x: 30 + logoWidth + 10, // 10 è il marginRight del logo
-            y: headerTop - logoHeight/2 - 5, // centrato verticalmente rispetto al logo
+            y: logoAreaBottom + logoHeight/2 - 3, // centrato verticalmente rispetto al logo
             size: 10,
             font,
             color: rgb(0, 0, 0),
@@ -155,8 +157,8 @@ export const usePDFWithFooter = () => {
           
           // Linea sotto l'header esattamente come nelle altre pagine
           imagePage.drawLine({
-            start: { x: 30, y: headerBottom },
-            end: { x: pageWidth - 30, y: headerBottom },
+            start: { x: 30, y: headerLineY },
+            end: { x: pageWidth - 30, y: headerLineY },
             thickness: 1,
             color: rgb(0, 0, 0),
           });
@@ -267,7 +269,7 @@ const addImageToPage = async (
     // STEP 3: Calcola la posizione dell'area dell'immagine - STESSO SPAZIO DELLE PRIME PAGINE
     const yAreaTop = position === 'top' 
       ? pageHeight - headerSpace - imageAreaHeight  // Usa headerSpace delle prime pagine
-      : pageHeight - headerSpace - imageAreaHeight * 2 - 10; // Piccolo spazio tra immagini
+      : pageHeight - headerSpace - imageAreaHeight * 2 - 5; // Spazio tra immagini ridotto a 5pt
     
     // Centro dell'area dove deve stare il bounding box
     const centerX = pageWidth / 2;
