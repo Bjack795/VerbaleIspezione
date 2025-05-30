@@ -247,10 +247,10 @@ const addImageToPage = async (
     }
     
     // STEP 2: Ridimensiona - MARGINI RIDOTTI
-    // Riduco lo spazio header da 160 a 120 e il margine per didascalie da 60 a 40
-    const imageAreaHeight = (pageHeight - 140) / 2; // Spazio ridotto per 2 immagini
+    // Riduco ulteriormente lo spazio header/footer per massimizzare l'area immagini
+    const imageAreaHeight = (pageHeight - 110) / 2; // Ulteriormente ridotto da 140 a 110
     const maxWidth = pageWidth - 120; // margini 60px per lato  
-    const maxHeight = imageAreaHeight - 60; // spazio ridotto per didascalia
+    const maxHeight = imageAreaHeight - 50; // spazio per didascalia
     
     // Calcola il fattore di scala basato sul bounding box
     const scaleWidth = maxWidth / boundingWidth;
@@ -263,8 +263,8 @@ const addImageToPage = async (
     
     // STEP 3: Calcola la posizione dell'area dell'immagine - MARGINI RIDOTTI
     const yAreaTop = position === 'top' 
-      ? pageHeight - 100 - imageAreaHeight  // ridotto il margine dall'header
-      : pageHeight - 100 - imageAreaHeight * 2 - 10; // ridotto spazio tra immagini da 20 a 10
+      ? pageHeight - 70 - imageAreaHeight  // ridotto drasticamente da 100 a 70
+      : pageHeight - 70 - imageAreaHeight * 2 - 10; // ridotto spazio tra immagini da 20 a 10
     
     // Centro dell'area dove deve stare il bounding box
     const centerX = pageWidth / 2;
