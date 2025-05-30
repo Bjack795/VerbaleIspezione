@@ -246,11 +246,14 @@ const addImageToPage = async (
       boundingHeight = originalHeight;
     }
     
-    // STEP 2: Ridimensiona - MARGINI RIDOTTI
-    // Riduco ulteriormente lo spazio header/footer per massimizzare l'area immagini
-    const imageAreaHeight = (pageHeight - 110) / 2; // Ulteriormente ridotto da 140 a 110
+    // STEP 2: Ridimensiona - USA LO STESSO SPAZIO HEADER DELLE PRIME PAGINE
+    // Spazio header esatto delle prime pagine: padding(30) + header(~75) = 105 punti
+    // Spazio footer: 70 punti (come nelle prime pagine)
+    const headerSpace = 105; // Esattamente come nelle prime pagine
+    const footerSpace = 70;
+    const imageAreaHeight = (pageHeight - headerSpace - footerSpace) / 2; 
     const maxWidth = pageWidth - 120; // margini 60px per lato  
-    const maxHeight = imageAreaHeight - 50; // spazio per didascalia
+    const maxHeight = imageAreaHeight - 40; // spazio per didascalia
     
     // Calcola il fattore di scala basato sul bounding box
     const scaleWidth = maxWidth / boundingWidth;
@@ -261,10 +264,10 @@ const addImageToPage = async (
     const finalWidth = originalWidth * scale;
     const finalHeight = originalHeight * scale;
     
-    // STEP 3: Calcola la posizione dell'area dell'immagine - MARGINI RIDOTTI
+    // STEP 3: Calcola la posizione dell'area dell'immagine - STESSO SPAZIO DELLE PRIME PAGINE
     const yAreaTop = position === 'top' 
-      ? pageHeight - 70 - imageAreaHeight  // ridotto drasticamente da 100 a 70
-      : pageHeight - 70 - imageAreaHeight * 2 - 10; // ridotto spazio tra immagini da 20 a 10
+      ? pageHeight - headerSpace - imageAreaHeight  // Usa headerSpace delle prime pagine
+      : pageHeight - headerSpace - imageAreaHeight * 2 - 10; // Piccolo spazio tra immagini
     
     // Centro dell'area dove deve stare il bounding box
     const centerX = pageWidth / 2;
