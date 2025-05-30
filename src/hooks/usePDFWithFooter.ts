@@ -204,8 +204,12 @@ export const usePDFWithFooter = () => {
         }
       }
 
-      // 6. Genera il PDF finale
-      const finalPdfBytes = await pdfDoc.save();
+      // 6. Genera il PDF finale con opzioni di compatibilità
+      const finalPdfBytes = await pdfDoc.save({
+        useObjectStreams: false, // Migliore compatibilità con viewer vecchi
+        addDefaultPage: false,   // Non aggiungere pagine vuote automaticamente
+        objectsPerTick: 50,      // Evita problemi di memoria su documenti grandi
+      });
       const finalBlob = new Blob([finalPdfBytes], { type: 'application/pdf' });
 
       setIsLoading(false);
