@@ -204,43 +204,75 @@ const addImageToPage = async (
     
     if (!image) return;
     
-    // STEP 1: Gestire la rotazione - ottieni dimensioni considerando la rotazione
     const rotationInDegrees = imageData.rotation || 0;
-    let imgWidth = image.width;
-    let imgHeight = image.height;
     
-    // Se l'immagine è ruotata di 90° o 270°, scambia le dimensioni per il calcolo
+    // Dimensioni originali dell'immagine
+    const originalWidth = image.width;
+    const originalHeight = image.height;
+    
+    // STEP 1: Calcola le dimensioni che l'immagine occuperà DOPO la rotazione
+    let boundingWidth, boundingHeight;
+    
     if (rotationInDegrees === 90 || rotationInDegrees === 270) {
-      [imgWidth, imgHeight] = [imgHeight, imgWidth];
+      // Per 90°/270°, larghezza e altezza si scambiano
+      boundingWidth = originalHeight;
+      boundingHeight = originalWidth;
+    } else {
+      // Per 0°/180°, rimangono uguali
+      boundingWidth = originalWidth;
+      boundingHeight = originalHeight;
     }
     
-    // STEP 2: Ridimensionare per far entrare 2 immagini per pagina
+    // STEP 2: Ridimensiona basandoti sul bounding box post-rotazione
     const imageAreaHeight = (pageHeight - 160) / 2; // Spazio per 2 immagini
-    const maxWidth = pageWidth - 120; // margini 60px per lato
+    const maxWidth = pageWidth - 120; // margini 60px per lato  
     const maxHeight = imageAreaHeight - 60; // spazio per didascalia
     
-    // Calcola dimensioni finali mantenendo aspect ratio
-    const imageAspectRatio = imgWidth / imgHeight;
-    let finalWidth = maxWidth;
-    let finalHeight = finalWidth / imageAspectRatio;
+    // Calcola il fattore di scala basato sul bounding box
+    const scaleWidth = maxWidth / boundingWidth;
+    const scaleHeight = maxHeight / boundingHeight;
+    const scale = Math.min(scaleWidth, scaleHeight);
     
-    if (finalHeight > maxHeight) {
-      finalHeight = maxHeight;
-      finalWidth = finalHeight * imageAspectRatio;
-    }
+    // Dimensioni finali dell'immagine (prima della rotazione)
+    const finalWidth = originalWidth * scale;
+    const finalHeight = originalHeight * scale;
     
-    // STEP 3: Posizionare centrato orizzontalmente
-    const yPosition = position === 'top' 
+    // Dimensioni del bounding box finale
+    const finalBoundingWidth = boundingWidth * scale;
+    const finalBoundingHeight = boundingHeight * scale;
+    
+    // STEP 3: Calcola la posizione dell'area dell'immagine
+    const yAreaTop = position === 'top' 
       ? pageHeight - 100 - imageAreaHeight 
       : pageHeight - 100 - imageAreaHeight * 2 - 20;
     
-    const imageYPosition = yPosition + 30; // spazio per didascalia sotto
-    const xPosition = (pageWidth - finalWidth) / 2; // centrato orizzontalmente
+    const yAreaBottom = yAreaTop + imageAreaHeight;
     
-    // Disegna l'immagine con rotazione applicata
+    // Centro dell'area dove deve stare il bounding box
+    const centerX = pageWidth / 2;
+    const centerY = yAreaTop + (imageAreaHeight - 60) / 2 + 30; // centrata nell'area disponibile
+    
+    // STEP 4: Calcola la posizione dell'immagine considerando la rotazione
+    let imageX, imageY;
+    
+    if (rotationInDegrees === 0) {
+      imageX = centerX - finalWidth / 2;
+      imageY = centerY - finalHeight / 2;
+    } else if (rotationInDegrees === 90) {
+      imageX = centerX + finalHeight / 2;
+      imageY = centerY - finalWidth / 2;
+    } else if (rotationInDegrees === 180) {
+      imageX = centerX + finalWidth / 2;
+      imageY = centerY + finalHeight / 2;
+    } else if (rotationInDegrees === 270) {
+      imageX = centerX - finalHeight / 2;
+      imageY = centerY + finalWidth / 2;
+    }
+    
+    // Disegna l'immagine
     page.drawImage(image, {
-      x: xPosition,
-      y: imageYPosition,
+      x: imageX,
+      y: imageY,
       width: finalWidth,
       height: finalHeight,
       rotate: degrees(rotationInDegrees)
@@ -252,10 +284,10 @@ const addImageToPage = async (
       ? `Figura ${figureNumber} - ${imageData.caption}`
       : `Figura ${figureNumber}`;
     
-    // Aggiungi didascalia
+    // Aggiungi didascalia sotto l'area dell'immagine
     page.drawText(captionText, {
       x: 60,
-      y: yPosition + 5,
+      y: yAreaTop + 5,
       size: 10,
       font,
       color: rgb(0.2, 0.2, 0.2),
