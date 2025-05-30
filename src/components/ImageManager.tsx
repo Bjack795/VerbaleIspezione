@@ -228,8 +228,13 @@ const ImageManager: React.FC<ImageManagerProps> = ({ images, onImagesChange, col
                   <img
                     src={image.preview}
                     alt={`Anteprima ${index + 1}`}
-                    className="w-32 h-24 object-cover rounded-md"
+                    className="rounded-md"
                     style={{
+                      maxWidth: '80%',
+                      maxHeight: '50vh',
+                      width: 'auto',
+                      height: 'auto',
+                      objectFit: 'contain',
                       transform: `rotate(${image.rotation}deg)`,
                       transition: 'transform 0.3s ease'
                     }}
