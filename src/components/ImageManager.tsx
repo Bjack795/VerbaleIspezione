@@ -284,9 +284,6 @@ const ImageManager: React.FC<ImageManagerProps> = ({ images, onImagesChange, col
             {images.length} immagine{images.length !== 1 ? 'i' : ''} caricata{images.length !== 1 ? 'e' : ''}
             {images.length > 0 && ` • ${Math.ceil(images.length / 2)} pagina${Math.ceil(images.length / 2) !== 1 ? 'e' : ''} aggiuntive nel PDF`}
           </p>
-          <p className="text-xs" style={{ color: colors.on_surface_variant }}>
-            ℹ️ Le rotazioni manuali sono visibili nell'anteprima ma temporaneamente non nel PDF finale
-          </p>
         </div>
       )}
     </div>

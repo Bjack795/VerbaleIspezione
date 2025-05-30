@@ -83,8 +83,8 @@ export const usePDFWithFooter = () => {
       const pages = pdfDoc.getPages();
       const totalMainPages = pages.length;
 
-      // 3. Font per il footer
-      const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+      // 3. Font Arial per tutto il documento
+      const font = await pdfDoc.embedFont(StandardFonts.Helvetica); // Arial non è disponibile, uso Helvetica che è simile
 
       // 4. Aggiungi footer alle pagine esistenti
       pages.forEach((page, index) => {
@@ -122,7 +122,29 @@ export const usePDFWithFooter = () => {
           const currentPageNumber = totalMainPages + Math.floor(i / 2) + 1;
           const totalPages = totalMainPages + Math.ceil(images.length / 2);
           
-          // Header
+          // HEADER UGUALE ALLE ALTRE PAGINE - con logo e company name
+          // Carica il logo
+          const logoBytes = await fetch(`${import.meta.env.BASE_URL}logo.png`).then(r => r.arrayBuffer());
+          const logoImage = await pdfDoc.embedPng(logoBytes);
+          
+          // Disegna il logo
+          imagePage.drawImage(logoImage, {
+            x: 30,
+            y: pageHeight - 50,
+            width: 40,
+            height: 30, // altezza proporzionale
+          });
+          
+          // Testo company name
+          imagePage.drawText('Redesco Progetti srl', {
+            x: 80,
+            y: pageHeight - 35,
+            size: 10,
+            font,
+            color: rgb(0, 0, 0),
+          });
+          
+          // Linea sotto l'header
           imagePage.drawLine({
             start: { x: 30, y: pageHeight - 60 },
             end: { x: pageWidth - 30, y: pageHeight - 60 },
@@ -130,20 +152,21 @@ export const usePDFWithFooter = () => {
             color: rgb(0, 0, 0),
           });
           
+          // Titolo "ALLEGATO FOTOGRAFICO" (riduco lo spazio)
           imagePage.drawText('ALLEGATO FOTOGRAFICO', {
             x: 30,
-            y: pageHeight - 45,
+            y: pageHeight - 80, // ridotto da -45 a -80
             size: 14,
             font,
             color: rgb(0, 0, 0),
           });
           
-          // Prima immagine (in alto)
+          // Prima immagine (in alto) - margini ridotti
           if (images[i]) {
             await addImageToPage(imagePage, images[i], 'top', font, pdfDoc, i);
           }
           
-          // Seconda immagine (in basso)
+          // Seconda immagine (in basso) - margini ridotti
           if (images[i + 1]) {
             await addImageToPage(imagePage, images[i + 1], 'bottom', font, pdfDoc, i + 1);
           }
@@ -223,10 +246,11 @@ const addImageToPage = async (
       boundingHeight = originalHeight;
     }
     
-    // STEP 2: Ridimensiona basandoti sul bounding box post-rotazione
-    const imageAreaHeight = (pageHeight - 160) / 2; // Spazio per 2 immagini
+    // STEP 2: Ridimensiona - MARGINI RIDOTTI
+    // Riduco lo spazio header da 160 a 120 e il margine per didascalie da 60 a 40
+    const imageAreaHeight = (pageHeight - 120) / 2; // Spazio ridotto per 2 immagini
     const maxWidth = pageWidth - 120; // margini 60px per lato  
-    const maxHeight = imageAreaHeight - 60; // spazio per didascalia
+    const maxHeight = imageAreaHeight - 40; // spazio ridotto per didascalia
     
     // Calcola il fattore di scala basato sul bounding box
     const scaleWidth = maxWidth / boundingWidth;
@@ -237,14 +261,14 @@ const addImageToPage = async (
     const finalWidth = originalWidth * scale;
     const finalHeight = originalHeight * scale;
     
-    // STEP 3: Calcola la posizione dell'area dell'immagine
+    // STEP 3: Calcola la posizione dell'area dell'immagine - MARGINI RIDOTTI
     const yAreaTop = position === 'top' 
-      ? pageHeight - 100 - imageAreaHeight 
-      : pageHeight - 100 - imageAreaHeight * 2 - 20;
+      ? pageHeight - 100 - imageAreaHeight  // ridotto il margine dall'header
+      : pageHeight - 100 - imageAreaHeight * 2 - 10; // ridotto spazio tra immagini da 20 a 10
     
     // Centro dell'area dove deve stare il bounding box
     const centerX = pageWidth / 2;
-    const centerY = yAreaTop + (imageAreaHeight - 60) / 2 + 30; // centrata nell'area disponibile
+    const centerY = yAreaTop + (imageAreaHeight - 40) / 2 + 20; // centrata nell'area disponibile
     
     // STEP 4: Calcola la posizione dell'immagine considerando la rotazione
     let imageX, imageY;
@@ -278,14 +302,17 @@ const addImageToPage = async (
       ? `Figura ${figureNumber} - ${imageData.caption}`
       : `Figura ${figureNumber}`;
     
-    // Aggiungi didascalia sotto l'area dell'immagine
+    // DIDASCALIA CENTRATA
+    const textWidth = font.widthOfTextAtSize(captionText, 10);
+    const centeredX = (pageWidth - textWidth) / 2;
+    
+    // Aggiungi didascalia centrata sotto l'area dell'immagine
     page.drawText(captionText, {
-      x: 60,
+      x: centeredX,
       y: yAreaTop + 5,
       size: 10,
       font,
       color: rgb(0.2, 0.2, 0.2),
-      maxWidth: pageWidth - 120,
     });
     
   } catch (error) {
