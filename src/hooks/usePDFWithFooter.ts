@@ -85,6 +85,7 @@ export const usePDFWithFooter = () => {
 
       // 3. Font Arial per tutto il documento
       const font = await pdfDoc.embedFont(StandardFonts.Helvetica); // Arial non è disponibile, uso Helvetica che è simile
+      const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold); // Font bold per il company name
 
       // 4. Aggiungi footer alle pagine esistenti
       pages.forEach((page, index) => {
@@ -98,7 +99,7 @@ export const usePDFWithFooter = () => {
         page.drawLine({
           start: { x: 30, y: 40 },
           end: { x: width - 30, y: 40 },
-          thickness: 1,
+          thickness: 1.5,
           color: rgb(0, 0, 0),
         });
         
@@ -133,25 +134,31 @@ export const usePDFWithFooter = () => {
           const logoHeight = logoWidth / logoAspectRatio;
           
           // Header con padding equivalente (paddingTop: 15, paddingBottom: 7)
-          const headerTop = pageHeight - 30; // Equivale al page padding 30
-          const logoAreaTop = headerTop - 15; // Equivale a paddingTop: 15
-          const logoAreaBottom = logoAreaTop - 10; // marginBottom logoRow: 10
-          const headerLineY = logoAreaBottom - 7; // paddingBottom: 7
+          // Replica esatta della struttura delle prime pagine
+          const pageTopPadding = 30; // page padding
+          const headerPaddingTop = 15; // header paddingTop
+          const logoRowMarginBottom = 10; // logoRow marginBottom  
+          const headerPaddingBottom = 7; // header paddingBottom
+          
+          // Calcola posizioni esatte
+          const headerStart = pageHeight - pageTopPadding - headerPaddingTop;
+          const logoY = headerStart - logoHeight - logoRowMarginBottom;
+          const headerLineY = headerStart - logoHeight - logoRowMarginBottom - headerPaddingBottom;
           
           // Disegna il logo con dimensioni proporzionali
           imagePage.drawImage(logoImage, {
             x: 30,
-            y: logoAreaBottom, // Posizionato nella logoRow
+            y: logoY,
             width: logoWidth,
             height: logoHeight,
           });
           
-          // Testo company name allineato verticalmente con il logo
+          // Testo company name con font weight bold e posizionamento corretto
           imagePage.drawText('Redesco Progetti srl', {
             x: 30 + logoWidth + 10, // 10 è il marginRight del logo
-            y: logoAreaBottom + logoHeight/2 - 3, // centrato verticalmente rispetto al logo
+            y: logoY + logoHeight/2 - 2, // centrato verticalmente rispetto al logo
             size: 10,
-            font,
+            font: boldFont, // Uso font bold per replicare le prime pagine
             color: rgb(0, 0, 0),
           });
           
@@ -159,7 +166,7 @@ export const usePDFWithFooter = () => {
           imagePage.drawLine({
             start: { x: 30, y: headerLineY },
             end: { x: pageWidth - 30, y: headerLineY },
-            thickness: 1,
+            thickness: 1.5,
             color: rgb(0, 0, 0),
           });
           
@@ -179,7 +186,7 @@ export const usePDFWithFooter = () => {
           imagePage.drawLine({
             start: { x: 30, y: 40 },
             end: { x: pageWidth - 30, y: 40 },
-            thickness: 1,
+            thickness: 1.5,
             color: rgb(0, 0, 0),
           });
           
