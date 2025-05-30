@@ -63,7 +63,7 @@ const createPagedContent = (data: FormInputs) => {
       <View style={styles.headerDividerThin}></View>
 
       {/* Sezione PROGETTO */}
-      <View style={styles.borderedSection} wrap={false}>
+      <View style={styles.sectionWrapper} wrap={false}>
         <View style={styles.grayBackground}>
            <Text style={styles.sectionTitle}>PROGETTO: {data.nomeProgetto}</Text>
         </View>
@@ -88,7 +88,7 @@ const createPagedContent = (data: FormInputs) => {
       </View>
 
       {/* Sezione Dati Lavorazione */}
-       <View style={styles.borderedSection} wrap={false}>
+       <View style={styles.sectionWrapper} wrap={false}>
           <View style={styles.sectionRow}>
             <View style={[styles.sectionColumn, styles.verticalDivider]}>
               <Text style={styles.label}>Lavorazione Verificata</Text>
@@ -154,7 +154,7 @@ const createPagedContent = (data: FormInputs) => {
       </View>
 
       {/* Sezione OGGETTO DEL SOPRALLUOGO E ESITO CONTROLLO*/}
-      <View style={styles.borderedSection}>
+      <View style={styles.sectionWrapper}>
          <Text style={styles.sectionTitle}>OGGETTO DEL SOPRALLUOGO</Text>
          <View style={styles.sectionRowLast}>
            <View style={styles.sectionColumnFull}>
@@ -179,7 +179,7 @@ const createPagedContent = (data: FormInputs) => {
           <Text style={styles.noteText}>* Tale osservazione è da considerarsi prescrittiva – da ottemperare</Text>
       </View>
       
-      <View style={styles.borderedSection} wrap={false}>
+      <View style={styles.sectionWrapper} wrap={false}>
          <View style={styles.sectionRowLast}>
            <View style={[styles.sectionColumn, styles.verticalDivider]}>
              <Text style={styles.value}>Nome</Text>
@@ -310,12 +310,39 @@ const styles = StyleSheet.create({
   },
   // Stili per le sezioni con bordo come nello screenshot
   borderedSection: {
-    border: '1 solid #000',
-    /*marginBottom: 15,*/
     marginTop: 15,
   },
+  // Nuovi stili per bordi compatibili delle sezioni
+  sectionBorderLeft: {
+    width: 1,
+    backgroundColor: '#000',
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    bottom: 0,
+  },
+  sectionBorderRight: {
+    width: 1,
+    backgroundColor: '#000',
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    bottom: 0,
+  },
+  sectionBorderTop: {
+    height: 1,
+    backgroundColor: '#000',
+  },
+  sectionBorderBottom: {
+    height: 1,
+    backgroundColor: '#000',
+  },
+  // Container per sezione con wrapper di bordi
+  sectionWrapper: {
+    marginTop: 15,
+    border: '1 solid #000',
+  },
   unBorderedSection: {
-    /*marginBottom: 15,*/
     marginTop: 15,
   },
   // Stile per le sezioni con sfondo grigio
