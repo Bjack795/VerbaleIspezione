@@ -233,17 +233,34 @@ const addImageToPage = async (
       finalWidth = finalHeight * imageAspectRatio;
     }
     
-    // Centra l'immagine
-    const xPosition = (pageWidth - finalWidth) / 2;
-    const imageYPosition = yPosition + 30; // spazio per didascalia sotto
+    // Converti rotazione (inverti il segno per correggere la direzione)
+    const rotationInDegrees = -(imageData.rotation || 0);
     
-    // Converti rotazione in radianti per PDF-lib
-    const rotationInDegrees = imageData.rotation || 0;
+    // Calcola posizione Y dell'immagine (spazio per didascalia sotto)
+    const imageYPosition = yPosition + 30;
+    
+    // Calcola centro dell'area dove dovrebbe essere l'immagine
+    const centerX = pageWidth / 2;
+    const centerY = imageYPosition + finalHeight / 2;
+    
+    // Per rotazioni di 90° e 270°, PDF-lib effettivamente scambia le dimensioni
+    // quindi devo calcolare la posizione corretta per mantenere l'immagine centrata
+    let finalX, finalY;
+    
+    if (Math.abs(rotationInDegrees) === 90 || Math.abs(rotationInDegrees) === 270) {
+      // Per rotazioni di 90°/270°, l'immagine si "ribalta" rispetto al centro
+      finalX = centerX - finalHeight / 2;
+      finalY = centerY - finalWidth / 2;
+    } else {
+      // Per 0° e 180°, mantieni il centro normale
+      finalX = centerX - finalWidth / 2;
+      finalY = centerY - finalHeight / 2;
+    }
     
     // Disegna l'immagine con rotazione applicata
     page.drawImage(image, {
-      x: xPosition,
-      y: imageYPosition,
+      x: finalX,
+      y: finalY,
       width: finalWidth,
       height: finalHeight,
       rotate: degrees(rotationInDegrees)
