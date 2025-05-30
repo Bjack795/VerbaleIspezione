@@ -204,27 +204,23 @@ const addImageToPage = async (
     
     if (!image) return;
     
-    // Calcola posizione Y basata su top/bottom
-    const imageAreaHeight = (pageHeight - 160) / 2; // Dividi lo spazio disponibile in 2
-    const yPosition = position === 'top' 
-      ? pageHeight - 100 - imageAreaHeight 
-      : pageHeight - 100 - imageAreaHeight * 2 - 20;
-    
-    // Ottieni dimensioni originali dell'immagine
+    // STEP 1: Gestire la rotazione - ottieni dimensioni considerando la rotazione
+    const rotationInDegrees = imageData.rotation || 0;
     let imgWidth = image.width;
     let imgHeight = image.height;
     
-    // Se l'immagine è ruotata di 90° o 270°, scambia le dimensioni per il calcolo dell'aspect ratio
-    const needsDimensionSwap = imageData.rotation === 90 || imageData.rotation === 270;
-    if (needsDimensionSwap) {
+    // Se l'immagine è ruotata di 90° o 270°, scambia le dimensioni per il calcolo
+    if (rotationInDegrees === 90 || rotationInDegrees === 270) {
       [imgWidth, imgHeight] = [imgHeight, imgWidth];
     }
     
-    // Calcola dimensioni mantenendo aspect ratio
-    const imageAspectRatio = imgWidth / imgHeight;
+    // STEP 2: Ridimensionare per far entrare 2 immagini per pagina
+    const imageAreaHeight = (pageHeight - 160) / 2; // Spazio per 2 immagini
     const maxWidth = pageWidth - 120; // margini 60px per lato
     const maxHeight = imageAreaHeight - 60; // spazio per didascalia
     
+    // Calcola dimensioni finali mantenendo aspect ratio
+    const imageAspectRatio = imgWidth / imgHeight;
     let finalWidth = maxWidth;
     let finalHeight = finalWidth / imageAspectRatio;
     
@@ -233,34 +229,18 @@ const addImageToPage = async (
       finalWidth = finalHeight * imageAspectRatio;
     }
     
-    // Converti rotazione (inverti il segno per correggere la direzione)
-    const rotationInDegrees = -(imageData.rotation || 0);
+    // STEP 3: Posizionare centrato orizzontalmente
+    const yPosition = position === 'top' 
+      ? pageHeight - 100 - imageAreaHeight 
+      : pageHeight - 100 - imageAreaHeight * 2 - 20;
     
-    // Calcola posizione Y dell'immagine (spazio per didascalia sotto)
-    const imageYPosition = yPosition + 30;
-    
-    // Calcola centro dell'area dove dovrebbe essere l'immagine
-    const centerX = pageWidth / 2;
-    const centerY = imageYPosition + finalHeight / 2;
-    
-    // Per rotazioni di 90° e 270°, PDF-lib effettivamente scambia le dimensioni
-    // quindi devo calcolare la posizione corretta per mantenere l'immagine centrata
-    let finalX, finalY;
-    
-    if (Math.abs(rotationInDegrees) === 90 || Math.abs(rotationInDegrees) === 270) {
-      // Per rotazioni di 90°/270°, l'immagine si "ribalta" rispetto al centro
-      finalX = centerX - finalHeight / 2;
-      finalY = centerY - finalWidth / 2;
-    } else {
-      // Per 0° e 180°, mantieni il centro normale
-      finalX = centerX - finalWidth / 2;
-      finalY = centerY - finalHeight / 2;
-    }
+    const imageYPosition = yPosition + 30; // spazio per didascalia sotto
+    const xPosition = (pageWidth - finalWidth) / 2; // centrato orizzontalmente
     
     // Disegna l'immagine con rotazione applicata
     page.drawImage(image, {
-      x: finalX,
-      y: finalY,
+      x: xPosition,
+      y: imageYPosition,
       width: finalWidth,
       height: finalHeight,
       rotate: degrees(rotationInDegrees)
