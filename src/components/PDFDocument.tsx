@@ -64,9 +64,6 @@ const createPagedContent = (data: FormInputs) => {
 
       {/* Sezione PROGETTO */}
       <View style={[styles.sectionWrapper, { position: 'relative' }]} wrap={false}>
-        <View style={styles.sectionBorderTop}></View>
-        <View style={styles.sectionBorderLeft}></View>
-        <View style={styles.sectionBorderRight}></View>
         <View style={styles.grayBackground}>
            <Text style={styles.sectionTitle}>PROGETTO: {data.nomeProgetto}</Text>
         </View>
@@ -90,14 +87,15 @@ const createPagedContent = (data: FormInputs) => {
               )}
            </View>
          </View>
+        {/* Bordi esterni - renderizzati per ultimi */}
+        <View style={styles.sectionBorderTop}></View>
         <View style={styles.sectionBorderBottom}></View>
+        <View style={styles.sectionBorderLeft}></View>
+        <View style={styles.sectionBorderRight}></View>
       </View>
 
       {/* Sezione Dati Lavorazione */}
        <View style={[styles.sectionWrapper, { position: 'relative' }]} wrap={false}>
-          <View style={styles.sectionBorderTop}></View>
-          <View style={styles.sectionBorderLeft}></View>
-          <View style={styles.sectionBorderRight}></View>
           <View style={styles.sectionRow}>
             <View style={[styles.sectionColumn, styles.verticalDivider]}>
               <View style={styles.verticalDividerLine}></View>
@@ -147,7 +145,11 @@ const createPagedContent = (data: FormInputs) => {
               <Text style={styles.value}>{data.schedaControllo}</Text>
             </View>
           </View>
+          {/* Bordi esterni - renderizzati per ultimi */}
+          <View style={styles.sectionBorderTop}></View>
           <View style={styles.sectionBorderBottom}></View>
+          <View style={styles.sectionBorderLeft}></View>
+          <View style={styles.sectionBorderRight}></View>
        </View>
 
       {/* Sezione METODO DI VERIFICA */}
@@ -170,9 +172,6 @@ const createPagedContent = (data: FormInputs) => {
 
       {/* Sezione OGGETTO DEL SOPRALLUOGO E ESITO CONTROLLO*/}
       <View style={[styles.sectionWrapper, { position: 'relative' }]}>
-         <View style={styles.sectionBorderTop}></View>
-         <View style={styles.sectionBorderLeft}></View>
-         <View style={styles.sectionBorderRight}></View>
          <Text style={styles.sectionTitle}>OGGETTO DEL SOPRALLUOGO</Text>
          <View style={styles.sectionRowLast}>
            <View style={styles.sectionColumnFull}>
@@ -195,13 +194,14 @@ const createPagedContent = (data: FormInputs) => {
            ))}
          </View>
           <Text style={styles.noteText}>* Tale osservazione è da considerarsi prescrittiva – da ottemperare</Text>
+         {/* Bordi esterni - renderizzati per ultimi */}
+         <View style={styles.sectionBorderTop}></View>
          <View style={styles.sectionBorderBottom}></View>
+         <View style={styles.sectionBorderLeft}></View>
+         <View style={styles.sectionBorderRight}></View>
       </View>
       
       <View style={[styles.sectionWrapper, { position: 'relative' }]} wrap={false}>
-         <View style={styles.sectionBorderTop}></View>
-         <View style={styles.sectionBorderLeft}></View>
-         <View style={styles.sectionBorderRight}></View>
          <View style={styles.sectionRowLast}>
            <View style={[styles.sectionColumn, styles.verticalDivider]}>
              <View style={styles.verticalDividerLine}></View>
@@ -230,7 +230,11 @@ const createPagedContent = (data: FormInputs) => {
               </Text>
            </View>
          </View>
+         {/* Bordi esterni - renderizzati per ultimi */}
+         <View style={styles.sectionBorderTop}></View>
          <View style={styles.sectionBorderBottom}></View>
+         <View style={styles.sectionBorderLeft}></View>
+         <View style={styles.sectionBorderRight}></View>
       </View>
     </>
   );
@@ -363,7 +367,7 @@ const styles = StyleSheet.create({
   },
   rowLine: {
     height: 0.5,
-    backgroundColor: '#ccc',
+    backgroundColor: '#000',
   },
   sectionRowLast: {
     flexDirection: 'row',
@@ -400,15 +404,15 @@ const styles = StyleSheet.create({
   // Stili per i bordi delle sezioni
   sectionBorderTop: {
     height: 1,
-    backgroundColor: '#000',
+    backgroundColor: 'black',
   },
   sectionBorderBottom: {
     height: 1,
-    backgroundColor: '#000',
+    backgroundColor: 'black',
   },
   sectionBorderLeft: {
     width: 1,
-    backgroundColor: '#000',
+    backgroundColor: 'black',
     position: 'absolute',
     left: 0,
     top: 0,
@@ -416,7 +420,7 @@ const styles = StyleSheet.create({
   },
   sectionBorderRight: {
     width: 1,
-    backgroundColor: '#000',
+    backgroundColor: 'black',
     position: 'absolute',
     right: 0,
     top: 0,
