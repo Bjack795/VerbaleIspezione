@@ -382,8 +382,7 @@ const styles = StyleSheet.create({
   },
   sectionLineLight: {
     height: 0.5,
-    flexGrow: 1,
-    flexBasis: '50%',
+    paddingHorizontal: 10,
     backgroundColor: '#ccc',
   },
   // Stile per le righe all'interno delle sezioni
