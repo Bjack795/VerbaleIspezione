@@ -63,19 +63,24 @@ const createPagedContent = (data: FormInputs) => {
       <View style={styles.headerDividerThin}></View>
 
       {/* Sezione PROGETTO */}
-      <View style={styles.sectionWrapper} wrap={false}>
+      <View style={[styles.sectionWrapper, { position: 'relative' }]} wrap={false}>
+        <View style={styles.sectionBorderTop}></View>
+        <View style={styles.sectionBorderLeft}></View>
+        <View style={styles.sectionBorderRight}></View>
         <View style={styles.grayBackground}>
            <Text style={styles.sectionTitle}>PROGETTO: {data.nomeProgetto}</Text>
         </View>
         <View style={styles.sectionLine}></View>
          <View style={styles.sectionRowLast}>
            <View style={[styles.sectionColumn, styles.verticalDivider]}>
+             <View style={styles.verticalDividerLine}></View>
              <Text style={styles.sectionSubtitle}>Data</Text>
              <Text style={styles.value}>
                {format(new Date(data.dataIspezione), 'dd/MM/yyyy', { locale: it })}
              </Text>
            </View>
            <View style={[styles.sectionColumn, styles.verticalDivider]}>
+             <View style={styles.verticalDividerLine}></View>
              <Text style={styles.sectionSubtitle}>N. progressivo</Text>
              <Text style={styles.value}>{data.numero}</Text>
            </View>
@@ -85,12 +90,17 @@ const createPagedContent = (data: FormInputs) => {
               )}
            </View>
          </View>
+        <View style={styles.sectionBorderBottom}></View>
       </View>
 
       {/* Sezione Dati Lavorazione */}
-       <View style={styles.sectionWrapper} wrap={false}>
+       <View style={[styles.sectionWrapper, { position: 'relative' }]} wrap={false}>
+          <View style={styles.sectionBorderTop}></View>
+          <View style={styles.sectionBorderLeft}></View>
+          <View style={styles.sectionBorderRight}></View>
           <View style={styles.sectionRow}>
             <View style={[styles.sectionColumn, styles.verticalDivider]}>
+              <View style={styles.verticalDividerLine}></View>
               <Text style={styles.label}>Lavorazione Verificata</Text>
             </View>
             <View style={styles.sectionColumn}>
@@ -100,6 +110,7 @@ const createPagedContent = (data: FormInputs) => {
           <View style={styles.rowLine}></View>
            <View style={styles.sectionRow}>
             <View style={[styles.sectionColumn, styles.verticalDivider]}>
+              <View style={styles.verticalDividerLine}></View>
               <Text style={styles.label}>Verifica materiale previsto</Text>
             </View>
             <View style={styles.sectionColumn}>
@@ -109,6 +120,7 @@ const createPagedContent = (data: FormInputs) => {
           <View style={styles.rowLine}></View>
            <View style={styles.sectionRow}>
             <View style={[styles.sectionColumn, styles.verticalDivider]}>
+              <View style={styles.verticalDividerLine}></View>
               <Text style={styles.label}>Riferimento Progetto costruttivo</Text>
             </View>
             <View style={styles.sectionColumn}>
@@ -118,6 +130,7 @@ const createPagedContent = (data: FormInputs) => {
           <View style={styles.rowLine}></View>
            <View style={styles.sectionRow}>
             <View style={[styles.sectionColumn, styles.verticalDivider]}>
+              <View style={styles.verticalDividerLine}></View>
               <Text style={styles.label}>Ubicazione - Localizzazione</Text>
             </View>
             <View style={styles.sectionColumn}>
@@ -127,12 +140,14 @@ const createPagedContent = (data: FormInputs) => {
           <View style={styles.rowLine}></View>
            <View style={styles.sectionRowLast}>
             <View style={[styles.sectionColumn, styles.verticalDivider]}>
+              <View style={styles.verticalDividerLine}></View>
               <Text style={styles.label}>Scheda controllo lavorazione</Text>
             </View>
             <View style={styles.sectionColumn}>
               <Text style={styles.value}>{data.schedaControllo}</Text>
             </View>
           </View>
+          <View style={styles.sectionBorderBottom}></View>
        </View>
 
       {/* Sezione METODO DI VERIFICA */}
@@ -154,7 +169,10 @@ const createPagedContent = (data: FormInputs) => {
       </View>
 
       {/* Sezione OGGETTO DEL SOPRALLUOGO E ESITO CONTROLLO*/}
-      <View style={styles.sectionWrapper}>
+      <View style={[styles.sectionWrapper, { position: 'relative' }]}>
+         <View style={styles.sectionBorderTop}></View>
+         <View style={styles.sectionBorderLeft}></View>
+         <View style={styles.sectionBorderRight}></View>
          <Text style={styles.sectionTitle}>OGGETTO DEL SOPRALLUOGO</Text>
          <View style={styles.sectionRowLast}>
            <View style={styles.sectionColumnFull}>
@@ -177,31 +195,42 @@ const createPagedContent = (data: FormInputs) => {
            ))}
          </View>
           <Text style={styles.noteText}>* Tale osservazione è da considerarsi prescrittiva – da ottemperare</Text>
+         <View style={styles.sectionBorderBottom}></View>
       </View>
       
-      <View style={styles.sectionWrapper} wrap={false}>
+      <View style={[styles.sectionWrapper, { position: 'relative' }]} wrap={false}>
+         <View style={styles.sectionBorderTop}></View>
+         <View style={styles.sectionBorderLeft}></View>
+         <View style={styles.sectionBorderRight}></View>
          <View style={styles.sectionRowLast}>
            <View style={[styles.sectionColumn, styles.verticalDivider]}>
+             <View style={styles.verticalDividerLine}></View>
              <Text style={styles.value}>Nome</Text>
            </View>
            <View style={[styles.sectionColumn, styles.verticalDivider]}>
+             <View style={styles.verticalDividerLine}></View>
              <Text style={styles.value}>!!!!!!!!!</Text>
            </View>
            <View style={[styles.sectionColumn, styles.verticalDivider]}>
+             <View style={styles.verticalDividerLine}></View>
              <Text style={styles.value}>Firma</Text>
            </View>
            <View style={[styles.sectionColumn, styles.verticalDivider]}>
+             <View style={styles.verticalDividerLine}></View>
              <Text style={styles.value}>!!!!!!!!!</Text>
            </View>
            <View style={[styles.sectionColumn, styles.verticalDivider]}>
+             <View style={styles.verticalDividerLine}></View>
              <Text style={styles.value}>Data</Text>
            </View>
            <View style={[styles.sectionColumn, styles.verticalDivider]}>
+             <View style={styles.verticalDividerLine}></View>
               <Text style={styles.value}>
                   {format(new Date(data.dataVerbale), 'dd/MM/yyyy', { locale: it })}
               </Text>
            </View>
          </View>
+         <View style={styles.sectionBorderBottom}></View>
       </View>
     </>
   );
@@ -312,35 +341,9 @@ const styles = StyleSheet.create({
   borderedSection: {
     marginTop: 15,
   },
-  // Nuovi stili per bordi compatibili delle sezioni
-  sectionBorderLeft: {
-    width: 1,
-    backgroundColor: '#000',
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    bottom: 0,
-  },
-  sectionBorderRight: {
-    width: 1,
-    backgroundColor: '#000',
-    position: 'absolute',
-    right: 0,
-    top: 0,
-    bottom: 0,
-  },
-  sectionBorderTop: {
-    height: 1,
-    backgroundColor: '#000',
-  },
-  sectionBorderBottom: {
-    height: 1,
-    backgroundColor: '#000',
-  },
   // Container per sezione con wrapper di bordi
   sectionWrapper: {
     marginTop: 15,
-    border: '1 solid #000',
   },
   unBorderedSection: {
     marginTop: 15,
@@ -384,7 +387,40 @@ const styles = StyleSheet.create({
   },
   // Stile per i bordi verticali tra le colonne
   verticalDivider: {
-    borderRight: '0.5 solid #ccc',
+    position: 'relative',
+  },
+  verticalDividerLine: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    bottom: 0,
+    width: 0.5,
+    backgroundColor: '#ccc',
+  },
+  // Stili per i bordi delle sezioni
+  sectionBorderTop: {
+    height: 1,
+    backgroundColor: '#000',
+  },
+  sectionBorderBottom: {
+    height: 1,
+    backgroundColor: '#000',
+  },
+  sectionBorderLeft: {
+    width: 1,
+    backgroundColor: '#000',
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    bottom: 0,
+  },
+  sectionBorderRight: {
+    width: 1,
+    backgroundColor: '#000',
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    bottom: 0,
   },
   label: {
     fontWeight: 'bold',
