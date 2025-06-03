@@ -477,7 +477,11 @@ interface PDFDocumentProps {
   data: FormInputs;
 }
 
-const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => {
+interface PDFDocumentWrapperProps {
+  data: FormInputs;
+}
+
+const PDFDocumentWrapper: React.FC<PDFDocumentWrapperProps> = ({ data }) => {
   const { compressedImages, isLoading, error } = useCompressedImages();
 
   // Mostra il componente di loading durante la compressione delle immagini
@@ -490,6 +494,15 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => {
     console.warn('PDFDocument: Utilizzo immagini fallback a causa di errori:', error);
   }
 
+  return <PDFDocument data={data} compressedImages={compressedImages} />;
+};
+
+interface PDFDocumentProps {
+  data: FormInputs;
+  compressedImages: Record<string, string>;
+}
+
+const PDFDocument: React.FC<PDFDocumentProps> = ({ data, compressedImages }) => {
   const { mainContent } = createPagedContent(data, compressedImages);
 
   return (
@@ -517,4 +530,5 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => {
   );
 };
 
-export default PDFDocument 
+export default PDFDocumentWrapper
+export { PDFDocument } 

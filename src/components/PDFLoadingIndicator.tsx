@@ -37,7 +37,7 @@ const PDFLoadingIndicator: React.FC<PDFLoadingIndicatorProps> = ({
         fontSize: '14px',
         color: '#666',
         textAlign: 'center',
-        fontFamily: 'Arial, sans-serif'
+        fontFamily: 'system-ui, -apple-system, sans-serif'
       }}>
         {message}
       </p>
@@ -47,7 +47,7 @@ const PDFLoadingIndicator: React.FC<PDFLoadingIndicatorProps> = ({
         fontSize: '12px',
         color: '#999',
         textAlign: 'center',
-        fontFamily: 'Arial, sans-serif'
+        fontFamily: 'system-ui, -apple-system, sans-serif'
       }}>
         Ottimizzazione per una migliore qualità PDF...
       </p>
