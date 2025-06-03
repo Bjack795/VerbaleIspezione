@@ -380,6 +380,10 @@ const styles = StyleSheet.create({
     height: 0.5,
     backgroundColor: '#000',
   },
+  sectionLineLight: {
+    height: 0.5,
+    backgroundColor: '#525250',
+  },
   // Stile per le righe all'interno delle sezioni
   sectionRow: {
     flexDirection: 'row',
