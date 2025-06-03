@@ -205,39 +205,22 @@ const createPagedContent = (data: FormInputs, compressedImages: Record<string, s
          <View style={styles.sectionRowLast}>
            <View style={[styles.sectionColumn, styles.verticalDivider]}>
              <View style={styles.verticalDividerLine}></View>
-             <Text style={styles.value}>Nome</Text>
+             <Text style={styles.value}>Ispettore</Text>
            </View>
            <View style={[styles.sectionColumn, styles.verticalDivider]}>
              <View style={styles.verticalDividerLine}></View>
-             <Text style={styles.value}>!!!!!!!!!</Text>
+             <Text style={styles.value}>NOME COGNOME</Text>
            </View>
            <View style={[styles.sectionColumn, styles.verticalDivider]}>
              <View style={styles.verticalDividerLine}></View>
-             <Text style={styles.value}>Firma</Text>
+             <Text style={styles.value}>Per conto di</Text>
            </View>
-           <View style={[styles.sectionColumn, styles.verticalDivider]}>
-             <View style={styles.verticalDividerLine}></View>
-             <Text style={styles.value}>!!!!!!!!!</Text>
-           </View>
-           <View style={[styles.sectionColumn, styles.verticalDivider]}>
-             <View style={styles.verticalDividerLine}></View>
-             <Text style={styles.value}>Data</Text>
-           </View>
-           <View style={[styles.sectionColumn, styles.verticalDivider]}>
-             <View style={styles.verticalDividerLine}></View>
-              <Text style={styles.value}>
-                  {format(new Date(data.dataVerbale), 'dd/MM/yyyy', { locale: it })}
-              </Text>
-           </View>
+           
          </View>
          <View style={styles.sectionRowLast}>
            <View style={[styles.sectionColumn, styles.verticalDivider]}>
              <View style={styles.verticalDividerLine}></View>
-             <Text style={styles.value}>Nome</Text>
-           </View>
-           <View style={[styles.sectionColumn, styles.verticalDivider]}>
-             <View style={styles.verticalDividerLine}></View>
-             <Text style={styles.value}>!!!!!!!!!</Text>
+             <Text style={styles.value}>Mauro Eugenio Giuliani</Text>
            </View>
            <View style={[styles.sectionColumn, styles.verticalDivider]}>
              <View style={styles.verticalDividerLine}></View>
