@@ -33,22 +33,22 @@ export interface ImageCompressionConfig {
  * Configurazione predefinita per la compressione delle immagini a 150 DPI
  */
 export const defaultImageCompressionConfig: ImageCompressionConfig = {
-  targetDPI: 150,
-  defaultQuality: 0.75, // Qualità buona per 150 DPI
+  targetDPI: 250,
+  defaultQuality: 0.85, // Qualità alta per 250 DPI
   logoMaxDimensions: {
-    width: 32,   // Dimensione piccola per logo
-    height: 32,  
-    quality: 0.8 // Qualità decente per logo
+    width: 50,   // Dimensione aumentata per 250 DPI
+    height: 50,  
+    quality: 0.9 // Qualità alta per logo a 250 DPI
   },
   checkboxMaxDimensions: {
-    width: 10,   // Dimensione minima per checkbox
-    height: 10,  
-    quality: 0.7 // Qualità standard per checkbox
+    width: 16,   // Dimensione aumentata per 250 DPI
+    height: 16,  
+    quality: 0.8 // Qualità buona per checkbox a 250 DPI
   },
   reportImageDimensions: {
-    width: 800,  // Dimensioni corrette per 150 DPI (circa 13.5cm a 150 DPI)
-    height: 600, // Altezza proporzionale (circa 10cm a 150 DPI)
-    quality: 1 // Qualità buona per mantenere dettagli a 150 DPI
+    width: 1200,  // Dimensioni corrette per 250 DPI (circa 12cm a 250 DPI)
+    height: 900,  // Altezza proporzionale (circa 9cm a 250 DPI)
+    quality: 1    // Qualità massima per mantenere dettagli a 250 DPI
   },
   loadTimeout: 10000 // 10 secondi
 };
@@ -78,22 +78,22 @@ export const highQualityImageConfig: ImageCompressionConfig = {
  * Configurazione per dimensioni file ultra-ridotte (pochi KB)
  */
 export const ultraCompactImageConfig: ImageCompressionConfig = {
-  targetDPI: 150,
-  defaultQuality: 0.6, // Qualità accettabile anche in modalità compatta
+  targetDPI: 250,
+  defaultQuality: 0.75, // Qualità buona anche in modalità compatta per 250 DPI
   logoMaxDimensions: {
-    width: 24,   // Logo minuscolo
-    height: 24,
-    quality: 0.7
+    width: 40,   // Logo ridotto ma adeguato per 250 DPI
+    height: 40,
+    quality: 0.85
   },
   checkboxMaxDimensions: {
-    width: 8,    // Checkbox microscopica
-    height: 8,
-    quality: 0.6
+    width: 12,   // Checkbox piccola ma leggibile a 250 DPI
+    height: 12,
+    quality: 0.75
   },
   reportImageDimensions: {
-    width: 600,  // Dimensioni ridotte ma ancora adeguate per 150 DPI (circa 10cm)
-    height: 450, // Mantiene proporzioni 4:3
-    quality: 0.6 // Qualità sufficiente per 150 DPI
+    width: 800,  // Dimensioni compatte ma adeguate per 250 DPI (circa 8cm)
+    height: 600, // Mantiene proporzioni 4:3
+    quality: 0.8 // Qualità buona per 250 DPI
   },
   loadTimeout: 10000
 };
@@ -103,21 +103,21 @@ export const ultraCompactImageConfig: ImageCompressionConfig = {
  */
 export const compactImageConfig: ImageCompressionConfig = {
   ...defaultImageCompressionConfig,
-  targetDPI: 150, // Mantiene 150 DPI anche in modalità compatta
-  defaultQuality: 0.65,
+  targetDPI: 250, // 250 DPI anche in modalità compatta
+  defaultQuality: 0.8,
   logoMaxDimensions: {
-    width: 28,
-    height: 28,
-    quality: 0.75
+    width: 45,
+    height: 45,
+    quality: 0.85
   },
   checkboxMaxDimensions: {
-    width: 8,
-    height: 8,
-    quality: 0.65
+    width: 14,
+    height: 14,
+    quality: 0.8
   },
   reportImageDimensions: {
-    width: 700,  // Dimensioni intermedie per 150 DPI (circa 12cm)
-    height: 525, // Mantiene proporzioni 4:3
-    quality: 0.65 // Qualità intermedia per 150 DPI
+    width: 1000, // Dimensioni intermedie per 250 DPI (circa 10cm)
+    height: 750, // Mantiene proporzioni 4:3
+    quality: 0.9 // Qualità alta per 250 DPI
   }
 }; 

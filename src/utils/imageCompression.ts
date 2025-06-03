@@ -12,17 +12,17 @@ interface ImageCompressionOptions {
 }
 
 /**
- * Comprime un'immagine a 150 DPI e restituisce una versione ottimizzata
+ * Comprime un'immagine a 250 DPI e restituisce una versione ottimizzata
  */
-export const compressImageTo150DPI = async (
+export const compressImageTo250DPI = async (
   imageSrc: string,
   options: ImageCompressionOptions = {}
-): Promise<string> => {
+  ): Promise<string> => {
   const {
-    targetDPI = 150,
+    targetDPI = 250,
     quality = 0.8,
-    maxWidth = 800,
-    maxHeight = 600
+    maxWidth = 1200,
+    maxHeight = 900
   } = options;
 
   return new Promise((resolve, reject) => {
@@ -44,7 +44,7 @@ export const compressImageTo150DPI = async (
         
         console.log(`Immagine originale: ${originalWidth}x${originalHeight}px`);
         
-        // Calcola le dimensioni target per 150 DPI mantenendo proporzioni
+        // Calcola le dimensioni target per 250 DPI mantenendo proporzioni
         const aspectRatio = originalWidth / originalHeight;
         let targetWidth, targetHeight;
         
@@ -69,7 +69,7 @@ export const compressImageTo150DPI = async (
           }
         }
         
-        console.log(`Immagine ridimensionata per ${targetDPI} DPI: ${targetWidth}x${targetHeight}px`);
+        console.log(`Immagine ottimizzata per ${targetDPI} DPI: ${targetWidth}x${targetHeight}px`);
         
         // Imposta le dimensioni del canvas (simile a PIL resize)
         canvas.width = targetWidth;
@@ -119,7 +119,7 @@ export const compressMultipleImages = async (
 ): Promise<Record<string, string>> => {
   const compressionPromises = imageSources.map(async ({ key, src, options }) => {
     try {
-      const compressedSrc = await compressImageTo150DPI(src, options);
+      const compressedSrc = await compressImageTo250DPI(src, options);
       return { key, compressedSrc };
     } catch (error) {
       console.warn(`Errore nella compressione dell'immagine ${key}:`, error);
@@ -139,7 +139,7 @@ export const compressMultipleImages = async (
 };
 
 /**
- * Comprime un File immagine del report a 150 DPI
+ * Comprime un File immagine del report a 250 DPI
  */
 export const compressReportImage = async (
   imageFile: File,
@@ -151,7 +151,7 @@ export const compressReportImage = async (
     reader.onload = async (e) => {
       try {
         const imageSrc = e.target?.result as string;
-        const compressedDataUrl = await compressImageTo150DPI(imageSrc, {
+        const compressedDataUrl = await compressImageTo250DPI(imageSrc, {
           targetDPI: config.targetDPI,
           maxWidth: config.reportImageDimensions.width,
           maxHeight: config.reportImageDimensions.height,
