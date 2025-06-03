@@ -28,16 +28,16 @@ export interface ImageCompressionConfig {
  */
 export const defaultImageCompressionConfig: ImageCompressionConfig = {
   targetDPI: 150,
-  defaultQuality: 0.85,
+  defaultQuality: 0.8,
   logoMaxDimensions: {
-    width: 120,
-    height: 120,
-    quality: 0.9 // Qualità più alta per il logo
+    width: 100,  // Dimensione massima per logo a 150 DPI
+    height: 100, // Dimensione massima per logo a 150 DPI
+    quality: 0.85 // Qualità buona per il logo
   },
   checkboxMaxDimensions: {
-    width: 24,
-    height: 24,
-    quality: 0.8 // Qualità standard per le checkbox
+    width: 20,   // Dimensione massima per checkbox a 150 DPI
+    height: 20,  // Dimensione massima per checkbox a 150 DPI
+    quality: 0.75 // Qualità adeguata per checkbox
   },
   loadTimeout: 10000 // 10 secondi
 };

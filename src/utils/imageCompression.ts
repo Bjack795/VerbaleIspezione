@@ -40,26 +40,48 @@ export const compressImageTo150DPI = async (
           return;
         }
 
-        // Calcola le dimensioni ottimali basate su 150 DPI
-        // DPI standard per web è 72, quindi fattore di ridimensionamento
-        const scaleFactor = targetDPI / 72;
-        
         let { width, height } = img;
         
-        // Applica il ridimensionamento per DPI
-        width = Math.floor(width / scaleFactor);
-        height = Math.floor(height / scaleFactor);
+        console.log(`Immagine originale: ${width}x${height}px`);
         
-        // Assicurati che non superi le dimensioni massime
-        if (width > maxWidth) {
-          height = (height * maxWidth) / width;
-          width = maxWidth;
+        // Calcola le dimensioni ottimali per 150 DPI
+        // Standard web DPI è 96, quindi fattore di scala per 150 DPI
+        const webDPI = 96;
+        const dpiScaleFactor = targetDPI / webDPI;
+        
+        // Applica il fattore DPI per ottimizzare per 150 DPI
+        let targetWidth = Math.round(width * dpiScaleFactor);
+        let targetHeight = Math.round(height * dpiScaleFactor);
+        
+        // Assicurati che non superi le dimensioni massime (limite superiore)
+        const aspectRatio = width / height;
+        
+        if (targetWidth > maxWidth || targetHeight > maxHeight) {
+          if (targetWidth > targetHeight) {
+            // Immagine orizzontale
+            targetWidth = Math.min(targetWidth, maxWidth);
+            targetHeight = Math.round(targetWidth / aspectRatio);
+            
+            if (targetHeight > maxHeight) {
+              targetHeight = maxHeight;
+              targetWidth = Math.round(targetHeight * aspectRatio);
+            }
+          } else {
+            // Immagine verticale o quadrata
+            targetHeight = Math.min(targetHeight, maxHeight);
+            targetWidth = Math.round(targetHeight * aspectRatio);
+            
+            if (targetWidth > maxWidth) {
+              targetWidth = maxWidth;
+              targetHeight = Math.round(targetWidth / aspectRatio);
+            }
+          }
         }
         
-        if (height > maxHeight) {
-          width = (width * maxHeight) / height;
-          height = maxHeight;
-        }
+        width = targetWidth;
+        height = targetHeight;
+        
+        console.log(`Immagine ottimizzata per ${targetDPI} DPI: ${width}x${height}px`);
         
         // Imposta le dimensioni del canvas
         canvas.width = width;
@@ -72,8 +94,14 @@ export const compressImageTo150DPI = async (
         // Disegna l'immagine ridimensionata
         ctx.drawImage(img, 0, 0, width, height);
         
-        // Converti in base64 con compressione
+        // Converti in base64 con compressione JPEG per ridurre la dimensione
         const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+        
+        // Log della riduzione dimensione
+        const originalSize = imageSrc.length;
+        const compressedSize = compressedDataUrl.length;
+        const reduction = ((originalSize - compressedSize) / originalSize * 100).toFixed(1);
+        console.log(`Riduzione dimensione: ${reduction}% (da ${originalSize} a ${compressedSize} caratteri)`);
         
         resolve(compressedDataUrl);
       } catch (error) {
