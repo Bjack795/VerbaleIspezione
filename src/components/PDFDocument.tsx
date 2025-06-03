@@ -238,7 +238,10 @@ const createPagedContent = (data: FormInputs, compressedImages: Record<string, s
            </View>
            <View style={[styles.sectionColumn, styles.verticalDivider]}>
              <View style={styles.verticalDividerLine}></View>
-             <Text style={styles.value}>!!!!!!!!!</Text>
+             <Image
+              src={compressedImages.firma}
+              style={styles.logo}
+            />
            </View>
 
          </View>
@@ -496,6 +499,7 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data, compressedImages }) => 
   // Fallback alle immagini originali se non sono fornite immagini compresse
   const imagesToUse = compressedImages || {
     logo: `${import.meta.env.BASE_URL}logo.png`,
+    firma: `${import.meta.env.BASE_URL}firma.jpg`,
     checkbox_checked: `${import.meta.env.BASE_URL}images/checkbox_checked.png`,
     checkbox_unchecked: `${import.meta.env.BASE_URL}images/checkbox_unchecked.png`
   };
