@@ -71,7 +71,7 @@ const createPagedContent = (data: FormInputs, compressedImages: Record<string, s
          <View style={styles.sectionRowLast}>
            <View style={[styles.sectionColumn, styles.verticalDivider]}>
              <View style={styles.verticalDividerLine}></View>
-             <Text style={styles.sectionSubtitle}>Data</Text>
+             <Text style={styles.sectionSubtitle}>Data ispezione</Text>
              <Text style={styles.value}>
                {format(new Date(data.dataIspezione), 'dd/MM/yyyy', { locale: it })}
              </Text>
@@ -220,7 +220,18 @@ const createPagedContent = (data: FormInputs, compressedImages: Record<string, s
              <Text style={styles.value}>Mauro Eugenio Giuliani</Text>
            </View>
          </View>
+         <View style={styles.sectionLine}></View>
          <View style={styles.sectionRowLast}>
+           <View style={[styles.sectionColumn, styles.verticalDivider]}>
+              <View style={styles.verticalDividerLine}></View>
+              <Text style={styles.value}>Data verbale</Text>
+           </View>
+           <View style={[styles.sectionColumn, styles.verticalDivider]}>
+             <View style={styles.verticalDividerLine}></View>
+              <Text style={styles.value}>
+                  {format(new Date(data.dataVerbale), 'dd/MM/yyyy', { locale: it })}
+              </Text>
+           </View>
            <View style={[styles.sectionColumn, styles.verticalDivider]}>
              <View style={styles.verticalDividerLine}></View>
              <Text style={styles.value}>Firma</Text>
@@ -229,16 +240,7 @@ const createPagedContent = (data: FormInputs, compressedImages: Record<string, s
              <View style={styles.verticalDividerLine}></View>
              <Text style={styles.value}>!!!!!!!!!</Text>
            </View>
-           <View style={[styles.sectionColumn, styles.verticalDivider]}>
-             <View style={styles.verticalDividerLine}></View>
-             <Text style={styles.value}>Data</Text>
-           </View>
-           <View style={[styles.sectionColumn, styles.verticalDivider]}>
-             <View style={styles.verticalDividerLine}></View>
-              <Text style={styles.value}>
-                  {format(new Date(data.dataVerbale), 'dd/MM/yyyy', { locale: it })}
-              </Text>
-           </View>
+
          </View>
          {/* Bordi esterni - renderizzati per ultimi */}
          <View style={styles.sectionBorderTop}></View>
