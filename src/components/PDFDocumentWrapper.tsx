@@ -1,23 +1,21 @@
 import React from 'react';
 import { FormInputs } from '../types/form';
 import { useCompressedImages } from '../hooks/useCompressedImages';
-import PDFLoadingIndicator from './PDFLoadingIndicator';
-import { PDFDocument } from './PDFDocument';
+import PDFDocument from './PDFDocument';
 
 interface PDFDocumentWrapperProps {
   data: FormInputs;
 }
 
 /**
- * Wrapper per il PDFDocument che gestisce il caricamento e la compressione delle immagini
- * Prima di renderizzare il PDF effettivo
+ * Wrapper per il PDFDocument che gestisce la compressione delle immagini a 150 DPI
  */
 const PDFDocumentWrapper: React.FC<PDFDocumentWrapperProps> = ({ data }) => {
   const { compressedImages, isLoading, error } = useCompressedImages();
 
-  // Mostra il componente di loading durante la compressione delle immagini
+  // Non renderizzare finché le immagini non sono pronte
   if (isLoading) {
-    return <PDFLoadingIndicator />;
+    return null;
   }
 
   // Log degli errori se presenti, ma continua con il rendering
