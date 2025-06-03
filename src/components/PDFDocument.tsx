@@ -4,8 +4,6 @@ import { FormInputs } from '../types/form'
 import { colors } from '../constants/theme'
 import { format } from 'date-fns'
 import { it } from 'date-fns/locale'
-import { useCompressedImages } from '../hooks/useCompressedImages'
-import PDFLoadingIndicator from './PDFLoadingIndicator'
 
 // Funzione per calcolare il numero stimato di pagine
 const calculateExpectedPages = (data: FormInputs): number => {
@@ -477,26 +475,6 @@ interface PDFDocumentProps {
   data: FormInputs;
 }
 
-interface PDFDocumentWrapperProps {
-  data: FormInputs;
-}
-
-const PDFDocumentWrapper: React.FC<PDFDocumentWrapperProps> = ({ data }) => {
-  const { compressedImages, isLoading, error } = useCompressedImages();
-
-  // Mostra il componente di loading durante la compressione delle immagini
-  if (isLoading) {
-    return <PDFLoadingIndicator />;
-  }
-
-  // Log degli errori se presenti, ma continua con il rendering
-  if (error) {
-    console.warn('PDFDocument: Utilizzo immagini fallback a causa di errori:', error);
-  }
-
-  return <PDFDocument data={data} compressedImages={compressedImages} />;
-};
-
 interface PDFDocumentProps {
   data: FormInputs;
   compressedImages: Record<string, string>;
@@ -530,5 +508,4 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data, compressedImages }) => 
   );
 };
 
-export default PDFDocumentWrapper
-export { PDFDocument } 
+export default PDFDocument 
