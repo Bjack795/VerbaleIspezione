@@ -393,11 +393,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingVertical: 5,
   },
+  sectionRowLastCentered: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
   // Stile per le colonne all'interno delle righe
   sectionColumnCentered: {
     flexGrow: 1,
     flexBasis: '50%',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   sectionColumn: {
     flexGrow: 1,
