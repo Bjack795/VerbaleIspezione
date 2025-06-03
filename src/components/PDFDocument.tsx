@@ -4,6 +4,8 @@ import { FormInputs } from '../types/form'
 import { colors } from '../constants/theme'
 import { format } from 'date-fns'
 import { it } from 'date-fns/locale'
+import { useCompressedImages } from '../hooks/useCompressedImages'
+import PDFLoadingIndicator from './PDFLoadingIndicator'
 
 // Funzione per calcolare il numero stimato di pagine
 const calculateExpectedPages = (data: FormInputs): number => {
@@ -52,7 +54,7 @@ const calculateExpectedPages = (data: FormInputs): number => {
 };
 
 // Funzione per creare il contenuto suddiviso per pagine
-const createPagedContent = (data: FormInputs) => {
+const createPagedContent = (data: FormInputs, compressedImages: Record<string, string>) => {
   const totalPages = calculateExpectedPages(data);
   
   // Contenuto principale (quello che hai già)
@@ -159,7 +161,7 @@ const createPagedContent = (data: FormInputs) => {
            {Object.entries(data.tipoIspezione).map(([key, value]) => (
              <View key={key} style={{ flexDirection: 'row'}}>
                <Image
-                 src={`${import.meta.env.BASE_URL}images/${value ? 'checkbox_checked' : 'checkbox_unchecked'}.png`}
+                 src={compressedImages[value ? 'checkbox_checked' : 'checkbox_unchecked']}
                  style={{ width: 12, height: 12, marginRight: 6 }}
                />
                <Text style={styles.checkboxOption}>
@@ -184,7 +186,7 @@ const createPagedContent = (data: FormInputs) => {
            {Object.entries(data.esito).map(([key, value]) => (
              <View key={key} style={{ flexDirection: 'row'}}>
                <Image
-                 src={`${import.meta.env.BASE_URL}images/${value ? 'checkbox_checked' : 'checkbox_unchecked'}.png`}
+                 src={compressedImages[value ? 'checkbox_checked' : 'checkbox_unchecked']}
                  style={{ width: 12, height: 12, marginRight: 6 }}
                />
                <Text style={styles.checkboxOption}>
@@ -476,7 +478,19 @@ interface PDFDocumentProps {
 }
 
 const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => {
-  const { mainContent } = createPagedContent(data);
+  const { compressedImages, isLoading, error } = useCompressedImages();
+
+  // Mostra il componente di loading durante la compressione delle immagini
+  if (isLoading) {
+    return <PDFLoadingIndicator />;
+  }
+
+  // Log degli errori se presenti, ma continua con il rendering
+  if (error) {
+    console.warn('PDFDocument: Utilizzo immagini fallback a causa di errori:', error);
+  }
+
+  const { mainContent } = createPagedContent(data, compressedImages);
 
   return (
     <Document>
@@ -485,7 +499,7 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data }) => {
         <View style={styles.header} fixed>
           <View style={styles.logoRow}>
             <Image
-              src={`${import.meta.env.BASE_URL}logo.png`}
+              src={compressedImages.logo}
               style={styles.logo}
             />
             <Text style={styles.companyName}>Redesco Progetti srl</Text>
