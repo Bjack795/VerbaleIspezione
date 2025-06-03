@@ -405,10 +405,18 @@ const styles = StyleSheet.create({
   sectionBorderTop: {
     height: 1,
     backgroundColor: 'black',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
   },
   sectionBorderBottom: {
     height: 1,
     backgroundColor: 'black',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
   },
   sectionBorderLeft: {
     width: 1,
