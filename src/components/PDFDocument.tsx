@@ -105,7 +105,7 @@ const createPagedContent = (data: FormInputs, compressedImages: Record<string, s
               <Text style={styles.value}>{data.lavorazioneVerificata}</Text>
             </View>
           </View>
-          <View style={styles.rowLine}></View>
+          <View style={styles.sectionLineLight}></View>
            <View style={styles.sectionRow}>
             <View style={[styles.sectionColumn, styles.verticalDivider]}>
               <View style={styles.verticalDividerLine}></View>
@@ -115,7 +115,7 @@ const createPagedContent = (data: FormInputs, compressedImages: Record<string, s
               <Text style={styles.value}>{data.verificaMateriale}</Text>
             </View>
           </View>
-          <View style={styles.rowLine}></View>
+          <View style={styles.sectionLineLight}></View>
            <View style={styles.sectionRow}>
             <View style={[styles.sectionColumn, styles.verticalDivider]}>
               <View style={styles.verticalDividerLine}></View>
@@ -125,7 +125,7 @@ const createPagedContent = (data: FormInputs, compressedImages: Record<string, s
               <Text style={styles.value}>{data.riferimentoProgetto}</Text>
             </View>
           </View>
-          <View style={styles.rowLine}></View>
+          <View style={styles.sectionLineLight}></View>
            <View style={styles.sectionRow}>
             <View style={[styles.sectionColumn, styles.verticalDivider]}>
               <View style={styles.verticalDividerLine}></View>
@@ -135,7 +135,7 @@ const createPagedContent = (data: FormInputs, compressedImages: Record<string, s
               <Text style={styles.value}>{data.ubicazione}</Text>
             </View>
           </View>
-          <View style={styles.rowLine}></View>
+          <View style={styles.sectionLineLight}></View>
            <View style={styles.sectionRowLast}>
             <View style={[styles.sectionColumn, styles.verticalDivider]}>
               <View style={styles.verticalDividerLine}></View>
@@ -439,7 +439,7 @@ const styles = StyleSheet.create({
   },
   // Stili per i bordi delle sezioni
   sectionBorderTop: {
-    height: 0.5,
+    height: 0.8,
     backgroundColor: 'black',
     position: 'absolute',
     top: 0,
@@ -447,7 +447,7 @@ const styles = StyleSheet.create({
     right: 0,
   },
   sectionBorderBottom: {
-    height: 0.5,
+    height: 0.8,
     backgroundColor: 'black',
     position: 'absolute',
     bottom: 0,
@@ -455,7 +455,7 @@ const styles = StyleSheet.create({
     right: 0,
   },
   sectionBorderLeft: {
-    width: 0.5,
+    width: 0.8,
     backgroundColor: 'black',
     position: 'absolute',
     left: 0,
@@ -463,7 +463,7 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
   sectionBorderRight: {
-    width: 0.5,
+    width: 0.8,
     backgroundColor: 'black',
     position: 'absolute',
     right: 0,
