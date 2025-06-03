@@ -40,59 +40,47 @@ export const compressImageTo150DPI = async (
           return;
         }
 
-        let { width, height } = img;
+        const { width: originalWidth, height: originalHeight } = img;
         
-        console.log(`Immagine originale: ${width}x${height}px`);
+        console.log(`Immagine originale: ${originalWidth}x${originalHeight}px`);
         
-        // Calcola le dimensioni ottimali per 150 DPI
-        // Standard web DPI è 96, quindi fattore di scala per 150 DPI
-        const webDPI = 96;
-        const dpiScaleFactor = targetDPI / webDPI;
+        // Calcola le dimensioni target per 150 DPI (simile a PIL resize)
+        const aspectRatio = originalWidth / originalHeight;
+        let targetWidth, targetHeight;
         
-        // Applica il fattore DPI per ottimizzare per 150 DPI
-        let targetWidth = Math.round(width * dpiScaleFactor);
-        let targetHeight = Math.round(height * dpiScaleFactor);
-        
-        // Assicurati che non superi le dimensioni massime (limite superiore)
-        const aspectRatio = width / height;
-        
-        if (targetWidth > maxWidth || targetHeight > maxHeight) {
-          if (targetWidth > targetHeight) {
-            // Immagine orizzontale
-            targetWidth = Math.min(targetWidth, maxWidth);
-            targetHeight = Math.round(targetWidth / aspectRatio);
-            
-            if (targetHeight > maxHeight) {
-              targetHeight = maxHeight;
-              targetWidth = Math.round(targetHeight * aspectRatio);
-            }
-          } else {
-            // Immagine verticale o quadrata
-            targetHeight = Math.min(targetHeight, maxHeight);
+        // Determina le dimensioni finali rispettando maxWidth/maxHeight
+        if (originalWidth > originalHeight) {
+          // Immagine orizzontale - scala in base alla larghezza
+          targetWidth = Math.min(maxWidth, originalWidth);
+          targetHeight = Math.round(targetWidth / aspectRatio);
+          
+          if (targetHeight > maxHeight) {
+            targetHeight = maxHeight;
             targetWidth = Math.round(targetHeight * aspectRatio);
-            
-            if (targetWidth > maxWidth) {
-              targetWidth = maxWidth;
-              targetHeight = Math.round(targetWidth / aspectRatio);
-            }
+          }
+        } else {
+          // Immagine verticale o quadrata - scala in base all'altezza
+          targetHeight = Math.min(maxHeight, originalHeight);
+          targetWidth = Math.round(targetHeight * aspectRatio);
+          
+          if (targetWidth > maxWidth) {
+            targetWidth = maxWidth;
+            targetHeight = Math.round(targetWidth / aspectRatio);
           }
         }
         
-        width = targetWidth;
-        height = targetHeight;
+        console.log(`Immagine ridimensionata per ${targetDPI} DPI: ${targetWidth}x${targetHeight}px`);
         
-        console.log(`Immagine ottimizzata per ${targetDPI} DPI: ${width}x${height}px`);
+        // Imposta le dimensioni del canvas (simile a PIL resize)
+        canvas.width = targetWidth;
+        canvas.height = targetHeight;
         
-        // Imposta le dimensioni del canvas
-        canvas.width = width;
-        canvas.height = height;
-        
-        // Configura il context per una migliore qualità
+        // Configura il context per qualità alta (simile a LANCZOS in PIL)
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = 'high';
         
-        // Disegna l'immagine ridimensionata
-        ctx.drawImage(img, 0, 0, width, height);
+        // Disegna l'immagine ridimensionata (resize + optimize come in PIL)
+        ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
         
         // Converti in base64 con compressione JPEG per ridurre la dimensione
         const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
