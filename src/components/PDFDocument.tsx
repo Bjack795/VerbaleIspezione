@@ -382,7 +382,8 @@ const styles = StyleSheet.create({
   },
   sectionLineLight: {
     height: 0.5,
-    backgroundColor: '#525250',
+    width: 0.5,
+    backgroundColor: '#ccc',
   },
   // Stile per le righe all'interno delle sezioni
   sectionRow: {
