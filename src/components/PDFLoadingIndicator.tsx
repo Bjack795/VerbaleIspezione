@@ -27,7 +27,7 @@ const PDFLoadingIndicator: React.FC<PDFLoadingIndicatorProps> = ({
         height: '40px',
         border: '4px solid #f3f3f3',
         borderTop: '4px solid #3498db',
-        borderRadius: '50%',
+        borderRadius: '20px',
         animation: 'spin 1s linear infinite',
         marginBottom: '15px'
       }} />
