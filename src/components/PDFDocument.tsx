@@ -240,7 +240,7 @@ const createPagedContent = (data: FormInputs, compressedImages: Record<string, s
              <View style={styles.verticalDividerLine}></View>
              <Image
               src={compressedImages.firma}
-              style={styles.logo}
+              style={styles.firma}
             />
            </View>
 
@@ -292,6 +292,10 @@ const styles = StyleSheet.create({
     width: 40, // Dimensione aggiustata per evitare deformazione
     height: 'auto', // Altezza automatica per mantenere proporzioni
     marginRight: 10,
+  },
+  firma: {
+    width: 80, // Dimensione aggiustata per evitare deformazione
+    height: 'auto', // Altezza automatica per mantenere proporzioni
   },
   companyName: {
     fontSize: 10,
