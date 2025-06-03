@@ -230,6 +230,34 @@ const createPagedContent = (data: FormInputs, compressedImages: Record<string, s
               </Text>
            </View>
          </View>
+         <View style={styles.sectionRowLast}>
+           <View style={[styles.sectionColumn, styles.verticalDivider]}>
+             <View style={styles.verticalDividerLine}></View>
+             <Text style={styles.value}>Nome</Text>
+           </View>
+           <View style={[styles.sectionColumn, styles.verticalDivider]}>
+             <View style={styles.verticalDividerLine}></View>
+             <Text style={styles.value}>!!!!!!!!!</Text>
+           </View>
+           <View style={[styles.sectionColumn, styles.verticalDivider]}>
+             <View style={styles.verticalDividerLine}></View>
+             <Text style={styles.value}>Firma</Text>
+           </View>
+           <View style={[styles.sectionColumn, styles.verticalDivider]}>
+             <View style={styles.verticalDividerLine}></View>
+             <Text style={styles.value}>!!!!!!!!!</Text>
+           </View>
+           <View style={[styles.sectionColumn, styles.verticalDivider]}>
+             <View style={styles.verticalDividerLine}></View>
+             <Text style={styles.value}>Data</Text>
+           </View>
+           <View style={[styles.sectionColumn, styles.verticalDivider]}>
+             <View style={styles.verticalDividerLine}></View>
+              <Text style={styles.value}>
+                  {format(new Date(data.dataVerbale), 'dd/MM/yyyy', { locale: it })}
+              </Text>
+           </View>
+         </View>
          {/* Bordi esterni - renderizzati per ultimi */}
          <View style={styles.sectionBorderTop}></View>
          <View style={styles.sectionBorderBottom}></View>
