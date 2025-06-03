@@ -34,21 +34,21 @@ export interface ImageCompressionConfig {
  */
 export const defaultImageCompressionConfig: ImageCompressionConfig = {
   targetDPI: 150,
-  defaultQuality: 0.3, // Qualità molto bassa per file piccoli
+  defaultQuality: 0.75, // Qualità buona per 150 DPI
   logoMaxDimensions: {
-    width: 32,   // Dimensione molto piccola per ridurre drasticamente il file
-    height: 32,  // Dimensione molto piccola per ridurre drasticamente il file
-    quality: 0.4 // Qualità bassa per compressione massima
+    width: 32,   // Dimensione piccola per logo
+    height: 32,  
+    quality: 0.8 // Qualità decente per logo
   },
   checkboxMaxDimensions: {
     width: 10,   // Dimensione minima per checkbox
-    height: 10,  // Dimensione minima per checkbox
-    quality: 0.3 // Qualità molto bassa per checkbox
+    height: 10,  
+    quality: 0.7 // Qualità standard per checkbox
   },
   reportImageDimensions: {
-    width: 400,  // Larghezza massima per immagini del report (ridotta da 5MB originali)
-    height: 300, // Altezza massima per immagini del report
-    quality: 0.3 // Qualità bassa per compressione massima
+    width: 800,  // Dimensioni corrette per 150 DPI (circa 13.5cm a 150 DPI)
+    height: 600, // Altezza proporzionale (circa 10cm a 150 DPI)
+    quality: 0.75 // Qualità buona per mantenere dettagli a 150 DPI
   },
   loadTimeout: 10000 // 10 secondi
 };
@@ -79,21 +79,21 @@ export const highQualityImageConfig: ImageCompressionConfig = {
  */
 export const ultraCompactImageConfig: ImageCompressionConfig = {
   targetDPI: 150,
-  defaultQuality: 0.2, // Qualità minima
+  defaultQuality: 0.6, // Qualità accettabile anche in modalità compatta
   logoMaxDimensions: {
     width: 24,   // Logo minuscolo
     height: 24,
-    quality: 0.3
+    quality: 0.7
   },
   checkboxMaxDimensions: {
     width: 8,    // Checkbox microscopica
     height: 8,
-    quality: 0.2
+    quality: 0.6
   },
   reportImageDimensions: {
-    width: 300,  // Immagini del report piccole per file ultra-compatto
-    height: 200,
-    quality: 0.2 // Qualità minima
+    width: 600,  // Dimensioni ridotte ma ancora adeguate per 150 DPI (circa 10cm)
+    height: 450, // Mantiene proporzioni 4:3
+    quality: 0.6 // Qualità sufficiente per 150 DPI
   },
   loadTimeout: 10000
 };
@@ -103,21 +103,21 @@ export const ultraCompactImageConfig: ImageCompressionConfig = {
  */
 export const compactImageConfig: ImageCompressionConfig = {
   ...defaultImageCompressionConfig,
-  targetDPI: 100,
-  defaultQuality: 0.2,
+  targetDPI: 150, // Mantiene 150 DPI anche in modalità compatta
+  defaultQuality: 0.65,
   logoMaxDimensions: {
     width: 28,
     height: 28,
-    quality: 0.3
+    quality: 0.75
   },
   checkboxMaxDimensions: {
     width: 8,
     height: 8,
-    quality: 0.2
+    quality: 0.65
   },
   reportImageDimensions: {
-    width: 350,  // Immagini del report per configurazione compatta
-    height: 250,
-    quality: 0.25
+    width: 700,  // Dimensioni intermedie per 150 DPI (circa 12cm)
+    height: 525, // Mantiene proporzioni 4:3
+    quality: 0.65 // Qualità intermedia per 150 DPI
   }
 }; 

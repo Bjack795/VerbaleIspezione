@@ -44,28 +44,28 @@ export const compressImageTo150DPI = async (
         
         console.log(`Immagine originale: ${originalWidth}x${originalHeight}px`);
         
-        // Calcola le dimensioni target per 150 DPI (simile a PIL resize)
+        // Calcola le dimensioni target per 150 DPI mantenendo proporzioni
         const aspectRatio = originalWidth / originalHeight;
         let targetWidth, targetHeight;
         
-        // Determina le dimensioni finali rispettando maxWidth/maxHeight
-        if (originalWidth > originalHeight) {
-          // Immagine orizzontale - scala in base alla larghezza
-          targetWidth = Math.min(maxWidth, originalWidth);
-          targetHeight = Math.round(targetWidth / aspectRatio);
-          
-          if (targetHeight > maxHeight) {
-            targetHeight = maxHeight;
-            targetWidth = Math.round(targetHeight * aspectRatio);
-          }
-        } else {
-          // Immagine verticale o quadrata - scala in base all'altezza
-          targetHeight = Math.min(maxHeight, originalHeight);
-          targetWidth = Math.round(targetHeight * aspectRatio);
-          
-          if (targetWidth > maxWidth) {
-            targetWidth = maxWidth;
+        // Scala per adattarsi ai limiti massimi mantenendo le proporzioni
+        const scaleByWidth = maxWidth / originalWidth;
+        const scaleByHeight = maxHeight / originalHeight;
+        const scale = Math.min(scaleByWidth, scaleByHeight, 1); // Non ingrandire mai
+        
+        targetWidth = Math.round(originalWidth * scale);
+        targetHeight = Math.round(originalHeight * scale);
+        
+        // Assicurati che le dimensioni siano almeno minime e rispettino i vincoli
+        targetWidth = Math.max(Math.min(targetWidth, maxWidth), 100); // Min 100px
+        targetHeight = Math.max(Math.min(targetHeight, maxHeight), 75);  // Min 75px
+        
+        // Ricalcola per mantenere proporzioni se necessario
+        if (targetWidth / targetHeight !== aspectRatio) {
+          if (targetWidth / aspectRatio <= maxHeight) {
             targetHeight = Math.round(targetWidth / aspectRatio);
+          } else {
+            targetWidth = Math.round(targetHeight * aspectRatio);
           }
         }
         
