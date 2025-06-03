@@ -220,7 +220,7 @@ const createPagedContent = (data: FormInputs, compressedImages: Record<string, s
              <Text style={styles.value}>Mauro Eugenio Giuliani</Text>
            </View>
          </View>
-         <View style={styles.sectionLine}></View>
+         <View style={styles.sectionLineLight}></View>
          <View style={styles.sectionRowLast}>
            <View style={[styles.sectionColumnCentered, styles.verticalDivider]}>
               <View style={styles.verticalDividerLine}></View>
