@@ -48,7 +48,7 @@ export const defaultImageCompressionConfig: ImageCompressionConfig = {
   reportImageDimensions: {
     width: 800,  // Dimensioni corrette per 150 DPI (circa 13.5cm a 150 DPI)
     height: 600, // Altezza proporzionale (circa 10cm a 150 DPI)
-    quality: 0.75 // Qualità buona per mantenere dettagli a 150 DPI
+    quality: 1 // Qualità buona per mantenere dettagli a 150 DPI
   },
   loadTimeout: 10000 // 10 secondi
 };
