@@ -203,40 +203,40 @@ const createPagedContent = (data: FormInputs, compressedImages: Record<string, s
       
       <View style={[styles.sectionWrapper, { position: 'relative' }]} wrap={false}>
          <View style={styles.sectionRowLast}>
-           <View style={[styles.sectionColumn, styles.verticalDivider]}>
+           <View style={[styles.sectionColumnCentered, styles.verticalDivider]}>
              <View style={styles.verticalDividerLine}></View>
              <Text style={styles.value}>Ispettore</Text>
            </View>
-           <View style={[styles.sectionColumn, styles.verticalDivider]}>
+           <View style={[styles.sectionColumnCentered, styles.verticalDivider]}>
              <View style={styles.verticalDividerLine}></View>
              <Text style={styles.value}>NOME COGNOME</Text>
            </View>
-           <View style={[styles.sectionColumn, styles.verticalDivider]}>
+           <View style={[styles.sectionColumnCentered, styles.verticalDivider]}>
              <View style={styles.verticalDividerLine}></View>
              <Text style={styles.value}>Per conto di</Text>
            </View>
-           <View style={[styles.sectionColumn, styles.verticalDivider]}>
+           <View style={[styles.sectionColumnCentered, styles.verticalDivider]}>
              <View style={styles.verticalDividerLine}></View>
              <Text style={styles.value}>Mauro Eugenio Giuliani</Text>
            </View>
          </View>
          <View style={styles.sectionLine}></View>
          <View style={styles.sectionRowLast}>
-           <View style={[styles.sectionColumn, styles.verticalDivider]}>
+           <View style={[styles.sectionColumnCentered, styles.verticalDivider]}>
               <View style={styles.verticalDividerLine}></View>
               <Text style={styles.value}>Data verbale</Text>
            </View>
-           <View style={[styles.sectionColumn, styles.verticalDivider]}>
+           <View style={[styles.sectionColumnCentered, styles.verticalDivider]}>
              <View style={styles.verticalDividerLine}></View>
               <Text style={styles.value}>
                   {format(new Date(data.dataVerbale), 'dd/MM/yyyy', { locale: it })}
               </Text>
            </View>
-           <View style={[styles.sectionColumn, styles.verticalDivider]}>
+           <View style={[styles.sectionColumnCentered, styles.verticalDivider]}>
              <View style={styles.verticalDividerLine}></View>
              <Text style={styles.value}>Firma</Text>
            </View>
-           <View style={[styles.sectionColumn, styles.verticalDivider]}>
+           <View style={[styles.sectionColumnCentered, styles.verticalDivider]}>
              {/* <View style={styles.verticalDividerLine}></View> */}
              <Image
               src={compressedImages.firma}
@@ -394,6 +394,11 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
   },
   // Stile per le colonne all'interno delle righe
+  sectionColumnCentered: {
+    flexGrow: 1,
+    flexBasis: '50%',
+    alignItems: 'center',
+  },
   sectionColumn: {
     flexGrow: 1,
     flexBasis: '50%',
