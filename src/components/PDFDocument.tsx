@@ -235,9 +235,9 @@ const createPagedContent = (data: FormInputs, compressedImages: Record<string, s
            <View style={[styles.sectionColumn, styles.verticalDivider]}>
              <View style={styles.verticalDividerLine}></View>
              <Text style={styles.value}>Firma</Text>
-           </View>
-           <View style={[styles.sectionColumn, styles.verticalDivider]}>
-             <View style={styles.verticalDividerLine}></View>
+           {/* </View>
+           <View style={[styles.sectionColumn, styles.verticalDivider]}> */}
+             {/* <View style={styles.verticalDividerLine}></View> */}
              <Image
               src={compressedImages.firma}
               style={styles.firma}
@@ -294,8 +294,9 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   firma: {
-    width: 80, // Dimensione aggiustata per evitare deformazione
+    width: 110, // Dimensione aggiustata per evitare deformazione
     height: 'auto', // Altezza automatica per mantenere proporzioni
+    alignItems: 'center',
   },
   companyName: {
     fontSize: 10,
