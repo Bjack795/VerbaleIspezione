@@ -477,11 +477,18 @@ interface PDFDocumentProps {
 
 interface PDFDocumentProps {
   data: FormInputs;
-  compressedImages: Record<string, string>;
+  compressedImages?: Record<string, string>;
 }
 
 const PDFDocument: React.FC<PDFDocumentProps> = ({ data, compressedImages }) => {
-  const { mainContent } = createPagedContent(data, compressedImages);
+  // Fallback alle immagini originali se non sono fornite immagini compresse
+  const imagesToUse = compressedImages || {
+    logo: `${import.meta.env.BASE_URL}logo.png`,
+    checkbox_checked: `${import.meta.env.BASE_URL}images/checkbox_checked.png`,
+    checkbox_unchecked: `${import.meta.env.BASE_URL}images/checkbox_unchecked.png`
+  };
+
+  const { mainContent } = createPagedContent(data, imagesToUse);
 
   return (
     <Document>
@@ -490,7 +497,7 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data, compressedImages }) => 
         <View style={styles.header} fixed>
           <View style={styles.logoRow}>
             <Image
-              src={compressedImages.logo}
+              src={imagesToUse.logo}
               style={styles.logo}
             />
             <Text style={styles.companyName}>Redesco Progetti srl</Text>
