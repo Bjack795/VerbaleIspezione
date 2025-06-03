@@ -82,8 +82,13 @@ export const compressImageTo150DPI = async (
         // Disegna l'immagine ridimensionata (resize + optimize come in PIL)
         ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
         
-        // Converti in base64 con compressione JPEG per ridurre la dimensione
-        const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+        // Usa PNG per immagini molto piccole (checkbox), JPEG per altre
+        const format = (targetWidth <= 12 && targetHeight <= 12) ? 'image/png' : 'image/jpeg';
+        const compressedDataUrl = format === 'image/png' 
+          ? canvas.toDataURL('image/png')
+          : canvas.toDataURL('image/jpeg', quality);
+        
+        console.log(`Formato usato: ${format}`);
         
         // Log della riduzione dimensione
         const originalSize = imageSrc.length;
@@ -134,7 +139,69 @@ export const compressMultipleImages = async (
 };
 
 /**
- * Precarica e comprimi le immagini necessarie per il PDF
+ * Comprime un File immagine del report a 150 DPI
+ */
+export const compressReportImage = async (
+  imageFile: File,
+  config: ImageCompressionConfig = defaultImageCompressionConfig
+): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    
+    reader.onload = async (e) => {
+      try {
+        const imageSrc = e.target?.result as string;
+        const compressedDataUrl = await compressImageTo150DPI(imageSrc, {
+          targetDPI: config.targetDPI,
+          maxWidth: config.reportImageDimensions.width,
+          maxHeight: config.reportImageDimensions.height,
+          quality: config.reportImageDimensions.quality
+        });
+        
+        resolve(compressedDataUrl);
+      } catch (error) {
+        reject(error);
+      }
+    };
+    
+    reader.onerror = () => {
+      reject(new Error(`Errore nella lettura del file: ${imageFile.name}`));
+    };
+    
+    reader.readAsDataURL(imageFile);
+  });
+};
+
+/**
+ * Comprime tutte le immagini del report dell'utente
+ */
+export const compressAllReportImages = async (
+  imageFiles: File[],
+  config: ImageCompressionConfig = defaultImageCompressionConfig
+): Promise<string[]> => {
+  console.log(`Inizio compressione di ${imageFiles.length} immagini del report a ${config.targetDPI} DPI...`);
+  
+  const compressionPromises = imageFiles.map(async (file, index) => {
+    try {
+      console.log(`Compressione immagine ${index + 1}/${imageFiles.length}: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`);
+      const compressed = await compressReportImage(file, config);
+      console.log(`Immagine ${index + 1} compressa con successo`);
+      return compressed;
+    } catch (error) {
+      console.error(`Errore nella compressione dell'immagine ${file.name}:`, error);
+      // Fallback: usa l'immagine originale
+      return URL.createObjectURL(file);
+    }
+  });
+  
+  const results = await Promise.all(compressionPromises);
+  console.log(`Compressione completata per ${results.length} immagini del report`);
+  
+  return results;
+};
+
+/**
+ * Precarica e comprimi le immagini necessarie per il PDF (logo e checkbox)
  */
 export const preloadAndCompressPDFImages = async (
   config: ImageCompressionConfig = defaultImageCompressionConfig
@@ -174,6 +241,6 @@ export const preloadAndCompressPDFImages = async (
     }
   ];
   
-  console.log(`Compressione immagini a ${config.targetDPI} DPI con qualità ${config.defaultQuality}`);
+  console.log(`Compressione logo e checkbox a ${config.targetDPI} DPI`);
   return await compressMultipleImages(imagesToCompress);
 }; 

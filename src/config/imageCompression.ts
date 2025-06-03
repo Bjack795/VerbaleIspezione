@@ -19,6 +19,12 @@ export interface ImageCompressionConfig {
     height: number;
     quality: number;
   };
+  /** Dimensioni massime per le immagini del report */
+  reportImageDimensions: {
+    width: number;
+    height: number;
+    quality: number;
+  };
   /** Timeout per il caricamento delle immagini (ms) */
   loadTimeout: number;
 }
@@ -28,16 +34,21 @@ export interface ImageCompressionConfig {
  */
 export const defaultImageCompressionConfig: ImageCompressionConfig = {
   targetDPI: 150,
-  defaultQuality: 0.8,
+  defaultQuality: 0.3, // Qualità molto bassa per file piccoli
   logoMaxDimensions: {
-    width: 100,  // Dimensione massima per logo a 150 DPI
-    height: 100, // Dimensione massima per logo a 150 DPI
-    quality: 0.85 // Qualità buona per il logo
+    width: 32,   // Dimensione molto piccola per ridurre drasticamente il file
+    height: 32,  // Dimensione molto piccola per ridurre drasticamente il file
+    quality: 0.4 // Qualità bassa per compressione massima
   },
   checkboxMaxDimensions: {
-    width: 20,   // Dimensione massima per checkbox a 150 DPI
-    height: 20,  // Dimensione massima per checkbox a 150 DPI
-    quality: 0.75 // Qualità adeguata per checkbox
+    width: 10,   // Dimensione minima per checkbox
+    height: 10,  // Dimensione minima per checkbox
+    quality: 0.3 // Qualità molto bassa per checkbox
+  },
+  reportImageDimensions: {
+    width: 400,  // Larghezza massima per immagini del report (ridotta da 5MB originali)
+    height: 300, // Altezza massima per immagini del report
+    quality: 0.3 // Qualità bassa per compressione massima
   },
   loadTimeout: 10000 // 10 secondi
 };
@@ -64,22 +75,49 @@ export const highQualityImageConfig: ImageCompressionConfig = {
 };
 
 /**
- * Configurazione per dimensioni file ridotte (100 DPI)
+ * Configurazione per dimensioni file ultra-ridotte (pochi KB)
+ */
+export const ultraCompactImageConfig: ImageCompressionConfig = {
+  targetDPI: 150,
+  defaultQuality: 0.2, // Qualità minima
+  logoMaxDimensions: {
+    width: 24,   // Logo minuscolo
+    height: 24,
+    quality: 0.3
+  },
+  checkboxMaxDimensions: {
+    width: 8,    // Checkbox microscopica
+    height: 8,
+    quality: 0.2
+  },
+  reportImageDimensions: {
+    width: 300,  // Immagini del report piccole per file ultra-compatto
+    height: 200,
+    quality: 0.2 // Qualità minima
+  },
+  loadTimeout: 10000
+};
+
+/**
+ * Configurazione per dimensioni file ridotte (pochi KB)
  */
 export const compactImageConfig: ImageCompressionConfig = {
   ...defaultImageCompressionConfig,
   targetDPI: 100,
-  defaultQuality: 0.7,
+  defaultQuality: 0.2,
   logoMaxDimensions: {
-    ...defaultImageCompressionConfig.logoMaxDimensions,
-    width: 80,
-    height: 80,
-    quality: 0.8
+    width: 28,
+    height: 28,
+    quality: 0.3
   },
   checkboxMaxDimensions: {
-    ...defaultImageCompressionConfig.checkboxMaxDimensions,
-    width: 16,
-    height: 16,
-    quality: 0.7
+    width: 8,
+    height: 8,
+    quality: 0.2
+  },
+  reportImageDimensions: {
+    width: 350,  // Immagini del report per configurazione compatta
+    height: 250,
+    quality: 0.25
   }
 }; 

@@ -2,6 +2,15 @@ import { useState, useCallback } from 'react';
 import { pdf } from '@react-pdf/renderer';
 import { PDFDocument, rgb, StandardFonts, degrees } from 'pdf-lib';
 import { ImageData } from '../types/form';
+import { compressAllReportImages } from '../utils/imageCompression';
+import { ultraCompactImageConfig } from '../config/imageCompression';
+
+// Funzione per convertire data URL in File
+const dataURLToFile = async (dataURL: string, filename: string): Promise<File> => {
+  const response = await fetch(dataURL);
+  const blob = await response.blob();
+  return new File([blob], filename, { type: blob.type });
+};
 
 // Funzione per correggere l'orientamento dell'immagine basato su EXIF
 const getImageWithCorrectOrientation = async (file: File): Promise<HTMLCanvasElement> => {
@@ -74,7 +83,26 @@ export const usePDFWithFooter = () => {
       setIsLoading(true);
       setError(null);
 
-      // 1. Genera il PDF base con @react-pdf/renderer (senza footer)
+      // 1. Comprimi le immagini del report a 150 DPI PRIMA di processarle
+      let processedImages = images;
+      if (images.length > 0) {
+        console.log(`Compressione di ${images.length} immagini del report...`);
+        const imageFiles = images.map(img => img.file);
+        const compressedImageUrls = await compressAllReportImages(imageFiles, ultraCompactImageConfig);
+        
+        // Crea nuovi oggetti ImageData con le immagini compresse
+        const filePromises = images.map(async (originalImage, index) => ({
+          ...originalImage,
+          // Crea un nuovo File virtuale dalla data URL compressa
+          file: await dataURLToFile(compressedImageUrls[index], originalImage.file.name)
+        }));
+        
+        processedImages = await Promise.all(filePromises);
+        
+        console.log(`Compressione completata: ${processedImages.length} immagini pronte per il PDF`);
+      }
+
+      // 2. Genera il PDF base con @react-pdf/renderer (senza footer)
       const basePdfBlob = await pdf(reactPdfDocument).toBlob();
       const basePdfBytes = await basePdfBlob.arrayBuffer();
 
@@ -90,7 +118,7 @@ export const usePDFWithFooter = () => {
       // 4. Aggiungi footer alle pagine esistenti
       pages.forEach((page, index) => {
         const pageNumber = index + 1;
-        const totalPages = totalMainPages + Math.ceil(images.length / 2);
+        const totalPages = totalMainPages + Math.ceil(processedImages.length / 2);
         const footerText = `Redesco Progetti srl - Scheda di Verifica | Pagina ${pageNumber} di ${totalPages}`;
         
         const { width } = page.getSize();
@@ -114,14 +142,14 @@ export const usePDFWithFooter = () => {
       });
 
       // 5. Aggiungi pagine con immagini (2 per pagina)
-      if (images.length > 0) {
-        for (let i = 0; i < images.length; i += 2) {
+      if (processedImages.length > 0) {
+        for (let i = 0; i < processedImages.length; i += 2) {
           const imagePage = pdfDoc.addPage([595.28, 841.89]); // A4 in points
           const { width: pageWidth, height: pageHeight } = imagePage.getSize();
           
           // Calcola numero pagina per questa pagina immagini
           const currentPageNumber = totalMainPages + Math.floor(i / 2) + 1;
-          const totalPages = totalMainPages + Math.ceil(images.length / 2);
+          const totalPages = totalMainPages + Math.ceil(processedImages.length / 2);
           
           // HEADER UGUALE ALLE ALTRE PAGINE - con logo e company name
           // Carica il logo
@@ -175,13 +203,13 @@ export const usePDFWithFooter = () => {
           });
           
           // Prima immagine (in alto) - margini ridotti
-          if (images[i]) {
-            await addImageToPage(imagePage, images[i], 'top', font, pdfDoc, i);
+          if (processedImages[i]) {
+            await addImageToPage(imagePage, processedImages[i], 'top', font, pdfDoc, i);
           }
           
           // Seconda immagine (in basso) - margini ridotti
-          if (images[i + 1]) {
-            await addImageToPage(imagePage, images[i + 1], 'bottom', font, pdfDoc, i + 1);
+          if (processedImages[i + 1]) {
+            await addImageToPage(imagePage, processedImages[i + 1], 'bottom', font, pdfDoc, i + 1);
           }
           
           // Footer
