@@ -439,7 +439,7 @@ const styles = StyleSheet.create({
   },
   // Stili per i bordi delle sezioni
   sectionBorderTop: {
-    height: 1,
+    height: 0.5,
     backgroundColor: 'black',
     position: 'absolute',
     top: 0,
@@ -447,7 +447,7 @@ const styles = StyleSheet.create({
     right: 0,
   },
   sectionBorderBottom: {
-    height: 1,
+    height: 0.5,
     backgroundColor: 'black',
     position: 'absolute',
     bottom: 0,
@@ -455,7 +455,7 @@ const styles = StyleSheet.create({
     right: 0,
   },
   sectionBorderLeft: {
-    width: 1,
+    width: 0.5,
     backgroundColor: 'black',
     position: 'absolute',
     left: 0,
@@ -463,7 +463,7 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
   sectionBorderRight: {
-    width: 1,
+    width: 0.5,
     backgroundColor: 'black',
     position: 'absolute',
     right: 0,
