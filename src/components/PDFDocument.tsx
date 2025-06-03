@@ -205,11 +205,11 @@ const createPagedContent = (data: FormInputs, compressedImages: Record<string, s
          <View style={styles.sectionRowLast}>
            <View style={[styles.sectionColumnCentered, styles.verticalDivider]}>
              <View style={styles.verticalDividerLine}></View>
-             <Text style={styles.value}>Ispettore</Text>
+             <Text style={styles.value}>Data verbale</Text>
            </View>
            <View style={[styles.sectionColumnCentered, styles.verticalDivider]}>
              <View style={styles.verticalDividerLine}></View>
-             <Text style={styles.value}>NOME COGNOME</Text>
+             <Text style={styles.value}>Ispettore</Text>
            </View>
            <View style={[styles.sectionColumnCentered, styles.verticalDivider]}>
              <View style={styles.verticalDividerLine}></View>
@@ -217,24 +217,24 @@ const createPagedContent = (data: FormInputs, compressedImages: Record<string, s
            </View>
            <View style={[styles.sectionColumnCentered, styles.verticalDivider]}>
              <View style={styles.verticalDividerLine}></View>
-             <Text style={styles.value}>Mauro Eugenio Giuliani</Text>
+             <Text style={styles.value}>Firma</Text>
            </View>
          </View>
          <View style={styles.sectionLineLight}></View>
          <View style={styles.sectionRowLast}>
            <View style={[styles.sectionColumnCentered, styles.verticalDivider]}>
               <View style={styles.verticalDividerLine}></View>
-              <Text style={styles.value}>Data verbale</Text>
-           </View>
-           <View style={[styles.sectionColumnCentered, styles.verticalDivider]}>
-             <View style={styles.verticalDividerLine}></View>
               <Text style={styles.value}>
                   {format(new Date(data.dataVerbale), 'dd/MM/yyyy', { locale: it })}
               </Text>
            </View>
            <View style={[styles.sectionColumnCentered, styles.verticalDivider]}>
              <View style={styles.verticalDividerLine}></View>
-             <Text style={styles.value}>Firma</Text>
+             <Text style={styles.value}>NOME COGNOME</Text>
+           </View>
+           <View style={[styles.sectionColumnCentered, styles.verticalDivider]}>
+             <View style={styles.verticalDividerLine}></View>
+             <Text style={styles.value}>Mauro Eugenio Giuliani</Text>
            </View>
            <View style={[styles.sectionColumnCentered, styles.verticalDivider]}>
              {/* <View style={styles.verticalDividerLine}></View> */}
