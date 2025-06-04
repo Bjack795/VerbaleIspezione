@@ -94,9 +94,13 @@ const renderFormattedText = (text: string, baseStyle: any) => {
   const matches = Array.from(text.matchAll(htmlPattern));
 
   console.log('PDFDocument - Matches trovati:', matches.length);
-  matches.forEach((match, index) => {
-    console.log(`Match ${index}:`, match[0], '→', match[2]);
-  });
+  if (matches.length > 0) {
+    matches.forEach((match, index) => {
+      console.log(`Match ${index}:`, match[0], '→', match[2]);
+    });
+  } else {
+    console.log('PDFDocument - Nessun tag di formattazione trovato nel testo:', text);
+  }
 
   for (const match of matches) {
     const matchStart = match.index!;

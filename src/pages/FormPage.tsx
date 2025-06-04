@@ -152,20 +152,27 @@ const FormPage: React.FC = () => {
     // Ottieni il contenuto HTML grezzo
     const htmlContent = editor.innerHTML
     
+    console.log('Editor HTML content:', htmlContent)
+    
     // Converte gli elementi HTML in tag semplici
-    const cleanedContent = htmlContent
-      .replace(/<strong>/g, '<b>')
+    let cleanedContent = htmlContent
+      .replace(/<strong[^>]*>/g, '<b>')
       .replace(/<\/strong>/g, '</b>')
-      .replace(/<em>/g, '<i>')
+      .replace(/<em[^>]*>/g, '<i>')
       .replace(/<\/em>/g, '</i>')
       .replace(/<span[^>]*style="[^"]*text-decoration:[^"]*underline[^"]*"[^>]*>/g, '<u>')
+      .replace(/<span[^>]*style="[^"]*text-decoration-line:[^"]*underline[^"]*"[^>]*>/g, '<u>')
       .replace(/<\/span>/g, '</u>')
-      .replace(/<div>/g, '\n')
+      .replace(/<div[^>]*>/g, '\n')
       .replace(/<\/div>/g, '')
       .replace(/<br\s*\/?>/g, '\n')
       .replace(/&nbsp;/g, ' ')
-      .replace(/<[^>]*>/g, '') // Rimuovi eventuali altri tag HTML
       .trim()
+
+    // Rimuovi tag HTML rimanenti DOPO aver convertito quelli che ci interessano
+    cleanedContent = cleanedContent.replace(/<(?!\/?[biu]>)[^>]*>/g, '')
+    
+    console.log('Cleaned content for PDF:', cleanedContent)
 
     setFormData(prev => ({
       ...prev,
