@@ -142,47 +142,7 @@ const FormPage: React.FC = () => {
     }))
   }
 
-  // Funzioni per la formattazione del testo (aggiornate per contenteditable)
-  const insertFormattingTag = (startTag: string, endTag: string) => {
-    const editor = richTextRef.current
-    if (!editor) return
 
-    const selection = window.getSelection()
-    if (!selection || selection.rangeCount === 0) return
-
-    const range = selection.getRangeAt(0)
-    const selectedText = range.toString()
-
-    if (selectedText) {
-      // Se c'è testo selezionato, lo avvolge nei tag
-      const wrapper = document.createElement('span')
-      wrapper.innerHTML = `${startTag}${selectedText}${endTag}`
-      range.deleteContents()
-      range.insertNode(wrapper)
-      
-      // Aggiorna lo stato del form con il contenuto HTML
-      updateFormDataFromEditor()
-    } else {
-      // Se non c'è testo selezionato, inserisce i tag vuoti
-      const wrapper = document.createElement('span')
-      wrapper.innerHTML = `${startTag}${endTag}`
-      range.insertNode(wrapper)
-      
-      // Posiziona il cursore tra i tag
-      const textNode = wrapper.childNodes[0]
-      if (textNode) {
-        const newRange = document.createRange()
-        newRange.setStart(textNode, startTag.length)
-        newRange.setEnd(textNode, startTag.length)
-        selection.removeAllRanges()
-        selection.addRange(newRange)
-      }
-      
-      updateFormDataFromEditor()
-    }
-
-    editor.focus()
-  }
 
   // Funzione per aggiornare formData dal contenuto dell'editor
   const updateFormDataFromEditor = () => {
@@ -247,32 +207,7 @@ const FormPage: React.FC = () => {
       .replace(/\n/g, '<br>')
   }
 
-  // Funzione per renderizzare l'anteprima HTML nel form
-  const renderPreview = (text: string) => {
-    if (!text || text === '-') return null;
-    
-    // Converti i tag HTML in stili React
-    const htmlToReact = text
-      .replace(/<b>(.*?)<\/b>/g, '<strong>$1</strong>')
-      .replace(/<i>(.*?)<\/i>/g, '<em>$1</em>')
-      .replace(/<u>(.*?)<\/u>/g, '<span style="text-decoration: underline;">$1</span>');
-    
-    return (
-      <div 
-        className="mt-2 p-3 rounded border"
-        style={{ 
-          backgroundColor: colors.surface_variant, 
-          borderColor: colors.outline,
-          color: colors.on_surface_variant
-        }}
-      >
-        <div className="text-xs font-medium mb-1" style={{ color: colors.on_surface_variant }}>
-          Anteprima:
-        </div>
-        <div dangerouslySetInnerHTML={{ __html: htmlToReact }} />
-      </div>
-    );
-  };
+
 
   return (
     <FormLayout colors={colors} styling={styling}>
