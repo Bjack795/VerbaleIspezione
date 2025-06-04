@@ -385,7 +385,7 @@ const FormPage: React.FC = () => {
             />
           </div>
 
-          <div className="mt-8">
+          <div className="mt-8" style={{ marginBottom: 10 }}>
             {/* Pulsanti di formattazione */}
             <div className="mb-4">
               <label className="block text-sm font-medium mb-2" style={{ color: colors.on_surface }}>
