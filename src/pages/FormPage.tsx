@@ -77,7 +77,7 @@ const FormPage: React.FC = () => {
 
   const [errors, setErrors] = useState<Partial<Record<keyof FormInputs, string>>>({})
   const [activeTab, setActiveTab] = useState('dati')
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const richTextRef = useRef<HTMLDivElement>(null)
 
   const validateForm = (): boolean => {
     const newErrors: Partial<Record<keyof FormInputs, string>> = {}
@@ -142,45 +142,110 @@ const FormPage: React.FC = () => {
     }))
   }
 
-  // Funzioni per la formattazione del testo
+  // Funzioni per la formattazione del testo (aggiornate per contenteditable)
   const insertFormattingTag = (startTag: string, endTag: string) => {
-    const textarea = textareaRef.current
-    if (!textarea) return
+    const editor = richTextRef.current
+    if (!editor) return
 
-    const start = textarea.selectionStart
-    const end = textarea.selectionEnd
-    const text = textarea.value
-    const selectedText = text.substring(start, end)
+    const selection = window.getSelection()
+    if (!selection || selection.rangeCount === 0) return
 
-    // Se c'è testo selezionato, lo avvolge nei tag
-    // Se non c'è testo selezionato, inserisce i tag vuoti con il cursore nel mezzo
-    const newText = selectedText 
-      ? `${startTag}${selectedText}${endTag}`
-      : `${startTag}${endTag}`
+    const range = selection.getRangeAt(0)
+    const selectedText = range.toString()
 
-    const before = text.substring(0, start)
-    const after = text.substring(end)
-    const updatedText = before + newText + after
+    if (selectedText) {
+      // Se c'è testo selezionato, lo avvolge nei tag
+      const wrapper = document.createElement('span')
+      wrapper.innerHTML = `${startTag}${selectedText}${endTag}`
+      range.deleteContents()
+      range.insertNode(wrapper)
+      
+      // Aggiorna lo stato del form con il contenuto HTML
+      updateFormDataFromEditor()
+    } else {
+      // Se non c'è testo selezionato, inserisce i tag vuoti
+      const wrapper = document.createElement('span')
+      wrapper.innerHTML = `${startTag}${endTag}`
+      range.insertNode(wrapper)
+      
+      // Posiziona il cursore tra i tag
+      const textNode = wrapper.childNodes[0]
+      if (textNode) {
+        const newRange = document.createRange()
+        newRange.setStart(textNode, startTag.length)
+        newRange.setEnd(textNode, startTag.length)
+        selection.removeAllRanges()
+        selection.addRange(newRange)
+      }
+      
+      updateFormDataFromEditor()
+    }
 
-    // Aggiorna lo stato del form
-    setFormData(prev => ({
-      ...prev,
-      oggettoSopralluogo: updatedText
-    }))
-
-    // Ripristina il focus e la posizione del cursore
-    setTimeout(() => {
-      textarea.focus()
-      const newCursorPos = selectedText 
-        ? start + newText.length
-        : start + startTag.length
-      textarea.setSelectionRange(newCursorPos, newCursorPos)
-    }, 0)
+    editor.focus()
   }
 
-  const handleBold = () => insertFormattingTag('<b>', '</b>')
-  const handleItalic = () => insertFormattingTag('<i>', '</i>')
-  const handleUnderline = () => insertFormattingTag('<u>', '</u>')
+  // Funzione per aggiornare formData dal contenuto dell'editor
+  const updateFormDataFromEditor = () => {
+    const editor = richTextRef.current
+    if (!editor) return
+
+    // Ottieni il contenuto HTML grezzo
+    const htmlContent = editor.innerHTML
+    
+    // Converte gli elementi HTML in tag semplici
+    const cleanedContent = htmlContent
+      .replace(/<strong>/g, '<b>')
+      .replace(/<\/strong>/g, '</b>')
+      .replace(/<em>/g, '<i>')
+      .replace(/<\/em>/g, '</i>')
+      .replace(/<span[^>]*style="[^"]*text-decoration:[^"]*underline[^"]*"[^>]*>/g, '<u>')
+      .replace(/<\/span>/g, '</u>')
+      .replace(/<div>/g, '\n')
+      .replace(/<\/div>/g, '')
+      .replace(/<br\s*\/?>/g, '\n')
+      .replace(/&nbsp;/g, ' ')
+      .trim()
+
+    setFormData(prev => ({
+      ...prev,
+      oggettoSopralluogo: cleanedContent
+    }))
+  }
+
+  // Gestione del contenuto dell'editor
+  const handleEditorInput = () => {
+    updateFormDataFromEditor()
+  }
+
+  // Funzioni per i pulsanti di formattazione (aggiornate)
+  const handleBold = () => {
+    document.execCommand('bold', false)
+    updateFormDataFromEditor()
+  }
+
+  const handleItalic = () => {
+    document.execCommand('italic', false)
+    updateFormDataFromEditor()
+  }
+
+  const handleUnderline = () => {
+    document.execCommand('underline', false)
+    updateFormDataFromEditor()
+  }
+
+  // Funzione per convertire il testo con tag in HTML per l'editor
+  const convertToDisplayHTML = (text: string) => {
+    if (!text || text === '-') return ''
+    
+    return text
+      .replace(/<b>/g, '<strong>')
+      .replace(/<\/b>/g, '</strong>')
+      .replace(/<i>/g, '<em>')
+      .replace(/<\/i>/g, '</em>')
+      .replace(/<u>/g, '<span style="text-decoration: underline;">')
+      .replace(/<\/u>/g, '</span>')
+      .replace(/\n/g, '<br>')
+  }
 
   // Funzione per renderizzare l'anteprima HTML nel form
   const renderPreview = (text: string) => {
@@ -366,19 +431,35 @@ const FormPage: React.FC = () => {
                 </button>
               </div>
             </div>
-            <FormInput
-              label=""
-              name="oggettoSopralluogo"
-              value={formData.oggettoSopralluogo}
-              onChange={handleInputChange}
-              error={errors.oggettoSopralluogo}
-              multiline
-              rows={6}
-              colors={colors}
-              styling={styling}
-              ref={textareaRef}
-            />
-            {renderPreview(formData.oggettoSopralluogo)}
+            
+            {/* Rich Text Editor */}
+            <div className="mb-4">
+              <div
+                ref={richTextRef}
+                contentEditable
+                onInput={handleEditorInput}
+                className="mt-1 ml-3 block w-full rounded-md shadow-sm focus:border-red-500 focus:ring-red-500 min-h-32 p-3"
+                style={{
+                  borderColor: errors.oggettoSopralluogo ? colors.error : colors.outline,
+                  borderWidth: styling.border_width,
+                  borderRadius: styling.corner_radius,
+                  backgroundColor: colors.surface,
+                  color: colors.on_surface,
+                  outline: 'none',
+                  transition: 'all 0.2s',
+                  marginLeft: styling.margin,
+                  marginBottom: styling.margin,
+                  minHeight: '120px',
+                  lineHeight: '1.5'
+                }}
+                dangerouslySetInnerHTML={{ __html: convertToDisplayHTML(formData.oggettoSopralluogo) }}
+              />
+              {errors.oggettoSopralluogo && (
+                <p className="text-sm mt-1" style={{ color: colors.error }}>
+                  {errors.oggettoSopralluogo}
+                </p>
+              )}
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-4 mt-8">
