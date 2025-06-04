@@ -47,7 +47,7 @@ const FormPage: React.FC = () => {
     dataIspezione: getTodayDate(),
     dataVerbale: getTodayDate(),
     numero: '001',
-    nomeProgetto: 'XXX - Progetto di esempio',
+    nomeProgetto: 'XXXXX - Progetto di esempio',
     lavorazioneVerificata: '-',
     verificaMateriale: '-',
     riferimentoProgetto: '-',
@@ -79,6 +79,7 @@ const FormPage: React.FC = () => {
   const [errors, setErrors] = useState<Partial<Record<keyof FormInputs, string>>>({})
   const [activeTab, setActiveTab] = useState('dati')
   const richTextRef = useRef<HTMLDivElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Stato per tracciare le formattazioni attive
   const [activeFormats, setActiveFormats] = useState({
@@ -86,6 +87,136 @@ const FormPage: React.FC = () => {
     italic: false,
     underline: false
   })
+
+  // Funzione per generare il nome del file .sav
+  const generateSaveFileName = (): string => {
+    const projectName = formData.nomeProgetto || 'XXXXX'
+    const prefix = projectName.substring(0, 5).toUpperCase()
+    return `${prefix}.sav`
+  }
+
+  // Funzione per preparare i dati da salvare (escludendo le immagini)
+  const prepareDataForSave = () => {
+    const { images, ...dataToSave } = formData
+    return dataToSave
+  }
+
+  // Funzione per salvare i dati come file .sav
+  const saveDataToFile = async () => {
+    const dataToSave = prepareDataForSave()
+    const jsonData = JSON.stringify(dataToSave, null, 2)
+    const fileName = generateSaveFileName()
+
+    try {
+      // Prova prima con File System Access API (desktop Chrome/Edge)
+      if ('showSaveFilePicker' in window) {
+        const fileHandle = await (window as any).showSaveFilePicker({
+          suggestedName: fileName,
+          types: [{
+            description: 'File di salvataggio',
+            accept: { 'application/json': ['.sav'] }
+          }]
+        })
+        const writable = await fileHandle.createWritable()
+        await writable.write(jsonData)
+        await writable.close()
+        alert('Bozza salvata con successo!')
+      } else {
+        // Fallback per PWA e altri browser
+        const blob = new Blob([jsonData], { type: 'application/json' })
+        const url = URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = url
+        link.download = fileName
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        URL.revokeObjectURL(url)
+        alert('Bozza salvata con successo!')
+      }
+    } catch (error) {
+      console.error('Errore nel salvataggio:', error)
+      alert('Errore durante il salvataggio della bozza')
+    }
+  }
+
+  // Funzione per caricare i dati da file .sav
+  const loadDataFromFile = async (file: File) => {
+    try {
+      const text = await file.text()
+      const loadedData = JSON.parse(text)
+      
+      // Mantieni le immagini attuali e carica solo gli altri dati
+      const newFormData: FormInputs = {
+        ...loadedData,
+        images: formData.images // Mantieni le immagini esistenti
+      }
+      
+      setFormData(newFormData)
+      
+      // Aggiorna l'editor rich text
+      setTimeout(() => {
+        const editor = richTextRef.current
+        if (editor && newFormData.oggettoSopralluogo && newFormData.oggettoSopralluogo !== '-') {
+          const htmlContent = newFormData.oggettoSopralluogo
+            .replace(/<b>/g, '<strong>')
+            .replace(/<\/b>/g, '</strong>')
+            .replace(/<i>/g, '<em>')
+            .replace(/<\/i>/g, '</em>')
+            .replace(/<u>/g, '<span style="text-decoration: underline;">')
+            .replace(/<\/u>/g, '</span>')
+            .replace(/\n/g, '<br>')
+          
+          editor.innerHTML = htmlContent
+        }
+      }, 100)
+      
+      alert('Bozza caricata con successo!')
+    } catch (error) {
+      console.error('Errore nel caricamento:', error)
+      alert('Errore durante il caricamento della bozza. Assicurati che il file sia valido.')
+    }
+  }
+
+  // Handler per il pulsante "Importa bozza"
+  const handleImportDraft = async () => {
+    try {
+      // Prova prima con File System Access API (desktop Chrome/Edge)
+      if ('showOpenFilePicker' in window) {
+        const [fileHandle] = await (window as any).showOpenFilePicker({
+          types: [{
+            description: 'File di salvataggio',
+            accept: { 'application/json': ['.sav'] }
+          }],
+          multiple: false
+        })
+        const file = await fileHandle.getFile()
+        await loadDataFromFile(file)
+      } else {
+        // Fallback per PWA e altri browser
+        if (fileInputRef.current) {
+          fileInputRef.current.click()
+        }
+      }
+    } catch (error) {
+      if ((error as Error).name !== 'AbortError') {
+        console.error('Errore nell\'apertura del file:', error)
+        alert('Errore durante l\'apertura del file')
+      }
+    }
+  }
+
+  // Handler per l'input file (fallback)
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      loadDataFromFile(file)
+      // Reset dell'input per permettere di selezionare lo stesso file di nuovo
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+    }
+  }
 
   const validateForm = (): boolean => {
     const newErrors: Partial<Record<keyof FormInputs, string>> = {}
@@ -385,7 +516,7 @@ const FormPage: React.FC = () => {
             />
           </div>
 
-          <div className="mt-8" style={{ marginBottom: 10 }}>
+          <div className="mt-8">
             {/* Pulsanti di formattazione */}
             <div className="mb-4">
               <label className="block text-sm font-medium mb-2" style={{ color: colors.on_surface }}>
@@ -504,14 +635,40 @@ const FormPage: React.FC = () => {
             >
               Genera Documento
             </button>
+            
+            <button
+              type="button"
+              onClick={saveDataToFile}
+              className="w-full sm:w-auto bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            >
+              Salva Bozza
+            </button>
+            
+            <button
+              type="button"
+              onClick={handleImportDraft}
+              className="w-full sm:w-auto bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+            >
+              Importa Bozza
+            </button>
+            
             <button
               type="button"
               onClick={() => window.location.reload()}
-              className="w-full sm:w-auto bg-gray-200 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2" rel="noreferrer"
+              className="w-full sm:w-auto bg-gray-200 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
             >
               Cancella Campi
             </button>
           </div>
+          
+          {/* Input file nascosto per il fallback */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".sav,application/json"
+            onChange={handleFileInputChange}
+            style={{ display: 'none' }}
+          />
         </form>
       )}
 
@@ -529,6 +686,7 @@ const FormPage: React.FC = () => {
         <div className="text-center" style={{ marginTop: 40 }}>
           <PDFDownloadButton
             data={formData}
+            onDownload={saveDataToFile}
             className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
           >
             Scarica PDF

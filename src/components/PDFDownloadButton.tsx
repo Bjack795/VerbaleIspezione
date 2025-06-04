@@ -7,12 +7,14 @@ interface PDFDownloadButtonProps {
   data: FormInputs;
   className?: string;
   children?: React.ReactNode;
+  onDownload?: () => void; // Callback chiamata dopo il download
 }
 
 const PDFDownloadButton: React.FC<PDFDownloadButtonProps> = ({ 
   data, 
   className = '', 
-  children = 'Scarica PDF' 
+  children = 'Scarica PDF',
+  onDownload
 }) => {
   const { generatePDFWithFooter, isLoading, error } = usePDFWithFooter();
 
@@ -29,6 +31,11 @@ const PDFDownloadButton: React.FC<PDFDownloadButtonProps> = ({
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
+      
+      // Chiama la callback se fornita
+      if (onDownload) {
+        onDownload();
+      }
     } catch (err) {
       console.error('Errore nel download del PDF:', err);
     }
