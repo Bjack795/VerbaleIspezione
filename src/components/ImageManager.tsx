@@ -9,28 +9,106 @@ interface ImageManagerProps {
 
 const ImageManager: React.FC<ImageManagerProps> = ({ images, onImagesChange, colors }) => {
   const [dragOver, setDragOver] = useState(false);
+  const [processing, setProcessing] = useState(false);
 
   // Genera ID unico per le immagini
   const generateId = () => `img_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-  // Gestione caricamento file
-  const handleFileChange = useCallback((files: FileList | null) => {
+  // Funzione per comprimere un'immagine
+  const compressImage = (file: File, maxSizeBytes: number = 2 * 1024 * 1024): Promise<File> => {
+    return new Promise((resolve, reject) => {
+      if (file.size <= maxSizeBytes) {
+        console.log(`Immagine ${file.name} già ottimizzata (${file.size} bytes)`)
+        resolve(file)
+        return
+      }
+
+      console.log(`Compressione immagine ${file.name} (${file.size} bytes)...`)
+      
+      const canvas = document.createElement('canvas')
+      const ctx = canvas.getContext('2d')
+      const img = new Image()
+      
+      img.onload = () => {
+        // Calcola nuove dimensioni mantenendo l'aspect ratio
+        const maxDimension = 1920 // Max larghezza/altezza
+        let { width, height } = img
+        
+        if (width > height && width > maxDimension) {
+          height = (height * maxDimension) / width
+          width = maxDimension
+        } else if (height > maxDimension) {
+          width = (width * maxDimension) / height
+          height = maxDimension
+        }
+        
+        canvas.width = width
+        canvas.height = height
+        
+        // Disegna l'immagine ridimensionata
+        ctx?.drawImage(img, 0, 0, width, height)
+        
+        // Converti in blob
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const compressedFile = new File([blob], file.name, { 
+              type: 'image/jpeg',
+              lastModified: file.lastModified 
+            })
+            console.log(`Immagine compressa da ${file.size} a ${compressedFile.size} bytes`)
+            resolve(compressedFile)
+          } else {
+            reject(new Error('Errore nella compressione'))
+          }
+        }, 'image/jpeg', 0.8) // Qualità 80%
+      }
+      
+      img.onerror = () => reject(new Error('Errore nel caricamento immagine per compressione'))
+      img.src = URL.createObjectURL(file)
+    })
+  }
+
+  // Gestione caricamento file con compressione automatica
+  const handleFileChange = useCallback(async (files: FileList | null) => {
     if (!files) return;
 
+    setProcessing(true);
     const newImages: ImageData[] = [];
-    Array.from(files).forEach(file => {
-      if (file.type.startsWith('image/')) {
-        const imageData: ImageData = {
-          id: generateId(),
-          file,
-          preview: URL.createObjectURL(file),
-          caption: '',
-          rotation: 0,
-          timestamp: Date.now()
-        };
-        newImages.push(imageData);
+    
+    try {
+      for (const file of Array.from(files)) {
+        if (file.type.startsWith('image/')) {
+          try {
+            // Comprimi l'immagine se necessario
+            const compressedFile = await compressImage(file);
+            
+            const imageData: ImageData = {
+              id: generateId(),
+              file: compressedFile,
+              preview: URL.createObjectURL(compressedFile),
+              caption: '',
+              rotation: 0,
+              timestamp: Date.now()
+            };
+            newImages.push(imageData);
+          } catch (error) {
+            console.error(`Errore nella compressione di ${file.name}:`, error);
+            // In caso di errore, usa l'originale
+            const imageData: ImageData = {
+              id: generateId(),
+              file,
+              preview: URL.createObjectURL(file),
+              caption: '',
+              rotation: 0,
+              timestamp: Date.now()
+            };
+            newImages.push(imageData);
+          }
+        }
       }
-    });
+    } finally {
+      setProcessing(false);
+    }
 
     onImagesChange([...images, ...newImages]);
   }, [images, onImagesChange]);
@@ -113,10 +191,13 @@ const ImageManager: React.FC<ImageManagerProps> = ({ images, onImagesChange, col
           <div className="text-4xl">📸</div>
           <div>
             <p className="text-lg font-medium" style={{ color: colors.on_surface }}>
-              Carica le tue immagini
+              {processing ? 'Elaborazione immagini...' : 'Carica le tue immagini'}
             </p>
             <p className="text-sm" style={{ color: colors.on_surface_variant }}>
-              Trascina qui le immagini, carica dalla galleria o scatta una foto
+              {processing 
+                ? 'Compressione automatica in corso per ottimizzare le prestazioni'
+                : 'Trascina qui le immagini, carica dalla galleria o scatta una foto. Le immagini grandi verranno automaticamente compresse.'
+              }
             </p>
           </div>
           
@@ -126,23 +207,32 @@ const ImageManager: React.FC<ImageManagerProps> = ({ images, onImagesChange, col
             accept="image/*"
             className="hidden"
             id="gallery-upload"
+            disabled={processing}
             onChange={(e) => handleFileChange(e.target.files)}
           />
           
           <div className="flex flex-col sm:flex-row gap-2 justify-center">
             <label
-              htmlFor="gallery-upload"
-              className="cursor-pointer bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+              htmlFor={processing ? undefined : "gallery-upload"}
+              className={`px-4 py-2 rounded-md transition-colors ${
+                processing 
+                  ? 'bg-gray-400 cursor-not-allowed text-white' 
+                  : 'cursor-pointer bg-blue-600 text-white hover:bg-blue-700'
+              }`}
             >
-              📂 Carica da Galleria
+              {processing ? '⏳ Elaborazione...' : '📂 Carica da Galleria'}
             </label>
             
             {/* Pulsante fotocamera per mobile */}
             <label
-              htmlFor="camera-capture"
-              className="cursor-pointer bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors"
+              htmlFor={processing ? undefined : "camera-capture"}
+              className={`px-4 py-2 rounded-md transition-colors ${
+                processing 
+                  ? 'bg-gray-400 cursor-not-allowed text-white' 
+                  : 'cursor-pointer bg-green-600 text-white hover:bg-green-700'
+              }`}
             >
-              📷 Scatta Foto
+              {processing ? '⏳ Elaborazione...' : '📷 Scatta Foto'}
             </label>
             <input
               type="file"
@@ -150,6 +240,7 @@ const ImageManager: React.FC<ImageManagerProps> = ({ images, onImagesChange, col
               capture="environment"
               className="hidden"
               id="camera-capture"
+              disabled={processing}
               onChange={(e) => handleFileChange(e.target.files)}
             />
           </div>

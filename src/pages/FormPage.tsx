@@ -100,12 +100,33 @@ const FormPage: React.FC = () => {
     setDebugLogs(prev => [...prev.slice(-20), logMessage]) // Mantieni solo gli ultimi 20 log
   }
 
-  // Funzione per convertire un File in base64
+
+
+  // Funzione per convertire un File in base64 (migliorata)
   const fileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader()
-      reader.onload = () => resolve(reader.result as string)
-      reader.onerror = reject
+      
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          resolve(event.target.result as string)
+        } else {
+          reject(new Error('Risultato FileReader vuoto'))
+        }
+      }
+      
+      reader.onerror = (event) => {
+        const error = event.target?.error
+        addDebugLog(`PWA: Errore FileReader: ${error?.name} - ${error?.message}`)
+        reject(new Error(`FileReader error: ${error?.name || 'Sconosciuto'}`))
+      }
+      
+      reader.onabort = () => {
+        addDebugLog('PWA: FileReader abortito')
+        reject(new Error('FileReader abortito'))
+      }
+      
+      addDebugLog(`PWA: Inizio lettura file ${file.name} (${file.size} bytes)`)
       reader.readAsDataURL(file)
     })
   }
@@ -149,6 +170,8 @@ const FormPage: React.FC = () => {
       const image = images[i]
       try {
         addDebugLog(`PWA: Conversione immagine ${i + 1}/${images.length}: ${image.file.name} (${image.file.size} bytes)`)
+        
+        // Le immagini sono già state compresse in ImageManager
         const base64Data = await fileToBase64(image.file)
         const base64Size = base64Data.length
         addDebugLog(`PWA: Immagine ${i + 1} convertita - Base64 size: ${base64Size} bytes`)
