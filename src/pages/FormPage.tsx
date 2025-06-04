@@ -164,6 +164,7 @@ const FormPage: React.FC = () => {
       .replace(/<\/div>/g, '')
       .replace(/<br\s*\/?>/g, '\n')
       .replace(/&nbsp;/g, ' ')
+      .replace(/<[^>]*>/g, '') // Rimuovi eventuali altri tag HTML
       .trim()
 
     setFormData(prev => ({
@@ -172,9 +173,12 @@ const FormPage: React.FC = () => {
     }))
   }
 
-  // Gestione del contenuto dell'editor
-  const handleEditorInput = () => {
-    updateFormDataFromEditor()
+  // Gestione del contenuto dell'editor - previene il loop di re-rendering
+  const handleEditorInput = (e: React.FormEvent<HTMLDivElement>) => {
+    // Aggiorna solo se necessario
+    setTimeout(() => {
+      updateFormDataFromEditor()
+    }, 0)
   }
 
   // Funzioni per i pulsanti di formattazione (aggiornate)
@@ -193,19 +197,25 @@ const FormPage: React.FC = () => {
     updateFormDataFromEditor()
   }
 
-  // Funzione per convertire il testo con tag in HTML per l'editor
-  const convertToDisplayHTML = (text: string) => {
-    if (!text || text === '-') return ''
-    
-    return text
-      .replace(/<b>/g, '<strong>')
-      .replace(/<\/b>/g, '</strong>')
-      .replace(/<i>/g, '<em>')
-      .replace(/<\/i>/g, '</em>')
-      .replace(/<u>/g, '<span style="text-decoration: underline;">')
-      .replace(/<\/u>/g, '</span>')
-      .replace(/\n/g, '<br>')
-  }
+  // Inizializza il contenuto dell'editor quando il componente viene montato
+  React.useEffect(() => {
+    const editor = richTextRef.current
+    if (!editor || !formData.oggettoSopralluogo || formData.oggettoSopralluogo === '-') return
+
+    // Imposta il contenuto solo se l'editor è vuoto
+    if (editor.innerHTML === '' || editor.innerHTML === '<br>' || editor.innerHTML === '<div><br></div>') {
+      const htmlContent = formData.oggettoSopralluogo
+        .replace(/<b>/g, '<strong>')
+        .replace(/<\/b>/g, '</strong>')
+        .replace(/<i>/g, '<em>')
+        .replace(/<\/i>/g, '</em>')
+        .replace(/<u>/g, '<span style="text-decoration: underline;">')
+        .replace(/<\/u>/g, '</span>')
+        .replace(/\n/g, '<br>')
+      
+      editor.innerHTML = htmlContent
+    }
+  }, [])
 
 
 
@@ -373,11 +383,13 @@ const FormPage: React.FC = () => {
                 ref={richTextRef}
                 contentEditable
                 onInput={handleEditorInput}
-                className="mt-1 ml-3 block w-full rounded-md shadow-sm focus:border-red-500 focus:ring-red-500 min-h-32 p-3"
+                className="mt-1 ml-3 block w-full rounded-md shadow-sm focus:border-red-500 focus:ring-red-500"
                 style={{
                   borderColor: errors.oggettoSopralluogo ? colors.error : colors.outline,
                   borderWidth: styling.border_width,
+                  borderStyle: 'solid',
                   borderRadius: styling.corner_radius,
+                  padding: `${styling.field_padding_y}px ${styling.field_padding_x}px`,
                   backgroundColor: colors.surface,
                   color: colors.on_surface,
                   outline: 'none',
@@ -385,9 +397,11 @@ const FormPage: React.FC = () => {
                   marginLeft: styling.margin,
                   marginBottom: styling.margin,
                   minHeight: '120px',
-                  lineHeight: '1.5'
+                  lineHeight: '1.5',
+                  direction: 'ltr',
+                  textAlign: 'left'
                 }}
-                dangerouslySetInnerHTML={{ __html: convertToDisplayHTML(formData.oggettoSopralluogo) }}
+                suppressContentEditableWarning={true}
               />
               {errors.oggettoSopralluogo && (
                 <p className="text-sm mt-1" style={{ color: colors.error }}>
