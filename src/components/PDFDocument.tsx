@@ -77,18 +77,40 @@ const calculateExpectedPages = (data: FormInputs): number => {
 const renderFormattedText = (text: string, baseStyle: any) => {
   if (!text) return <Text style={baseStyle}></Text>;
   
-  // Pattern per trovare i tag HTML
-  const htmlPattern = /<(b|i|u)>(.*?)<\/\1>/g;
-  const parts: React.ReactElement[] = [];
-  let lastIndex = 0;
-  let match;
+  // Debug: log del testo ricevuto
+  console.log('PDFDocument - renderFormattedText ricevuto:', text);
+  
+  // Se non ci sono tag HTML, restituisci il testo normale
+  if (!text.includes('<') || !text.includes('>')) {
+    return <Text style={baseStyle}>{text}</Text>;
+  }
 
-  while ((match = htmlPattern.exec(text)) !== null) {
+  const parts: React.ReactElement[] = [];
+  let currentIndex = 0;
+  let keyIndex = 0;
+
+  // Pattern per trovare i tag HTML con matchAll
+  const htmlPattern = /<(b|i|u)>(.*?)<\/\1>/g;
+  const matches = Array.from(text.matchAll(htmlPattern));
+
+  console.log('PDFDocument - Matches trovati:', matches.length);
+  matches.forEach((match, index) => {
+    console.log(`Match ${index}:`, match[0], '→', match[2]);
+  });
+
+  for (const match of matches) {
+    const matchStart = match.index!;
+    const matchEnd = matchStart + match[0].length;
+
     // Aggiungi il testo prima del tag
-    if (match.index > lastIndex) {
-      const beforeText = text.substring(lastIndex, match.index);
+    if (matchStart > currentIndex) {
+      const beforeText = text.substring(currentIndex, matchStart);
       if (beforeText) {
-        parts.push(<Text key={`text-${lastIndex}`} style={baseStyle}>{beforeText}</Text>);
+        parts.push(
+          <Text key={`text-${keyIndex++}`} style={baseStyle}>
+            {beforeText}
+          </Text>
+        );
       }
     }
 
@@ -99,34 +121,49 @@ const renderFormattedText = (text: string, baseStyle: any) => {
 
     switch (tag) {
       case 'b':
-        formattedStyle.fontWeight = 'bold';
+        formattedStyle = { 
+          ...baseStyle, 
+          fontWeight: 'bold',
+          fontFamily: 'Helvetica-Bold' 
+        };
         break;
       case 'i':
-        formattedStyle.fontStyle = 'italic';
+        formattedStyle = { 
+          ...baseStyle, 
+          fontStyle: 'italic',
+          fontFamily: 'Helvetica-Oblique' 
+        };
         break;
       case 'u':
-        formattedStyle.textDecoration = 'underline';
+        formattedStyle = { 
+          ...baseStyle, 
+          textDecoration: 'underline'
+        };
         break;
     }
 
     parts.push(
-      <Text key={`formatted-${match.index}`} style={formattedStyle}>
+      <Text key={`formatted-${keyIndex++}`} style={formattedStyle}>
         {content}
       </Text>
     );
 
-    lastIndex = match.index + match[0].length;
+    currentIndex = matchEnd;
   }
 
-  // Aggiungi il testo rimanente
-  if (lastIndex < text.length) {
-    const remainingText = text.substring(lastIndex);
+  // Aggiungi il testo rimanente dopo l'ultimo tag
+  if (currentIndex < text.length) {
+    const remainingText = text.substring(currentIndex);
     if (remainingText) {
-      parts.push(<Text key={`text-${lastIndex}`} style={baseStyle}>{remainingText}</Text>);
+      parts.push(
+        <Text key={`text-${keyIndex++}`} style={baseStyle}>
+          {remainingText}
+        </Text>
+      );
     }
   }
 
-  // Se non ci sono tag HTML, restituisci il testo normale
+  // Se non abbiamo trovato tag, restituisci il testo normale
   if (parts.length === 0) {
     return <Text style={baseStyle}>{text}</Text>;
   }
