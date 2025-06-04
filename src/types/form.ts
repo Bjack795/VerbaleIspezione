@@ -18,6 +18,7 @@ export interface FormInputs {
   ubicazione: string;
   schedaControllo: string;
   oggettoSopralluogo: string;
+  ispettore: string;
   images: ImageData[]; // Aggiungo array delle immagini
   tipoIspezione: {
     visivo: boolean;

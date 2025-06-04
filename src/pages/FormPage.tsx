@@ -54,6 +54,7 @@ const FormPage: React.FC = () => {
     ubicazione: '-',
     schedaControllo: '-',
     oggettoSopralluogo: '-',
+    ispettore:'Nome Cognome',
     images: [],
     tipoIspezione: {
       visivo: true,
@@ -100,7 +101,8 @@ const FormPage: React.FC = () => {
       'riferimentoProgetto',
       'ubicazione',
       'schedaControllo',
-      'oggettoSopralluogo'
+      'oggettoSopralluogo',
+      'ispettore'
     ]
 
     requiredFields.forEach(field => {
@@ -369,6 +371,15 @@ const FormPage: React.FC = () => {
               value={formData.schedaControllo}
               onChange={handleInputChange}
               error={errors.schedaControllo}
+              colors={colors}
+              styling={styling}
+            />
+            <FormInput
+              label="Ispettore"
+              name="ispettore"
+              value={formData.ispettore}
+              onChange={handleInputChange}
+              error={errors.ispettore}
               colors={colors}
               styling={styling}
             />

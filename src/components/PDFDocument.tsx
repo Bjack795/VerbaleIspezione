@@ -354,7 +354,7 @@ const createPagedContent = (data: FormInputs, compressedImages: Record<string, s
            </View>
            <View style={[styles.sectionColumnCentered, styles.verticalDivider]}>
              <View style={styles.verticalDividerLine}></View>
-             <Text style={styles.value}>NOME COGNOME</Text>
+             <Text style={styles.value}>{data.ispettore}</Text>
            </View>
            <View style={[styles.sectionColumnCentered, styles.verticalDivider]}>
              <View style={styles.verticalDividerLine}></View>
