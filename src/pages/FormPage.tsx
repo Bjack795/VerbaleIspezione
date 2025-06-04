@@ -95,34 +95,79 @@ const FormPage: React.FC = () => {
     return `${prefix}.sav`
   }
 
-  // Funzione per preparare i dati da salvare (escludendo le immagini)
-  const prepareDataForSave = () => {
-    const { images, ...dataToSave } = formData
-    return dataToSave
+  // Funzione per convertire un File in base64
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = () => resolve(reader.result as string)
+      reader.onerror = reject
+      reader.readAsDataURL(file)
+    })
+  }
+
+  // Funzione per convertire base64 in File
+  const base64ToFile = (base64: string, filename: string): File => {
+    const arr = base64.split(',')
+    const mime = arr[0].match(/:(.*?);/)?.[1] || 'image/jpeg'
+    const bstr = atob(arr[1])
+    let n = bstr.length
+    const u8arr = new Uint8Array(n)
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n)
+    }
+    return new File([u8arr], filename, { type: mime })
+  }
+
+  // Interfaccia per le immagini serializzabili
+  interface SerializableImageData {
+    id: string;
+    fileData: string; // base64
+    fileName: string;
+    fileType: string;
+    caption: string;
+    rotation: number;
+    timestamp: number;
+  }
+
+  // Funzione per preparare i dati da salvare (includendo le immagini)
+  const prepareDataForSave = async () => {
+    const { images, ...otherData } = formData
+    
+    // Converti le immagini in formato serializzabile
+    const serializableImages: SerializableImageData[] = []
+    
+    for (const image of images) {
+      try {
+        const base64Data = await fileToBase64(image.file)
+        serializableImages.push({
+          id: image.id,
+          fileData: base64Data,
+          fileName: image.file.name,
+          fileType: image.file.type,
+          caption: image.caption,
+          rotation: image.rotation,
+          timestamp: image.timestamp
+        })
+      } catch (error) {
+        console.error('Errore nella conversione dell\'immagine:', error)
+      }
+    }
+    
+    return {
+      ...otherData,
+      images: serializableImages
+    }
   }
 
   // Funzione per salvare i dati come file .sav
-  const saveDataToFile = async () => {
-    const dataToSave = prepareDataForSave()
+  const saveDataToFile = async (automatic: boolean = false) => {
+    const dataToSave = await prepareDataForSave()
     const jsonData = JSON.stringify(dataToSave, null, 2)
     const fileName = generateSaveFileName()
 
     try {
-      // Prova prima con File System Access API (desktop Chrome/Edge)
-      if ('showSaveFilePicker' in window) {
-        const fileHandle = await (window as any).showSaveFilePicker({
-          suggestedName: fileName,
-          types: [{
-            description: 'File di salvataggio',
-            accept: { 'application/json': ['.sav'] }
-          }]
-        })
-        const writable = await fileHandle.createWritable()
-        await writable.write(jsonData)
-        await writable.close()
-        alert('Bozza salvata con successo!')
-      } else {
-        // Fallback per PWA e altri browser
+      if (automatic) {
+        // Salvataggio automatico - sempre con download diretto
         const blob = new Blob([jsonData], { type: 'application/json' })
         const url = URL.createObjectURL(blob)
         const link = document.createElement('a')
@@ -132,11 +177,40 @@ const FormPage: React.FC = () => {
         link.click()
         document.body.removeChild(link)
         URL.revokeObjectURL(url)
-        alert('Bozza salvata con successo!')
+        // Non mostrare alert per il salvataggio automatico
+      } else {
+        // Salvataggio manuale - prova prima con File System Access API (desktop Chrome/Edge)
+        if ('showSaveFilePicker' in window) {
+          const fileHandle = await (window as any).showSaveFilePicker({
+            suggestedName: fileName,
+            types: [{
+              description: 'File di salvataggio',
+              accept: { 'application/json': ['.sav'] }
+            }]
+          })
+          const writable = await fileHandle.createWritable()
+          await writable.write(jsonData)
+          await writable.close()
+          alert('Bozza salvata con successo!')
+        } else {
+          // Fallback per PWA e altri browser
+          const blob = new Blob([jsonData], { type: 'application/json' })
+          const url = URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.href = url
+          link.download = fileName
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          URL.revokeObjectURL(url)
+          alert('Bozza salvata con successo!')
+        }
       }
     } catch (error) {
       console.error('Errore nel salvataggio:', error)
-      alert('Errore durante il salvataggio della bozza')
+      if (!automatic) {
+        alert('Errore durante il salvataggio della bozza')
+      }
     }
   }
 
@@ -146,10 +220,32 @@ const FormPage: React.FC = () => {
       const text = await file.text()
       const loadedData = JSON.parse(text)
       
-      // Mantieni le immagini attuali e carica solo gli altri dati
+      // Riconverti le immagini da base64 a File
+      const restoredImages: ImageData[] = []
+      
+      if (loadedData.images && Array.isArray(loadedData.images)) {
+        for (const serializableImage of loadedData.images as SerializableImageData[]) {
+          try {
+            const file = base64ToFile(serializableImage.fileData, serializableImage.fileName)
+            const preview = URL.createObjectURL(file)
+            
+            restoredImages.push({
+              id: serializableImage.id,
+              file: file,
+              preview: preview,
+              caption: serializableImage.caption,
+              rotation: serializableImage.rotation,
+              timestamp: serializableImage.timestamp
+            })
+          } catch (error) {
+            console.error('Errore nel ripristino dell\'immagine:', error)
+          }
+        }
+      }
+      
       const newFormData: FormInputs = {
         ...loadedData,
-        images: formData.images // Mantieni le immagini esistenti
+        images: restoredImages
       }
       
       setFormData(newFormData)
@@ -171,7 +267,7 @@ const FormPage: React.FC = () => {
         }
       }, 100)
       
-      alert('Bozza caricata con successo!')
+      alert(`Bozza caricata con successo! ${restoredImages.length} immagini ripristinate.`)
     } catch (error) {
       console.error('Errore nel caricamento:', error)
       alert('Errore durante il caricamento della bozza. Assicurati che il file sia valido.')
@@ -638,7 +734,7 @@ const FormPage: React.FC = () => {
             
             <button
               type="button"
-              onClick={saveDataToFile}
+              onClick={() => saveDataToFile(false)}
               className="w-full sm:w-auto bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
               Salva Bozza
@@ -686,7 +782,7 @@ const FormPage: React.FC = () => {
         <div className="text-center" style={{ marginTop: 40 }}>
           <PDFDownloadButton
             data={formData}
-            onDownload={saveDataToFile}
+            onDownload={() => saveDataToFile(true)}
             className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
           >
             Scarica PDF
