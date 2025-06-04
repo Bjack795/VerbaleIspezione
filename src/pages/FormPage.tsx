@@ -79,6 +79,13 @@ const FormPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('dati')
   const richTextRef = useRef<HTMLDivElement>(null)
 
+  // Stato per tracciare le formattazioni attive
+  const [activeFormats, setActiveFormats] = useState({
+    bold: false,
+    italic: false,
+    underline: false
+  })
+
   const validateForm = (): boolean => {
     const newErrors: Partial<Record<keyof FormInputs, string>> = {}
     let isValid = true
@@ -142,8 +149,6 @@ const FormPage: React.FC = () => {
     }))
   }
 
-
-
   // Funzione per aggiornare formData dal contenuto dell'editor
   const updateFormDataFromEditor = () => {
     const editor = richTextRef.current
@@ -188,20 +193,56 @@ const FormPage: React.FC = () => {
     }, 0)
   }
 
-  // Funzioni per i pulsanti di formattazione (aggiornate)
+  // Funzione per controllare le formattazioni attive nella posizione del cursore
+  const checkActiveFormats = () => {
+    const editor = richTextRef.current
+    if (!editor) return
+
+    const selection = window.getSelection()
+    if (!selection || selection.rangeCount === 0) return
+
+    // Usa queryCommandState per verificare lo stato dei comandi
+    const bold = document.queryCommandState('bold')
+    const italic = document.queryCommandState('italic')
+    const underline = document.queryCommandState('underline')
+
+    setActiveFormats({
+      bold,
+      italic,
+      underline
+    })
+  }
+
+  // Gestione della selezione per aggiornare lo stato dei pulsanti
+  const handleEditorSelection = () => {
+    setTimeout(() => {
+      checkActiveFormats()
+    }, 0)
+  }
+
+  // Funzioni per i pulsanti di formattazione (aggiornate con controllo stato)
   const handleBold = () => {
     document.execCommand('bold', false)
     updateFormDataFromEditor()
+    setTimeout(() => {
+      checkActiveFormats()
+    }, 0)
   }
 
   const handleItalic = () => {
     document.execCommand('italic', false)
     updateFormDataFromEditor()
+    setTimeout(() => {
+      checkActiveFormats()
+    }, 0)
   }
 
   const handleUnderline = () => {
     document.execCommand('underline', false)
     updateFormDataFromEditor()
+    setTimeout(() => {
+      checkActiveFormats()
+    }, 0)
   }
 
   // Inizializza il contenuto dell'editor quando il componente viene montato
@@ -223,8 +264,6 @@ const FormPage: React.FC = () => {
       editor.innerHTML = htmlContent
     }
   }, [])
-
-
 
   return (
     <FormLayout colors={colors} styling={styling}>
@@ -345,11 +384,11 @@ const FormPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleBold}
-                  className="px-3 py-1 text-sm font-bold border rounded hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="px-3 py-1 text-sm font-bold border rounded hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                   style={{ 
                     borderColor: colors.outline,
                     color: colors.on_surface,
-                    backgroundColor: colors.surface_variant
+                    backgroundColor: activeFormats.bold ? '#fbbf24' : colors.surface_variant
                   }}
                   title="Grassetto"
                 >
@@ -358,11 +397,11 @@ const FormPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleItalic}
-                  className="px-3 py-1 text-sm italic border rounded hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="px-3 py-1 text-sm italic border rounded hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                   style={{ 
                     borderColor: colors.outline,
                     color: colors.on_surface,
-                    backgroundColor: colors.surface_variant
+                    backgroundColor: activeFormats.italic ? '#fbbf24' : colors.surface_variant
                   }}
                   title="Corsivo"
                 >
@@ -371,11 +410,11 @@ const FormPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleUnderline}
-                  className="px-3 py-1 text-sm underline border rounded hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="px-3 py-1 text-sm underline border rounded hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                   style={{ 
                     borderColor: colors.outline,
                     color: colors.on_surface,
-                    backgroundColor: colors.surface_variant
+                    backgroundColor: activeFormats.underline ? '#fbbf24' : colors.surface_variant
                   }}
                   title="Sottolineato"
                 >
@@ -390,6 +429,9 @@ const FormPage: React.FC = () => {
                 ref={richTextRef}
                 contentEditable
                 onInput={handleEditorInput}
+                onMouseUp={handleEditorSelection}
+                onKeyUp={handleEditorSelection}
+                onFocus={handleEditorSelection}
                 className="mt-1 ml-3 block w-full rounded-md shadow-sm focus:border-red-500 focus:ring-red-500"
                 style={{
                   borderColor: errors.oggettoSopralluogo ? colors.error : colors.outline,
