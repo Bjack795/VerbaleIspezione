@@ -159,26 +159,101 @@ const FormPage: React.FC = () => {
     }
   }
 
+  // Funzioni per gestire IndexedDB
+  const openDB = (): Promise<IDBDatabase> => {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open('VerbaleIspezioneBozze', 1)
+      
+      request.onerror = () => reject(request.error)
+      request.onsuccess = () => resolve(request.result)
+      
+      request.onupgradeneeded = (event) => {
+        const db = (event.target as IDBOpenDBRequest).result
+        if (!db.objectStoreNames.contains('bozze')) {
+          const store = db.createObjectStore('bozze', { keyPath: 'id' })
+          store.createIndex('timestamp', 'timestamp', { unique: false })
+          store.createIndex('nomeProgetto', 'nomeProgetto', { unique: false })
+        }
+      }
+    })
+  }
+
+  const saveDraftToCache = async (data: any): Promise<void> => {
+    try {
+      const db = await openDB()
+      const transaction = db.transaction(['bozze'], 'readwrite')
+      const store = transaction.objectStore('bozze')
+      
+      const draftData = {
+        id: generateSaveFileName().replace('.sav', ''),
+        data: data,
+        timestamp: Date.now(),
+        nomeProgetto: data.nomeProgetto || 'Progetto senza nome',
+        dataCreazione: new Date().toLocaleString('it-IT')
+      }
+      
+      await store.put(draftData)
+      console.log('Bozza salvata in cache:', draftData.id)
+    } catch (error) {
+      console.error('Errore nel salvataggio in cache:', error)
+    }
+  }
+
+  const loadDraftsFromCache = async (): Promise<any[]> => {
+    try {
+      const db = await openDB()
+      const transaction = db.transaction(['bozze'], 'readonly')
+      const store = transaction.objectStore('bozze')
+      
+      return new Promise((resolve, reject) => {
+        const request = store.getAll()
+        request.onsuccess = () => resolve(request.result)
+        request.onerror = () => reject(request.error)
+      })
+    } catch (error) {
+      console.error('Errore nel caricamento delle bozze:', error)
+      return []
+    }
+  }
+
+  const deleteDraftFromCache = async (id: string): Promise<void> => {
+    try {
+      const db = await openDB()
+      const transaction = db.transaction(['bozze'], 'readwrite')
+      const store = transaction.objectStore('bozze')
+      
+      await store.delete(id)
+      console.log('Bozza eliminata dalla cache:', id)
+    } catch (error) {
+      console.error('Errore nell\'eliminazione della bozza:', error)
+    }
+  }
+
+  // Stato per gestire le bozze in cache
+  const [cachedDrafts, setCachedDrafts] = useState<any[]>([])
+  const [showDraftsList, setShowDraftsList] = useState(false)
+
+  // Carica le bozze dalla cache all'avvio
+  React.useEffect(() => {
+    loadDraftsFromCache().then(setCachedDrafts)
+  }, [])
+
   // Funzione per salvare i dati come file .sav
   const saveDataToFile = async (automatic: boolean = false) => {
     const dataToSave = await prepareDataForSave()
-    const jsonData = JSON.stringify(dataToSave, null, 2)
-    const fileName = generateSaveFileName()
 
-    try {
-      if (automatic) {
-        // Salvataggio automatico - sempre con download diretto
-        const blob = new Blob([jsonData], { type: 'application/json' })
-        const url = URL.createObjectURL(blob)
-        const link = document.createElement('a')
-        link.href = url
-        link.download = fileName
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-        URL.revokeObjectURL(url)
-        // Non mostrare alert per il salvataggio automatico
-      } else {
+    if (automatic) {
+      // Salvataggio automatico in cache (quando si scarica PDF)
+      await saveDraftToCache(dataToSave)
+      // Aggiorna la lista delle bozze
+      const updatedDrafts = await loadDraftsFromCache()
+      setCachedDrafts(updatedDrafts)
+    } else {
+      // Salvataggio manuale con download del file
+      const jsonData = JSON.stringify(dataToSave, null, 2)
+      const fileName = generateSaveFileName()
+
+      try {
         // Salvataggio manuale - prova prima con File System Access API (desktop Chrome/Edge)
         if ('showSaveFilePicker' in window) {
           const fileHandle = await (window as any).showSaveFilePicker({
@@ -205,76 +280,100 @@ const FormPage: React.FC = () => {
           URL.revokeObjectURL(url)
           alert('Bozza salvata con successo!')
         }
-      }
-    } catch (error) {
-      console.error('Errore nel salvataggio:', error)
-      if (!automatic) {
+      } catch (error) {
+        console.error('Errore nel salvataggio:', error)
         alert('Errore durante il salvataggio della bozza')
       }
     }
   }
 
-  // Funzione per caricare i dati da file .sav
+  // Funzione per caricare una bozza dalla cache
+  const loadDraftFromCache = async (draftId: string) => {
+    try {
+      const db = await openDB()
+      const transaction = db.transaction(['bozze'], 'readonly')
+      const store = transaction.objectStore('bozze')
+      
+      const request = store.get(draftId)
+      request.onsuccess = async () => {
+        const draft = request.result
+        if (draft) {
+          await restoreFormData(draft.data)
+          setShowDraftsList(false)
+          alert('Bozza caricata dalla cache!')
+        }
+      }
+    } catch (error) {
+      console.error('Errore nel caricamento della bozza:', error)
+      alert('Errore durante il caricamento della bozza')
+    }
+  }
+
+  // Funzione per ripristinare i dati del form (estratta per riuso)
+  const restoreFormData = async (loadedData: any) => {
+    // Riconverti le immagini da base64 a File
+    const restoredImages: ImageData[] = []
+    
+    if (loadedData.images && Array.isArray(loadedData.images)) {
+      for (const serializableImage of loadedData.images as SerializableImageData[]) {
+        try {
+          const file = base64ToFile(serializableImage.fileData, serializableImage.fileName)
+          const preview = URL.createObjectURL(file)
+          
+          restoredImages.push({
+            id: serializableImage.id,
+            file: file,
+            preview: preview,
+            caption: serializableImage.caption,
+            rotation: serializableImage.rotation,
+            timestamp: serializableImage.timestamp
+          })
+        } catch (error) {
+          console.error('Errore nel ripristino dell\'immagine:', error)
+        }
+      }
+    }
+    
+    const newFormData: FormInputs = {
+      ...loadedData,
+      images: restoredImages
+    }
+    
+    setFormData(newFormData)
+    
+    // Aggiorna l'editor rich text
+    setTimeout(() => {
+      const editor = richTextRef.current
+      if (editor && newFormData.oggettoSopralluogo && newFormData.oggettoSopralluogo !== '-') {
+        const htmlContent = newFormData.oggettoSopralluogo
+          .replace(/<b>/g, '<strong>')
+          .replace(/<\/b>/g, '</strong>')
+          .replace(/<i>/g, '<em>')
+          .replace(/<\/i>/g, '</em>')
+          .replace(/<u>/g, '<span style="text-decoration: underline;">')
+          .replace(/<\/u>/g, '</span>')
+          .replace(/\n/g, '<br>')
+        
+        editor.innerHTML = htmlContent
+      }
+    }, 100)
+  }
+
+  // Funzione per caricare i dati da file .sav (aggiornata)
   const loadDataFromFile = async (file: File) => {
     try {
       const text = await file.text()
       const loadedData = JSON.parse(text)
       
-      // Riconverti le immagini da base64 a File
-      const restoredImages: ImageData[] = []
-      
-      if (loadedData.images && Array.isArray(loadedData.images)) {
-        for (const serializableImage of loadedData.images as SerializableImageData[]) {
-          try {
-            const file = base64ToFile(serializableImage.fileData, serializableImage.fileName)
-            const preview = URL.createObjectURL(file)
-            
-            restoredImages.push({
-              id: serializableImage.id,
-              file: file,
-              preview: preview,
-              caption: serializableImage.caption,
-              rotation: serializableImage.rotation,
-              timestamp: serializableImage.timestamp
-            })
-          } catch (error) {
-            console.error('Errore nel ripristino dell\'immagine:', error)
-          }
-        }
-      }
-      
-      const newFormData: FormInputs = {
-        ...loadedData,
-        images: restoredImages
-      }
-      
-      setFormData(newFormData)
-      
-      // Aggiorna l'editor rich text
-      setTimeout(() => {
-        const editor = richTextRef.current
-        if (editor && newFormData.oggettoSopralluogo && newFormData.oggettoSopralluogo !== '-') {
-          const htmlContent = newFormData.oggettoSopralluogo
-            .replace(/<b>/g, '<strong>')
-            .replace(/<\/b>/g, '</strong>')
-            .replace(/<i>/g, '<em>')
-            .replace(/<\/i>/g, '</em>')
-            .replace(/<u>/g, '<span style="text-decoration: underline;">')
-            .replace(/<\/u>/g, '</span>')
-            .replace(/\n/g, '<br>')
-          
-          editor.innerHTML = htmlContent
-        }
-      }, 100)
-      
-      alert(`Bozza caricata con successo! ${restoredImages.length} immagini ripristinate.`)
+      await restoreFormData(loadedData)
+      alert('Bozza caricata con successo dal file!')
     } catch (error) {
       console.error('Errore nel caricamento:', error)
       alert('Errore durante il caricamento della bozza. Assicurati che il file sia valido.')
     }
   }
 
-  // Handler per il pulsante "Importa bozza"
+  // Handler per il pulsante "Importa bozza da file"
   const handleImportDraft = async () => {
     try {
       // Prova prima con File System Access API (desktop Chrome/Edge)
@@ -742,10 +841,18 @@ const FormPage: React.FC = () => {
             
             <button
               type="button"
-              onClick={handleImportDraft}
+              onClick={() => setShowDraftsList(!showDraftsList)}
               className="w-full sm:w-auto bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
             >
-              Importa Bozza
+              Bozze Salvate ({cachedDrafts.length})
+            </button>
+            
+            <button
+              type="button"
+              onClick={handleImportDraft}
+              className="w-full sm:w-auto bg-purple-600 text-white px-6 py-2 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+            >
+              Importa da File
             </button>
             
             <button
@@ -756,6 +863,52 @@ const FormPage: React.FC = () => {
               Cancella Campi
             </button>
           </div>
+          
+          {/* Lista delle bozze salvate */}
+          {showDraftsList && (
+            <div className="mt-8 p-4 border border-gray-300 rounded-md bg-gray-50">
+              <h3 className="text-lg font-semibold mb-4" style={{ color: colors.primary }}>
+                Bozze Salvate in Cache
+              </h3>
+              {cachedDrafts.length === 0 ? (
+                <p className="text-gray-500">Nessuna bozza salvata</p>
+              ) : (
+                <div className="space-y-2">
+                  {cachedDrafts.map((draft) => (
+                    <div
+                      key={draft.id}
+                      className="flex items-center justify-between p-3 bg-white border rounded-md"
+                    >
+                      <div className="flex-1">
+                        <div className="font-medium">{draft.nomeProgetto}</div>
+                        <div className="text-sm text-gray-500">
+                          Salvato il: {draft.dataCreazione}
+                        </div>
+                      </div>
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => loadDraftFromCache(draft.id)}
+                          className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700"
+                        >
+                          Carica
+                        </button>
+                        <button
+                          onClick={async () => {
+                            await deleteDraftFromCache(draft.id)
+                            const updatedDrafts = await loadDraftsFromCache()
+                            setCachedDrafts(updatedDrafts)
+                          }}
+                          className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700"
+                        >
+                          Elimina
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
           
           {/* Input file nascosto per il fallback */}
           <input
