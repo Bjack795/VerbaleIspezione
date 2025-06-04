@@ -5,6 +5,28 @@ import { colors } from '../constants/theme'
 import { format } from 'date-fns'
 import { it } from 'date-fns/locale'
 
+// Mappatura delle label corrette
+const tipoIspezioneLabels: Record<string, string> = {
+  'visivo': 'Visivo',
+  'rilievo': 'Rilievo/Verifica misure',
+  'test': 'Test/Collaudo',
+  'altro': 'Altro'
+}
+
+const esitoLabels: Record<string, string> = {
+  'conforme': 'Conforme/Positivo',
+  'nonConforme': 'Non conforme',
+  'osservazione': 'Osservazione'
+}
+
+const dlLabels: Record<string, string> = {
+  'DLG': 'D.L. Generale',
+  'DLS': 'D.L. Strutture',
+  'DL_FACCIATE': 'D.L. Facciate',
+  'DL_ELETTRICI': 'D.L. Imp. Elettrici/Speciali',
+  'DL_MECCANICI': 'D.L. Imp. Meccanici'
+}
+
 // Funzione per calcolare il numero stimato di pagine
 const calculateExpectedPages = (data: FormInputs): number => {
   let estimatedHeight = 0;
@@ -83,7 +105,7 @@ const createPagedContent = (data: FormInputs, compressedImages: Record<string, s
            </View>
            <View style={styles.sectionColumn}>
               {Object.entries(data.dl).map(([key, value]) => value && 
-                <Text key={key} style={styles.sectionSubtitle}>{key.replace(/_/g, ' ').trim()}</Text>
+                <Text key={key} style={styles.sectionSubtitle}>{dlLabels[key] || key}</Text>
               )}
            </View>
          </View>
@@ -163,7 +185,7 @@ const createPagedContent = (data: FormInputs, compressedImages: Record<string, s
                  style={{ width: 12, height: 12, marginRight: 6 }}
                />
                <Text style={styles.checkboxOption}>
-                 {key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1').trim()}
+                 {tipoIspezioneLabels[key] || key}
                </Text>
              </View>
            ))}
@@ -188,7 +210,7 @@ const createPagedContent = (data: FormInputs, compressedImages: Record<string, s
                  style={{ width: 12, height: 12, marginRight: 6 }}
                />
                <Text style={styles.checkboxOption}>
-                 {key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1').trim()}
+                 {esitoLabels[key] || key}
                </Text>
              </View>
            ))}

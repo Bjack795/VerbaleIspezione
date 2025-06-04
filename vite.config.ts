@@ -7,6 +7,11 @@ import { fileURLToPath } from 'node:url'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
+// Determina se stiamo buildando per Electron o Tauri
+const isElectron = process.env.VITE_ELECTRON === 'true'
+const isTauri = process.env.VITE_TAURI === 'true'
+const isDesktop = isElectron || isTauri
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
@@ -19,6 +24,8 @@ export default defineConfig({
         short_name: 'Verbale',
         description: 'Verbale di Ispezione Redesco Progetti',
         theme_color: '#ffffff',
+        display: 'standalone',
+        start_url: isDesktop ? './' : '/VerbaleIspezione/',
         icons: [
           {
             src: 'pwa-192x192.png',
@@ -34,7 +41,8 @@ export default defineConfig({
       },
       workbox: {
         maximumFileSizeToCacheInBytes: 3 * 1024 * 1024, // 3 MB invece del default 2 MB
-        navigateFallback: '/VerbaleIspezione/index.html',
+        navigateFallback: isDesktop ? '/index.html' : '/VerbaleIspezione/index.html',
+        globPatterns: ['**/*.{js,css,html,ico,png,jpg,jpeg,svg,gif,txt}'],
         runtimeCaching: [
           {
             urlPattern: /\.(?:png|jpg|jpeg|svg|gif|txt)$/,
@@ -47,7 +55,8 @@ export default defineConfig({
       }
     })
   ],
-  base: '/VerbaleIspezione/',
+  // Base path: relativo per desktop, assoluto per GitHub Pages
+  base: isDesktop ? './' : '/VerbaleIspezione/',
   resolve: {
     alias: {
       '@': resolve(__dirname, './src')
@@ -56,12 +65,22 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: isDesktop,
+        drop_debugger: isDesktop,
+      },
+    },
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html')
       },
       output: {
-        manualChunks: undefined,
+        manualChunks: isDesktop ? undefined : {
+          vendor: ['react', 'react-dom'],
+          pdf: ['@react-pdf/renderer', 'pdf-lib']
+        },
         assetFileNames: 'assets/[name][extname]',
         chunkFileNames: 'assets/[name].js',
         entryFileNames: 'assets/[name].js'
