@@ -88,7 +88,17 @@ const FormPage: React.FC = () => {
     underline: false
   })
 
+  // Stato per debug PWA mobile
+  const [debugLogs, setDebugLogs] = useState<string[]>([])
+  const [showDebugPanel, setShowDebugPanel] = useState(false)
 
+  // Funzione di logging per debug mobile
+  const addDebugLog = (message: string) => {
+    const timestamp = new Date().toLocaleTimeString()
+    const logMessage = `[${timestamp}] ${message}`
+    console.log(logMessage)
+    setDebugLogs(prev => [...prev.slice(-20), logMessage]) // Mantieni solo gli ultimi 20 log
+  }
 
   // Funzione per convertire un File in base64
   const fileToBase64 = (file: File): Promise<string> => {
@@ -128,7 +138,9 @@ const FormPage: React.FC = () => {
   const prepareDataForSave = async () => {
     const { images, ...otherData } = formData
     
-    console.log(`Preparazione salvataggio: ${images.length} immagini da convertire`)
+    addDebugLog(`PWA: Preparazione salvataggio - ${images.length} immagini da convertire`)
+    addDebugLog(`PWA: User agent - ${navigator.userAgent}`)
+    addDebugLog(`PWA: Is PWA - ${window.matchMedia('(display-mode: standalone)').matches}`)
     
     // Converti le immagini in formato serializzabile
     const serializableImages: SerializableImageData[] = []
@@ -136,8 +148,11 @@ const FormPage: React.FC = () => {
     for (let i = 0; i < images.length; i++) {
       const image = images[i]
       try {
-        console.log(`Conversione immagine ${i + 1}/${images.length}: ${image.file.name}`)
+        addDebugLog(`PWA: Conversione immagine ${i + 1}/${images.length}: ${image.file.name} (${image.file.size} bytes)`)
         const base64Data = await fileToBase64(image.file)
+        const base64Size = base64Data.length
+        addDebugLog(`PWA: Immagine ${i + 1} convertita - Base64 size: ${base64Size} bytes`)
+        
         serializableImages.push({
           id: image.id,
           fileData: base64Data,
@@ -147,14 +162,15 @@ const FormPage: React.FC = () => {
           rotation: image.rotation,
           timestamp: image.timestamp
         })
-        console.log(`Immagine ${i + 1} convertita con successo`)
+        addDebugLog(`PWA: Immagine ${i + 1} aggiunta all'array`)
       } catch (error) {
-        console.error(`Errore nella conversione dell'immagine ${i + 1}:`, error)
+        addDebugLog(`PWA: ERRORE conversione immagine ${i + 1}: ${error}`)
         // Continua con le altre immagini anche se una fallisce
       }
     }
     
-    console.log(`Conversione completata: ${serializableImages.length}/${images.length} immagini salvate`)
+    const totalDataSize = JSON.stringify({ ...otherData, images: serializableImages }).length
+    addDebugLog(`PWA: Conversione completata - ${serializableImages.length}/${images.length} immagini - Dimensione totale: ${totalDataSize} bytes`)
     
     return {
       ...otherData,
@@ -182,6 +198,7 @@ const FormPage: React.FC = () => {
 
   const saveDraftToCache = async (data: any): Promise<void> => {
     try {
+      addDebugLog('PWA: Apertura database IndexedDB...')
       const db = await openDB()
       const transaction = db.transaction(['bozze'], 'readwrite')
       const store = transaction.objectStore('bozze')
@@ -197,20 +214,17 @@ const FormPage: React.FC = () => {
         dataCreazione: new Date().toLocaleString('it-IT')
       }
       
-      console.log('Tentativo di salvataggio in cache:', {
-        progetto: projectPrefix,
-        immagini: data.images ? data.images.length : 0,
-        dimensioneData: JSON.stringify(data).length
-      })
+      const dataSize = JSON.stringify(data).length
+      addDebugLog(`PWA: Tentativo salvataggio - Progetto: ${projectPrefix}, Immagini: ${data.images ? data.images.length : 0}, Dimensione: ${dataSize} bytes`)
       
       // put() sovrascriverà automaticamente se esiste già una bozza con lo stesso nomeProgetto
       await store.put(draftData)
-      console.log('Bozza salvata/aggiornata in cache con successo:', draftData.nomeProgetto)
+      addDebugLog('PWA: Bozza salvata/aggiornata in cache con successo!')
     } catch (error) {
-      console.error('Errore nel salvataggio in cache:', error)
+      addDebugLog(`PWA: ERRORE nel salvataggio in cache: ${error}`)
       // Prova a salvare senza immagini se il salvataggio fallisce
       if (data.images && data.images.length > 0) {
-        console.log('Tentativo di salvataggio senza immagini...')
+        addDebugLog('PWA: Tentativo di salvataggio senza immagini...')
         try {
           const dataWithoutImages = { ...data, images: [] }
           const draftDataBackup = {
@@ -225,9 +239,9 @@ const FormPage: React.FC = () => {
           const transaction = db.transaction(['bozze'], 'readwrite')
           const store = transaction.objectStore('bozze')
           await store.put(draftDataBackup)
-          console.log('Salvataggio senza immagini riuscito')
+          addDebugLog('PWA: Salvataggio senza immagini riuscito')
         } catch (backupError) {
-          console.error('Anche il salvataggio di backup è fallito:', backupError)
+          addDebugLog(`PWA: ERRORE anche nel salvataggio di backup: ${backupError}`)
         }
       }
     }
@@ -938,6 +952,14 @@ const FormPage: React.FC = () => {
             >
               Cancella Campi
             </button>
+            
+            <button
+              type="button"
+              onClick={() => setShowDebugPanel(!showDebugPanel)}
+              className="w-full sm:w-auto bg-yellow-600 text-white px-6 py-2 rounded-md hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
+            >
+              Debug PWA
+            </button>
           </div>
           
           {/* Lista delle bozze salvate */}
@@ -983,6 +1005,43 @@ const FormPage: React.FC = () => {
                   ))}
                 </div>
               )}
+            </div>
+          )}
+          
+          {/* Pannello di debug PWA */}
+          {showDebugPanel && (
+            <div className="mt-8 p-4 border border-yellow-400 rounded-md bg-yellow-50">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold text-yellow-800">
+                  Debug Log PWA
+                </h3>
+                <button
+                  onClick={() => setDebugLogs([])}
+                  className="px-3 py-1 text-sm bg-yellow-600 text-white rounded hover:bg-yellow-700"
+                >
+                  Pulisci Log
+                </button>
+              </div>
+              
+              <div className="bg-black text-green-400 p-3 rounded text-xs font-mono h-64 overflow-y-auto">
+                {debugLogs.length === 0 ? (
+                  <div className="text-gray-500">Nessun log ancora...</div>
+                ) : (
+                  debugLogs.map((log, index) => (
+                    <div key={index} className="mb-1 break-words">
+                      {log}
+                    </div>
+                  ))
+                )}
+              </div>
+              
+              <div className="mt-4 text-sm text-yellow-700">
+                <div><strong>Info dispositivo:</strong></div>
+                <div>User Agent: {navigator.userAgent.substring(0, 100)}...</div>
+                <div>PWA Mode: {window.matchMedia('(display-mode: standalone)').matches ? 'Sì' : 'No'}</div>
+                <div>IndexedDB: {typeof indexedDB !== 'undefined' ? 'Supportato' : 'Non supportato'}</div>
+                <div>Storage Quota: {'storage' in navigator && 'estimate' in navigator.storage ? 'Disponibile' : 'Non disponibile'}</div>
+              </div>
             </div>
           )}
           
