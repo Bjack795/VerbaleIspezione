@@ -182,6 +182,33 @@ const FormPage: React.FC = () => {
   const handleItalic = () => insertFormattingTag('<i>', '</i>')
   const handleUnderline = () => insertFormattingTag('<u>', '</u>')
 
+  // Funzione per renderizzare l'anteprima HTML nel form
+  const renderPreview = (text: string) => {
+    if (!text || text === '-') return null;
+    
+    // Converti i tag HTML in stili React
+    const htmlToReact = text
+      .replace(/<b>(.*?)<\/b>/g, '<strong>$1</strong>')
+      .replace(/<i>(.*?)<\/i>/g, '<em>$1</em>')
+      .replace(/<u>(.*?)<\/u>/g, '<span style="text-decoration: underline;">$1</span>');
+    
+    return (
+      <div 
+        className="mt-2 p-3 rounded border"
+        style={{ 
+          backgroundColor: colors.surface_variant, 
+          borderColor: colors.outline,
+          color: colors.on_surface_variant
+        }}
+      >
+        <div className="text-xs font-medium mb-1" style={{ color: colors.on_surface_variant }}>
+          Anteprima:
+        </div>
+        <div dangerouslySetInnerHTML={{ __html: htmlToReact }} />
+      </div>
+    );
+  };
+
   return (
     <FormLayout colors={colors} styling={styling}>
       <h2 className="text-2xl font-bold mb-8 text-center" style={{ color: colors.primary }}>
@@ -351,6 +378,7 @@ const FormPage: React.FC = () => {
               styling={styling}
               ref={textareaRef}
             />
+            {renderPreview(formData.oggettoSopralluogo)}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-4 mt-8">

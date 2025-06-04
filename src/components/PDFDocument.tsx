@@ -73,6 +73,67 @@ const calculateExpectedPages = (data: FormInputs): number => {
   return Math.max(1, pages); // Almeno 1 pagina
 };
 
+// Funzione per parsare e renderizzare il testo con formattazione HTML
+const renderFormattedText = (text: string, baseStyle: any) => {
+  if (!text) return <Text style={baseStyle}></Text>;
+  
+  // Pattern per trovare i tag HTML
+  const htmlPattern = /<(b|i|u)>(.*?)<\/\1>/g;
+  const parts: React.ReactElement[] = [];
+  let lastIndex = 0;
+  let match;
+
+  while ((match = htmlPattern.exec(text)) !== null) {
+    // Aggiungi il testo prima del tag
+    if (match.index > lastIndex) {
+      const beforeText = text.substring(lastIndex, match.index);
+      if (beforeText) {
+        parts.push(<Text key={`text-${lastIndex}`} style={baseStyle}>{beforeText}</Text>);
+      }
+    }
+
+    // Aggiungi il testo formattato
+    const tag = match[1];
+    const content = match[2];
+    let formattedStyle = { ...baseStyle };
+
+    switch (tag) {
+      case 'b':
+        formattedStyle.fontWeight = 'bold';
+        break;
+      case 'i':
+        formattedStyle.fontStyle = 'italic';
+        break;
+      case 'u':
+        formattedStyle.textDecoration = 'underline';
+        break;
+    }
+
+    parts.push(
+      <Text key={`formatted-${match.index}`} style={formattedStyle}>
+        {content}
+      </Text>
+    );
+
+    lastIndex = match.index + match[0].length;
+  }
+
+  // Aggiungi il testo rimanente
+  if (lastIndex < text.length) {
+    const remainingText = text.substring(lastIndex);
+    if (remainingText) {
+      parts.push(<Text key={`text-${lastIndex}`} style={baseStyle}>{remainingText}</Text>);
+    }
+  }
+
+  // Se non ci sono tag HTML, restituisci il testo normale
+  if (parts.length === 0) {
+    return <Text style={baseStyle}>{text}</Text>;
+  }
+
+  return <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>{parts}</View>;
+};
+
 // Funzione per creare il contenuto suddiviso per pagine
 const createPagedContent = (data: FormInputs, compressedImages: Record<string, string>) => {
   const totalPages = calculateExpectedPages(data);
@@ -197,7 +258,7 @@ const createPagedContent = (data: FormInputs, compressedImages: Record<string, s
          <Text style={styles.sectionTitle}>OGGETTO DEL SOPRALLUOGO</Text>
          <View style={styles.sectionRowLast}>
            <View style={styles.sectionColumnFull}>
-              <Text style={[styles.value]}>{data.oggettoSopralluogo}</Text>
+              {renderFormattedText(data.oggettoSopralluogo, styles.value)}
            </View>
          </View>
 
@@ -276,8 +337,8 @@ const createPagedContent = (data: FormInputs, compressedImages: Record<string, s
     </>
   );
 
-  return { mainContent, totalPages };
-};
+      return { mainContent, totalPages };
+  };
 
 // Registra un font (opzionale, dipende se vuoi usare un font specifico)
 // Font.register({ family: 'Roboto', src: '/fonts/Roboto-Regular.ttf' });
