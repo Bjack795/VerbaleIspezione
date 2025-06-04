@@ -128,11 +128,15 @@ const FormPage: React.FC = () => {
   const prepareDataForSave = async () => {
     const { images, ...otherData } = formData
     
+    console.log(`Preparazione salvataggio: ${images.length} immagini da convertire`)
+    
     // Converti le immagini in formato serializzabile
     const serializableImages: SerializableImageData[] = []
     
-    for (const image of images) {
+    for (let i = 0; i < images.length; i++) {
+      const image = images[i]
       try {
+        console.log(`Conversione immagine ${i + 1}/${images.length}: ${image.file.name}`)
         const base64Data = await fileToBase64(image.file)
         serializableImages.push({
           id: image.id,
@@ -143,10 +147,14 @@ const FormPage: React.FC = () => {
           rotation: image.rotation,
           timestamp: image.timestamp
         })
+        console.log(`Immagine ${i + 1} convertita con successo`)
       } catch (error) {
-        console.error('Errore nella conversione dell\'immagine:', error)
+        console.error(`Errore nella conversione dell'immagine ${i + 1}:`, error)
+        // Continua con le altre immagini anche se una fallisce
       }
     }
+    
+    console.log(`Conversione completata: ${serializableImages.length}/${images.length} immagini salvate`)
     
     return {
       ...otherData,
@@ -189,11 +197,39 @@ const FormPage: React.FC = () => {
         dataCreazione: new Date().toLocaleString('it-IT')
       }
       
+      console.log('Tentativo di salvataggio in cache:', {
+        progetto: projectPrefix,
+        immagini: data.images ? data.images.length : 0,
+        dimensioneData: JSON.stringify(data).length
+      })
+      
       // put() sovrascriverà automaticamente se esiste già una bozza con lo stesso nomeProgetto
       await store.put(draftData)
-      console.log('Bozza salvata/aggiornata in cache:', draftData.nomeProgetto)
+      console.log('Bozza salvata/aggiornata in cache con successo:', draftData.nomeProgetto)
     } catch (error) {
       console.error('Errore nel salvataggio in cache:', error)
+      // Prova a salvare senza immagini se il salvataggio fallisce
+      if (data.images && data.images.length > 0) {
+        console.log('Tentativo di salvataggio senza immagini...')
+        try {
+          const dataWithoutImages = { ...data, images: [] }
+          const draftDataBackup = {
+            nomeProgetto: (data.nomeProgetto || 'XXXXX').substring(0, 5).toUpperCase(),
+            data: dataWithoutImages,
+            timestamp: Date.now(),
+            nomeProgettoCompleto: data.nomeProgetto || 'Progetto senza nome',
+            dataCreazione: new Date().toLocaleString('it-IT')
+          }
+          
+          const db = await openDB()
+          const transaction = db.transaction(['bozze'], 'readwrite')
+          const store = transaction.objectStore('bozze')
+          await store.put(draftDataBackup)
+          console.log('Salvataggio senza immagini riuscito')
+        } catch (backupError) {
+          console.error('Anche il salvataggio di backup è fallito:', backupError)
+        }
+      }
     }
   }
 
