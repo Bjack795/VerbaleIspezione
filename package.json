@@ -3,18 +3,11 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "main": "electron/main.js",
   "homepage": "./",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "build:electron": "tsc && cross-env VITE_ELECTRON=true vite build",
     "preview": "vite preview",
-    "electron": "electron .",
-    "electron:dev": "concurrently \"npm run dev\" \"wait-on http://localhost:3000 && cross-env NODE_ENV=development electron .\"",
-    "electron:build": "npm run build:electron && electron-builder",
-    "electron:dist": "npm run build:electron && electron-builder --publish=never",
-    "electron:pack": "npm run build:electron && electron-builder --dir",
     "tauri": "tauri",
     "tauri:dev": "tauri dev",
     "tauri:build": "tauri build"
@@ -37,61 +30,12 @@
     "@types/react-dom": "^18.2.0",
     "@vitejs/plugin-react": "^4.4.1",
     "autoprefixer": "^10.4.21",
-    "concurrently": "^8.2.2",
     "cross-env": "^7.0.3",
-    "electron": "^36.3.2",
-    "electron-builder": "^26.0.12",
     "postcss": "^8.5.3",
     "tailwindcss": "^4.1.7",
     "terser": "^5.40.0",
     "typescript": "~5.8.3",
     "vite": "^6.3.5",
-    "vite-plugin-pwa": "^1.0.0",
-    "wait-on": "^8.0.1"
-  },
-  "build": {
-    "appId": "com.redesco.verbale-ispezione",
-    "productName": "Verbale di Ispezione",
-    "directories": {
-      "output": "electron-dist"
-    },
-    "files": [
-      "dist/**/*",
-      "electron/**/*",
-      "!dist/sw.js",
-      "!dist/workbox-*.js",
-      "!dist/registerSW.js",
-      "!dist/manifest.webmanifest"
-    ],
-    "asarUnpack": [],
-    "extraResources": [
-      {
-        "from": "public",
-        "to": "public"
-      }
-    ],
-    "win": {
-      "target": "dir",
-      "icon": "public/pwa-512x512.png",
-      "forceCodeSigning": false,
-      "compression": "maximum",
-      "signAndEditExecutable": false,
-      "signExts": null
-    },
-    "compression": "maximum",
-    "removePackageScripts": true,
-    "electronLanguages": [
-      "it",
-      "en"
-    ],
-    "nativeRebuilder": "sequential",
-    "mac": {
-      "target": "dmg",
-      "icon": "public/pwa-512x512.png"
-    },
-    "linux": {
-      "target": "AppImage",
-      "icon": "public/pwa-512x512.png"
-    }
+    "vite-plugin-pwa": "^1.0.0"
   }
 }
