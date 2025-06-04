@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import FormInput from '../components/FormInput'
 import CheckboxGroup from '../components/CheckboxGroup'
 import FormLayout from '../components/FormLayout'
@@ -77,6 +77,7 @@ const FormPage: React.FC = () => {
 
   const [errors, setErrors] = useState<Partial<Record<keyof FormInputs, string>>>({})
   const [activeTab, setActiveTab] = useState('dati')
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const validateForm = (): boolean => {
     const newErrors: Partial<Record<keyof FormInputs, string>> = {}
@@ -140,6 +141,46 @@ const FormPage: React.FC = () => {
       images
     }))
   }
+
+  // Funzioni per la formattazione del testo
+  const insertFormattingTag = (startTag: string, endTag: string) => {
+    const textarea = textareaRef.current
+    if (!textarea) return
+
+    const start = textarea.selectionStart
+    const end = textarea.selectionEnd
+    const text = textarea.value
+    const selectedText = text.substring(start, end)
+
+    // Se c'è testo selezionato, lo avvolge nei tag
+    // Se non c'è testo selezionato, inserisce i tag vuoti con il cursore nel mezzo
+    const newText = selectedText 
+      ? `${startTag}${selectedText}${endTag}`
+      : `${startTag}${endTag}`
+
+    const before = text.substring(0, start)
+    const after = text.substring(end)
+    const updatedText = before + newText + after
+
+    // Aggiorna lo stato del form
+    setFormData(prev => ({
+      ...prev,
+      oggettoSopralluogo: updatedText
+    }))
+
+    // Ripristina il focus e la posizione del cursore
+    setTimeout(() => {
+      textarea.focus()
+      const newCursorPos = selectedText 
+        ? start + newText.length
+        : start + startTag.length
+      textarea.setSelectionRange(newCursorPos, newCursorPos)
+    }, 0)
+  }
+
+  const handleBold = () => insertFormattingTag('<b>', '</b>')
+  const handleItalic = () => insertFormattingTag('<i>', '</i>')
+  const handleUnderline = () => insertFormattingTag('<u>', '</u>')
 
   return (
     <FormLayout colors={colors} styling={styling}>
@@ -251,8 +292,55 @@ const FormPage: React.FC = () => {
           </div>
 
           <div className="mt-8">
+            {/* Pulsanti di formattazione */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-2" style={{ color: colors.on_surface }}>
+                Oggetto del Sopralluogo
+              </label>
+              <div className="flex space-x-2 mb-2">
+                <button
+                  type="button"
+                  onClick={handleBold}
+                  className="px-3 py-1 text-sm font-bold border rounded hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  style={{ 
+                    borderColor: colors.outline,
+                    color: colors.on_surface,
+                    backgroundColor: colors.surface_variant
+                  }}
+                  title="Grassetto"
+                >
+                  B
+                </button>
+                <button
+                  type="button"
+                  onClick={handleItalic}
+                  className="px-3 py-1 text-sm italic border rounded hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  style={{ 
+                    borderColor: colors.outline,
+                    color: colors.on_surface,
+                    backgroundColor: colors.surface_variant
+                  }}
+                  title="Corsivo"
+                >
+                  I
+                </button>
+                <button
+                  type="button"
+                  onClick={handleUnderline}
+                  className="px-3 py-1 text-sm underline border rounded hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  style={{ 
+                    borderColor: colors.outline,
+                    color: colors.on_surface,
+                    backgroundColor: colors.surface_variant
+                  }}
+                  title="Sottolineato"
+                >
+                  U
+                </button>
+              </div>
+            </div>
             <FormInput
-              label="Oggetto del Sopralluogo"
+              label=""
               name="oggettoSopralluogo"
               value={formData.oggettoSopralluogo}
               onChange={handleInputChange}
@@ -261,6 +349,7 @@ const FormPage: React.FC = () => {
               rows={6}
               colors={colors}
               styling={styling}
+              ref={textareaRef}
             />
           </div>
 

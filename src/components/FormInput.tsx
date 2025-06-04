@@ -24,7 +24,7 @@ interface FormInputProps {
   };
 }
 
-const FormInput: React.FC<FormInputProps> = ({
+const FormInput = React.forwardRef<HTMLTextAreaElement | HTMLInputElement, FormInputProps>(({
   label,
   name,
   value,
@@ -35,7 +35,7 @@ const FormInput: React.FC<FormInputProps> = ({
   rows = 1,
   colors,
   styling
-}) => {
+}, ref) => {
   const inputStyle = {
     borderColor: error ? colors.error : colors.outline,
     borderWidth: styling.border_width,
@@ -56,6 +56,7 @@ const FormInput: React.FC<FormInputProps> = ({
       </label>
       {multiline ? (
         <textarea
+          ref={ref as React.RefObject<HTMLTextAreaElement>}
           name={name}
           value={value}
           onChange={onChange}
@@ -65,6 +66,7 @@ const FormInput: React.FC<FormInputProps> = ({
         />
       ) : (
         <input
+          ref={ref as React.RefObject<HTMLInputElement>}
           type={type}
           name={name}
           value={value}
@@ -80,6 +82,8 @@ const FormInput: React.FC<FormInputProps> = ({
       )}
     </div>
   )
-}
+})
+
+FormInput.displayName = 'FormInput'
 
 export default FormInput 
