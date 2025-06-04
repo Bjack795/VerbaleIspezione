@@ -174,7 +174,7 @@ const FormPage: React.FC = () => {
   }
 
   // Gestione del contenuto dell'editor - previene il loop di re-rendering
-  const handleEditorInput = (e: React.FormEvent<HTMLDivElement>) => {
+  const handleEditorInput = () => {
     // Aggiorna solo se necessario
     setTimeout(() => {
       updateFormDataFromEditor()
