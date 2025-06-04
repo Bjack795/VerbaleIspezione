@@ -88,12 +88,7 @@ const FormPage: React.FC = () => {
     underline: false
   })
 
-  // Funzione per generare il nome del file .sav
-  const generateSaveFileName = (): string => {
-    const projectName = formData.nomeProgetto || 'XXXXX'
-    const prefix = projectName.substring(0, 5).toUpperCase()
-    return `${prefix}.sav`
-  }
+
 
   // Funzione per convertire un File in base64
   const fileToBase64 = (file: File): Promise<string> => {
@@ -170,9 +165,8 @@ const FormPage: React.FC = () => {
       request.onupgradeneeded = (event) => {
         const db = (event.target as IDBOpenDBRequest).result
         if (!db.objectStoreNames.contains('bozze')) {
-          const store = db.createObjectStore('bozze', { keyPath: 'id' })
+          const store = db.createObjectStore('bozze', { keyPath: 'nomeProgetto' }) // Usa nomeProgetto come chiave
           store.createIndex('timestamp', 'timestamp', { unique: false })
-          store.createIndex('nomeProgetto', 'nomeProgetto', { unique: false })
         }
       }
     })
@@ -184,16 +178,20 @@ const FormPage: React.FC = () => {
       const transaction = db.transaction(['bozze'], 'readwrite')
       const store = transaction.objectStore('bozze')
       
+      // Usa i primi 5 caratteri del nome progetto come identificatore
+      const projectPrefix = (data.nomeProgetto || 'XXXXX').substring(0, 5).toUpperCase()
+      
       const draftData = {
-        id: generateSaveFileName().replace('.sav', ''),
+        nomeProgetto: projectPrefix, // Questa è ora la chiave primaria
         data: data,
         timestamp: Date.now(),
-        nomeProgetto: data.nomeProgetto || 'Progetto senza nome',
+        nomeProgettoCompleto: data.nomeProgetto || 'Progetto senza nome',
         dataCreazione: new Date().toLocaleString('it-IT')
       }
       
+      // put() sovrascriverà automaticamente se esiste già una bozza con lo stesso nomeProgetto
       await store.put(draftData)
-      console.log('Bozza salvata in cache:', draftData.id)
+      console.log('Bozza salvata/aggiornata in cache:', draftData.nomeProgetto)
     } catch (error) {
       console.error('Errore nel salvataggio in cache:', error)
     }
@@ -216,16 +214,92 @@ const FormPage: React.FC = () => {
     }
   }
 
-  const deleteDraftFromCache = async (id: string): Promise<void> => {
+  const deleteDraftFromCache = async (nomeProgetto: string): Promise<void> => {
     try {
       const db = await openDB()
       const transaction = db.transaction(['bozze'], 'readwrite')
       const store = transaction.objectStore('bozze')
       
-      await store.delete(id)
-      console.log('Bozza eliminata dalla cache:', id)
+      await store.delete(nomeProgetto)
+      console.log('Bozza eliminata dalla cache:', nomeProgetto)
     } catch (error) {
       console.error('Errore nell\'eliminazione della bozza:', error)
+    }
+  }
+
+  // Funzione per esportare l'intera cache
+  const exportCache = async () => {
+    try {
+      const drafts = await loadDraftsFromCache()
+      const exportData = {
+        version: '1.0',
+        timestamp: Date.now(),
+        dataEsportazione: new Date().toLocaleString('it-IT'),
+        bozze: drafts
+      }
+      
+      const jsonData = JSON.stringify(exportData, null, 2)
+      const fileName = `VerbaliCache_${new Date().toISOString().split('T')[0]}.json`
+
+      // Prova prima con File System Access API (desktop Chrome/Edge)
+      if ('showSaveFilePicker' in window) {
+        const fileHandle = await (window as any).showSaveFilePicker({
+          suggestedName: fileName,
+          types: [{
+            description: 'Cache Verbali',
+            accept: { 'application/json': ['.json'] }
+          }]
+        })
+        const writable = await fileHandle.createWritable()
+        await writable.write(jsonData)
+        await writable.close()
+        alert('Cache esportata con successo!')
+      } else {
+        // Fallback per PWA e altri browser
+        const blob = new Blob([jsonData], { type: 'application/json' })
+        const url = URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = url
+        link.download = fileName
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        URL.revokeObjectURL(url)
+        alert('Cache esportata con successo!')
+      }
+    } catch (error) {
+      console.error('Errore nell\'esportazione:', error)
+      alert('Errore durante l\'esportazione della cache')
+    }
+  }
+
+  // Funzione per importare e sostituire la cache
+  const importCache = async (data: any) => {
+    try {
+      if (!data.bozze || !Array.isArray(data.bozze)) {
+        throw new Error('Formato file non valido')
+      }
+
+      const db = await openDB()
+      const transaction = db.transaction(['bozze'], 'readwrite')
+      const store = transaction.objectStore('bozze')
+      
+      // Pulisci la cache esistente
+      await store.clear()
+      
+      // Importa tutte le bozze
+      for (const draft of data.bozze) {
+        await store.put(draft)
+      }
+      
+      // Aggiorna la lista delle bozze
+      const updatedDrafts = await loadDraftsFromCache()
+      setCachedDrafts(updatedDrafts)
+      
+      alert(`Cache importata con successo! ${data.bozze.length} bozze caricate.`)
+    } catch (error) {
+      console.error('Errore nell\'importazione:', error)
+      alert('Errore durante l\'importazione della cache. Verifica il formato del file.')
     }
   }
 
@@ -249,52 +323,19 @@ const FormPage: React.FC = () => {
       const updatedDrafts = await loadDraftsFromCache()
       setCachedDrafts(updatedDrafts)
     } else {
-      // Salvataggio manuale con download del file
-      const jsonData = JSON.stringify(dataToSave, null, 2)
-      const fileName = generateSaveFileName()
-
-      try {
-        // Salvataggio manuale - prova prima con File System Access API (desktop Chrome/Edge)
-        if ('showSaveFilePicker' in window) {
-          const fileHandle = await (window as any).showSaveFilePicker({
-            suggestedName: fileName,
-            types: [{
-              description: 'File di salvataggio',
-              accept: { 'application/json': ['.sav'] }
-            }]
-          })
-          const writable = await fileHandle.createWritable()
-          await writable.write(jsonData)
-          await writable.close()
-          alert('Bozza salvata con successo!')
-        } else {
-          // Fallback per PWA e altri browser
-          const blob = new Blob([jsonData], { type: 'application/json' })
-          const url = URL.createObjectURL(blob)
-          const link = document.createElement('a')
-          link.href = url
-          link.download = fileName
-          document.body.appendChild(link)
-          link.click()
-          document.body.removeChild(link)
-          URL.revokeObjectURL(url)
-          alert('Bozza salvata con successo!')
-        }
-      } catch (error) {
-        console.error('Errore nel salvataggio:', error)
-        alert('Errore durante il salvataggio della bozza')
-      }
+      // Esporta la cache corrente
+      await exportCache()
     }
   }
 
   // Funzione per caricare una bozza dalla cache
-  const loadDraftFromCache = async (draftId: string) => {
+  const loadDraftFromCache = async (nomeProgetto: string) => {
     try {
       const db = await openDB()
       const transaction = db.transaction(['bozze'], 'readonly')
       const store = transaction.objectStore('bozze')
       
-      const request = store.get(draftId)
+      const request = store.get(nomeProgetto)
       request.onsuccess = async () => {
         const draft = request.result
         if (draft) {
@@ -359,29 +400,28 @@ const FormPage: React.FC = () => {
     }, 100)
   }
 
-  // Funzione per caricare i dati da file .sav (aggiornata)
+  // Funzione per caricare i dati da file di cache esportato
   const loadDataFromFile = async (file: File) => {
     try {
       const text = await file.text()
       const loadedData = JSON.parse(text)
       
-      await restoreFormData(loadedData)
-      alert('Bozza caricata con successo dal file!')
+      await importCache(loadedData)
     } catch (error) {
       console.error('Errore nel caricamento:', error)
-      alert('Errore durante il caricamento della bozza. Assicurati che il file sia valido.')
+      alert('Errore durante il caricamento del file cache. Assicurati che il file sia valido.')
     }
   }
 
-  // Handler per il pulsante "Importa bozza da file"
+  // Handler per il pulsante "Importa Cache"
   const handleImportDraft = async () => {
     try {
       // Prova prima con File System Access API (desktop Chrome/Edge)
       if ('showOpenFilePicker' in window) {
         const [fileHandle] = await (window as any).showOpenFilePicker({
           types: [{
-            description: 'File di salvataggio',
-            accept: { 'application/json': ['.sav'] }
+            description: 'File cache verbali',
+            accept: { 'application/json': ['.json'] }
           }],
           multiple: false
         })
@@ -836,7 +876,7 @@ const FormPage: React.FC = () => {
               onClick={() => saveDataToFile(false)}
               className="w-full sm:w-auto bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
-              Salva Bozza
+              Esporta Cache
             </button>
             
             <button
@@ -852,7 +892,7 @@ const FormPage: React.FC = () => {
               onClick={handleImportDraft}
               className="w-full sm:w-auto bg-purple-600 text-white px-6 py-2 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
             >
-              Importa da File
+              Importa Cache
             </button>
             
             <button
@@ -876,25 +916,25 @@ const FormPage: React.FC = () => {
                 <div className="space-y-2">
                   {cachedDrafts.map((draft) => (
                     <div
-                      key={draft.id}
+                      key={draft.nomeProgetto}
                       className="flex items-center justify-between p-3 bg-white border rounded-md"
                     >
                       <div className="flex-1">
-                        <div className="font-medium">{draft.nomeProgetto}</div>
+                        <div className="font-medium">{draft.nomeProgettoCompleto}</div>
                         <div className="text-sm text-gray-500">
                           Salvato il: {draft.dataCreazione}
                         </div>
                       </div>
                       <div className="flex space-x-2">
                         <button
-                          onClick={() => loadDraftFromCache(draft.id)}
+                          onClick={() => loadDraftFromCache(draft.nomeProgetto)}
                           className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700"
                         >
                           Carica
                         </button>
                         <button
                           onClick={async () => {
-                            await deleteDraftFromCache(draft.id)
+                            await deleteDraftFromCache(draft.nomeProgetto)
                             const updatedDrafts = await loadDraftsFromCache()
                             setCachedDrafts(updatedDrafts)
                           }}
@@ -914,7 +954,7 @@ const FormPage: React.FC = () => {
           <input
             ref={fileInputRef}
             type="file"
-            accept=".sav,application/json"
+            accept=".json"
             onChange={handleFileInputChange}
             style={{ display: 'none' }}
           />
