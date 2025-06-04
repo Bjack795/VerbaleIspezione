@@ -14,12 +14,21 @@ const ImageManager: React.FC<ImageManagerProps> = ({ images, onImagesChange, col
   // Genera ID unico per le immagini
   const generateId = () => `img_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-  // Funzione per comprimere un'immagine
-  const compressImage = (file: File, maxSizeBytes: number = 2 * 1024 * 1024): Promise<File> => {
+  // Funzione per comprimere un'immagine e ottenere sia File che base64
+  const compressImage = (file: File, maxSizeBytes: number = 2 * 1024 * 1024): Promise<{file: File, base64: string}> => {
     return new Promise((resolve, reject) => {
       if (file.size <= maxSizeBytes) {
         console.log(`Immagine ${file.name} già ottimizzata (${file.size} bytes)`)
-        resolve(file)
+        // Per file non compressi, convertiamo in base64 qui per evitare il doppio passaggio
+        const reader = new FileReader()
+        reader.onload = () => {
+          resolve({
+            file: file,
+            base64: reader.result as string
+          })
+        }
+        reader.onerror = () => reject(new Error('Errore lettura file originale'))
+        reader.readAsDataURL(file)
         return
       }
 
@@ -48,15 +57,25 @@ const ImageManager: React.FC<ImageManagerProps> = ({ images, onImagesChange, col
         // Disegna l'immagine ridimensionata
         ctx?.drawImage(img, 0, 0, width, height)
         
-        // Converti in blob
+        // Converti in blob E in base64 direttamente
         canvas.toBlob((blob) => {
           if (blob) {
             const compressedFile = new File([blob], file.name, { 
               type: 'image/jpeg',
               lastModified: file.lastModified 
             })
-            console.log(`Immagine compressa da ${file.size} a ${compressedFile.size} bytes`)
-            resolve(compressedFile)
+            
+            // Converte il blob direttamente in base64 per evitare problemi iOS
+            const reader = new FileReader()
+            reader.onload = () => {
+              console.log(`Immagine compressa da ${file.size} a ${compressedFile.size} bytes`)
+              resolve({
+                file: compressedFile,
+                base64: reader.result as string
+              })
+            }
+            reader.onerror = () => reject(new Error('Errore conversione blob compressa'))
+            reader.readAsDataURL(blob)
           } else {
             reject(new Error('Errore nella compressione'))
           }
@@ -79,8 +98,8 @@ const ImageManager: React.FC<ImageManagerProps> = ({ images, onImagesChange, col
       for (const file of Array.from(files)) {
         if (file.type.startsWith('image/')) {
           try {
-            // Comprimi l'immagine se necessario
-            const compressedFile = await compressImage(file);
+            // Comprimi l'immagine e ottieni sia file che base64
+            const { file: compressedFile, base64 } = await compressImage(file);
             
             const imageData: ImageData = {
               id: generateId(),
@@ -90,6 +109,10 @@ const ImageManager: React.FC<ImageManagerProps> = ({ images, onImagesChange, col
               rotation: 0,
               timestamp: Date.now()
             };
+            
+            // Aggiungi il base64 come proprietà aggiuntiva per evitare la ri-conversione
+            (imageData as any).cachedBase64 = base64;
+            
             newImages.push(imageData);
           } catch (error) {
             console.error(`Errore nella compressione di ${file.name}:`, error);

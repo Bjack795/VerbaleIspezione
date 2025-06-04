@@ -171,10 +171,19 @@ const FormPage: React.FC = () => {
       try {
         addDebugLog(`PWA: Conversione immagine ${i + 1}/${images.length}: ${image.file.name} (${image.file.size} bytes)`)
         
-        // Le immagini sono già state compresse in ImageManager
-        const base64Data = await fileToBase64(image.file)
+        // Usa il base64 già cached se disponibile (da ImageManager)
+        let base64Data: string
+        if ((image as any).cachedBase64) {
+          addDebugLog(`PWA: Usando base64 già cached per immagine ${i + 1}`)
+          base64Data = (image as any).cachedBase64
+        } else {
+          // Fallback per immagini non processate da ImageManager
+          addDebugLog(`PWA: Conversione base64 per immagine ${i + 1} (fallback)`)
+          base64Data = await fileToBase64(image.file)
+        }
+        
         const base64Size = base64Data.length
-        addDebugLog(`PWA: Immagine ${i + 1} convertita - Base64 size: ${base64Size} bytes`)
+        addDebugLog(`PWA: Immagine ${i + 1} pronta - Base64 size: ${base64Size} bytes`)
         
         serializableImages.push({
           id: image.id,
