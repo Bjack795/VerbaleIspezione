@@ -1029,7 +1029,7 @@ const FormPage: React.FC = () => {
       )}
 
       {activeTab === 'immagini' && (
-        <div className="space-y-6">
+        <div className="space-y-6" style={{ overflow: 'hidden' }}>
           <ImageManager
             images={formData.images}
             onImagesChange={handleImagesChange}

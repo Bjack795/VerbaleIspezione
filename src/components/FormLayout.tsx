@@ -21,13 +21,14 @@ const FormLayout: React.FC<FormLayoutProps> = ({
   styling
 }) => {
   return (
-    <div className="min-h-screen" style={{ backgroundColor: colors.background }}>
+    <div className="min-h-screen" style={{ backgroundColor: colors.background, overflow: 'hidden' }}>
       <div className="relative py-12 sm:py-16 sm:max-w-screen-xl mx-auto">
         <div className="relative px-8 py-12" style={{ 
           backgroundColor: colors.surface,
           borderRadius: styling.corner_radius,
           boxShadow: `0 ${styling.elevation_medium}px ${styling.elevation_medium}px ${colors.shadow}20`,
-          padding: '30px'
+          padding: '30px',
+          overflow: 'auto'
         }}>
           <div className="max-w-full mx-auto">
             <div className="divide-y" style={{ borderColor: colors.outline_variant }}>

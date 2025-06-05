@@ -338,25 +338,35 @@ const ImageManager: React.FC<ImageManagerProps> = ({ images, onImagesChange, col
 
                 {/* Anteprima immagine */}
                 <div className="relative mb-3 flex justify-center">
-                  <img
-                    src={image.preview}
-                    alt={`Anteprima ${index + 1}`}
-                    className="rounded-md"
+                  <div 
+                    className="relative overflow-hidden rounded-md flex items-center justify-center"
                     style={{
-                      maxWidth: '80%',
-                      maxHeight: '50vh',
-                      width: 'auto',
-                      height: 'auto',
-                      objectFit: 'contain',
-                      transform: `rotate(${image.rotation}deg)`,
-                      transition: 'transform 0.3s ease'
+                      width: '100%',
+                      maxWidth: '300px',
+                      height: '200px',
+                      backgroundColor: '#f8f9fa'
                     }}
-                  />
-                  {image.rotation !== 0 && (
-                    <div className="absolute top-2 right-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs">
-                      {image.rotation}°
-                    </div>
-                  )}
+                  >
+                    <img
+                      src={image.preview}
+                      alt={`Anteprima ${index + 1}`}
+                      className="rounded-md"
+                      style={{
+                        maxWidth: '90%',
+                        maxHeight: '90%',
+                        width: 'auto',
+                        height: 'auto',
+                        objectFit: 'contain',
+                        transform: `rotate(${image.rotation}deg)`,
+                        transition: 'transform 0.3s ease'
+                      }}
+                    />
+                    {image.rotation !== 0 && (
+                      <div className="absolute top-2 right-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs">
+                        {image.rotation}°
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Campo didascalia */}
