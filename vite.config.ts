@@ -17,7 +17,8 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: 'autoUpdate',
+      registerType: isDesktop ? 'prompt' : 'autoUpdate',
+      disable: isDesktop && process.env.NODE_ENV === 'development',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
       manifest: {
         name: 'Verbale di Ispezione',
