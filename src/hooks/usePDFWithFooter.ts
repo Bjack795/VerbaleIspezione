@@ -220,7 +220,7 @@ export const usePDFWithFooter = () => {
           // Footer
           const companyNameForFooter = headerType === 'maestrale' ? 'Maestrale Srl' : 'Redesco Progetti srl'
           const footerText = language === 'en' 
-            ? `${companyNameForFooter} - Verification Form | Page ${currentPageNumber} of ${totalPages}`
+            ? `${companyNameForFooter} - Inspection Report | Page ${currentPageNumber} of ${totalPages}`
             : `${companyNameForFooter} - Scheda di Verifica | Pagina ${currentPageNumber} di ${totalPages}`;
           
           imagePage.drawLine({

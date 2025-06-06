@@ -14,11 +14,11 @@ const translations: Translations = {
   // Titoli principali
   'scheda_verifica': {
     it: 'SCHEDA DI VERIFICA',
-    en: 'VERIFICATION FORM'
+    en: 'INSPECTION REPORT'
   },
   'posa_installazione': {
     it: 'Posa/Installazione/Lavoro',
-    en: 'Installation/Work'
+    en: 'Installation/Works'
   },
   
   // Sezioni
@@ -28,15 +28,15 @@ const translations: Translations = {
   },
   'metodo_verifica': {
     it: 'METODO DI VERIFICA',
-    en: 'VERIFICATION METHOD'
+    en: 'CHECKING METHODS'
   },
   'oggetto_sopralluogo': {
     it: 'OGGETTO DEL SOPRALLUOGO',
-    en: 'INSPECTION SUBJECT'
+    en: 'DESCRIPTION'
   },
   'esito_controllo': {
     it: 'ESITO CONTROLLO',
-    en: 'CONTROL RESULT'
+    en: 'CHECK RESULT'
   },
   
   // Campi form
@@ -46,27 +46,27 @@ const translations: Translations = {
   },
   'n_progressivo': {
     it: 'N. progressivo',
-    en: 'Progressive number'
+    en: 'Number'
   },
   'lavorazione_verificata': {
     it: 'Lavorazione Verificata',
-    en: 'Verified Work'
+    en: 'Inspected works'
   },
   'verifica_materiale': {
     it: 'Verifica materiale previsto',
-    en: 'Expected material verification'
+    en: 'Material check'
   },
   'riferimento_progetto': {
     it: 'Riferimento Progetto costruttivo',
-    en: 'Constructive project reference'
+    en: 'Shop drawings reference'
   },
   'ubicazione': {
     it: 'Ubicazione - Localizzazione',
-    en: 'Location - Localization'
+    en: 'Location'
   },
   'scheda_controllo': {
     it: 'Scheda controllo lavorazione',
-    en: 'Work control sheet'
+    en: 'Checklist'
   },
   
   // Metodi ispezione
@@ -76,7 +76,7 @@ const translations: Translations = {
   },
   'rilievo_misure': {
     it: 'Rilievo/Verifica misure',
-    en: 'Survey/Measurement verification'
+    en: 'Survey/Measurements'
   },
   'test_collaudo': {
     it: 'Test/Collaudo',
@@ -90,11 +90,11 @@ const translations: Translations = {
   // Esiti
   'conforme_positivo': {
     it: 'Conforme/Positivo',
-    en: 'Compliant/Positive'
+    en: 'Conformant/Positive'
   },
   'non_conforme': {
     it: 'Non conforme',
-    en: 'Non-compliant'
+    en: 'Non-conformant'
   },
   'osservazione': {
     it: 'Osservazione',
@@ -104,7 +104,7 @@ const translations: Translations = {
   // Note
   'nota_osservazione': {
     it: '* Tale osservazione è da considerarsi prescrittiva – da ottemperare',
-    en: '* This observation is to be considered mandatory – to be complied with'
+    en: '* Please consider this observation as a prescription, it must be followed'
   },
   
   // Firme
@@ -128,7 +128,7 @@ const translations: Translations = {
   // Footer PDF
   'footer_pdf': {
     it: 'Redesco Progetti srl - Scheda di Verifica | Pagina',
-    en: 'Redesco Progetti srl - Verification Form | Page'
+    en: 'Redesco Progetti srl - Inspection Report | Page'
   },
   'di': {
     it: 'di',
@@ -138,23 +138,23 @@ const translations: Translations = {
   // DL Labels
   'dl_generale': {
     it: 'D.L. Generale',
-    en: 'General D.L.'
+    en: 'Gen. COW'
   },
   'dl_strutture': {
     it: 'D.L. Strutture',
-    en: 'Structures D.L.'
+    en: 'Struct. COW'
   },
   'dl_facciate': {
     it: 'D.L. Facciate',
-    en: 'Facades D.L.'
+    en: 'Facades COW'
   },
   'dl_elettrici': {
     it: 'D.L. Imp. Elettrici/Speciali',
-    en: 'D.L. Electrical/Special Systems'
+    en: 'Elec. COW'
   },
   'dl_meccanici': {
     it: 'D.L. Imp. Meccanici',
-    en: 'D.L. Mechanical Systems'
+    en: 'Mech. COW'
   },
   
   // Didascalie immagini
@@ -190,15 +190,15 @@ const translations: Translations = {
   },
   'lavorazione_verificata_label': {
     it: 'Lavorazione Verificata',
-    en: 'Verified Work'
+    en: 'Inspected works'
   },
   'verifica_materiale_label': {
     it: 'Verifica Materiale',
-    en: 'Material Verification'
+    en: 'Material check'
   },
   'riferimento_progetto_label': {
     it: 'Riferimento Progetto',
-    en: 'Project Reference'
+    en: 'Shop drawings reference'
   },
   'ubicazione_label': {
     it: 'Ubicazione',
@@ -206,7 +206,7 @@ const translations: Translations = {
   },
   'scheda_controllo_label': {
     it: 'Scheda Controllo',
-    en: 'Control Sheet'
+    en: 'Checklist'
   },
   'ispettore_label': {
     it: 'Ispettore',
@@ -214,13 +214,13 @@ const translations: Translations = {
   },
   'oggetto_sopralluogo_label': {
     it: 'Oggetto del Sopralluogo',
-    en: 'Inspection Subject'
+    en: 'Description'
   },
   
   // Sezioni form
   'tipo_ispezione': {
     it: 'Tipo Ispezione',
-    en: 'Inspection Type'
+    en: 'Inspection type'
   },
   'esito': {
     it: 'Esito',

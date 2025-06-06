@@ -10,47 +10,48 @@ import { HeaderType } from '../hooks/useHeaderSelection'
 // Mappatura delle label corrette per lingue
 const tipoIspezioneLabels: Record<string, Record<Language, string>> = {
   'visivo': { it: 'Visivo', en: 'Visual' },
-  'rilievo': { it: 'Rilievo/Verifica misure', en: 'Survey/Measurement verification' },
+  'rilievo': { it: 'Rilievo/Verifica misure', en: 'Survey/Measurements' },
   'test': { it: 'Test/Collaudo', en: 'Test/Commissioning' },
   'altro': { it: 'Altro', en: 'Other' }
 }
 
 const esitoLabels: Record<string, Record<Language, string>> = {
-  'conforme': { it: 'Conforme/Positivo', en: 'Compliant/Positive' },
-  'nonConforme': { it: 'Non conforme', en: 'Non-compliant' },
+  'conforme': { it: 'Conforme/Positivo', en: 'Conformant/Positive' },
+  'nonConforme': { it: 'Non conforme', en: 'Non-conformant' },
   'osservazione': { it: 'Osservazione', en: 'Observation' }
 }
 
 const dlLabels: Record<string, Record<Language, string>> = {
-  'DLG': { it: 'D.L. Generale', en: 'General D.L.' },
-  'DLS': { it: 'D.L. Strutture', en: 'Structures D.L.' },
-  'DL_FACCIATE': { it: 'D.L. Facciate', en: 'Facades D.L.' },
-  'DL_ELETTRICI': { it: 'D.L. Imp. Elettrici/Speciali', en: 'D.L. Electrical/Special Systems' },
-  'DL_MECCANICI': { it: 'D.L. Imp. Meccanici', en: 'D.L. Mechanical Systems' }
+  'DLG': { it: 'DLG', en: 'Gen. COW' },
+  'DLS': { it: 'DLS', en: 'Struct. COW' },
+  'COLLAUDATORE': { it: 'Collaudatore', en: 'Static Tester' },
+  'DL_FACCIATE': { it: 'DL Facciate', en: 'Facades COW' },
+  'DL_ELETTRICI': { it: 'DLI Ele.', en: 'Elec. COW' },
+  'DL_MECCANICI': { it: 'DLI Mec.', en: 'Mech. COW' }
 }
 
 // Funzione per ottenere traduzioni
 const getTranslation = (key: string, language: Language): string => {
   const translations: Record<string, Record<Language, string>> = {
-    'scheda_verifica': { it: 'SCHEDA DI VERIFICA', en: 'VERIFICATION FORM' },
+    'scheda_verifica': { it: 'SCHEDA DI VERIFICA', en: 'INSPECTION REPORT' },
     'posa_installazione': { it: 'Posa/Installazione/Lavoro', en: 'Installation/Work' },
     'progetto': { it: 'PROGETTO', en: 'PROJECT' },
-    'metodo_verifica': { it: 'METODO DI VERIFICA', en: 'VERIFICATION METHOD' },
-    'oggetto_sopralluogo': { it: 'OGGETTO DEL SOPRALLUOGO', en: 'INSPECTION SUBJECT' },
-    'esito_controllo': { it: 'ESITO CONTROLLO', en: 'CONTROL RESULT' },
+    'metodo_verifica': { it: 'METODO DI VERIFICA', en: 'CHECKING METHODS' },
+    'oggetto_sopralluogo': { it: 'OGGETTO DEL SOPRALLUOGO', en: 'DESCRIPTION' },
+    'esito_controllo': { it: 'ESITO CONTROLLO', en: 'CHECK RESULT' },
     'data_ispezione': { it: 'Data ispezione', en: 'Inspection date' },
-    'n_progressivo': { it: 'N. progressivo', en: 'Progressive number' },
-    'lavorazione_verificata': { it: 'Lavorazione Verificata', en: 'Verified Work' },
-    'verifica_materiale': { it: 'Verifica materiale previsto', en: 'Expected material verification' },
-    'riferimento_progetto': { it: 'Riferimento Progetto costruttivo', en: 'Constructive project reference' },
-    'ubicazione': { it: 'Ubicazione - Localizzazione', en: 'Location - Localization' },
-    'scheda_controllo': { it: 'Scheda controllo lavorazione', en: 'Work control sheet' },
-    'nota_osservazione': { it: '* Tale osservazione è da considerarsi prescrittiva – da ottemperare', en: '* This observation is to be considered mandatory – to be complied with' },
+    'n_progressivo': { it: 'N. progressivo', en: 'Number' },
+    'lavorazione_verificata': { it: 'Lavorazione Verificata', en: 'Inspected works' },
+    'verifica_materiale': { it: 'Verifica materiale previsto', en: 'Material check' },
+    'riferimento_progetto': { it: 'Riferimento Progetto costruttivo', en: 'Shop drawings reference' },
+    'ubicazione': { it: 'Ubicazione - Localizzazione', en: 'Location' },
+    'scheda_controllo': { it: 'Scheda controllo lavorazione', en: 'Checklist' },
+    'nota_osservazione': { it: '* Tale osservazione è da considerarsi prescrittiva – da ottemperare', en: '* Please consider this observation as a prescription, it must be followed' },
     'data_verbale': { it: 'Data verbale', en: 'Report date' },
     'ispettore': { it: 'Ispettore', en: 'Inspector' },
     'per_conto_di': { it: 'Per conto di', en: 'On behalf of' },
     'firma': { it: 'Firma', en: 'Signature' },
-    'footer_pdf': { it: 'Redesco Progetti srl - Scheda di Verifica | Pagina', en: 'Redesco Progetti srl - Verification Form | Page' },
+    'footer_pdf': { it: 'Redesco Progetti srl - Scheda di Verifica | Pagina', en: 'Redesco Progetti srl - Inspection Report | Page' },
     'di': { it: 'di', en: 'of' },
     'figura': { it: 'Figura', en: 'Figure' }
   }

@@ -35,6 +35,7 @@ export interface FormInputs {
   dl: {
     DLG: boolean;
     DLS: boolean;
+    COLLAUDATORE: boolean;
     DL_FACCIATE: boolean;
     DL_ELETTRICI: boolean;
     DL_MECCANICI: boolean;

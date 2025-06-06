@@ -24,6 +24,7 @@ const HeaderSelector: React.FC<HeaderSelectorProps> = ({
       <span className="text-sm font-medium" style={{ color: colors.on_surface }}>
         {t('azienda')}:
       </span>
+      <br/>
       <div className="flex border rounded-lg overflow-hidden" style={{ borderColor: colors.outline_variant }}>
         {/* Pulsante Redesco */}
         <button
@@ -42,11 +43,7 @@ const HeaderSelector: React.FC<HeaderSelectorProps> = ({
           <span>Redesco</span>
         </button>
 
-        {/* Separatore */}
-        <div 
-          className="w-px" 
-          style={{ backgroundColor: colors.outline_variant }}
-        />
+        &nbsp;
 
         {/* Pulsante Maestrale */}
         <button

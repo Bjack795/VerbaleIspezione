@@ -49,8 +49,9 @@ const FormPage: React.FC = () => {
   ]
 
   const dlOptions = [
-    { id: 'DLG', label: t('dl_generale') },
-    { id: 'DLS', label: t('dl_strutture') },
+    { id: 'DLG', label: t('DLG') },
+    { id: 'DLS', label: t('DLS') },
+    { id: 'COLLAUDATORE', label: t('Collaudatore') },
     { id: 'DL_FACCIATE', label: t('dl_facciate') },
     { id: 'DL_ELETTRICI', label: t('dl_elettrici') },
     { id: 'DL_MECCANICI', label: t('dl_meccanici') }
@@ -84,6 +85,7 @@ const FormPage: React.FC = () => {
     dl: {
       DLG: false,
       DLS: true,
+      COLLAUDATORE: false,
       DL_FACCIATE: false,
       DL_ELETTRICI: false,
       DL_MECCANICI: false,
@@ -865,6 +867,7 @@ const FormPage: React.FC = () => {
               <label className="block text-sm font-medium mb-2" style={{ color: colors.on_surface }}>
                 {t('oggetto_sopralluogo_label')}
               </label>
+              <div style={{marginTop: '6px'}}></div>
               <div className="flex space-x-2 mb-2">
                 <button
                   type="button"
@@ -879,6 +882,8 @@ const FormPage: React.FC = () => {
                 >
                   B
                 </button>
+                &nbsp;
+                &nbsp;
                 <button
                   type="button"
                   onClick={handleItalic}
@@ -892,6 +897,8 @@ const FormPage: React.FC = () => {
                 >
                   I
                 </button>
+                &nbsp;
+                &nbsp;
                 <button
                   type="button"
                   onClick={handleUnderline}
@@ -906,6 +913,7 @@ const FormPage: React.FC = () => {
                   U
                 </button>
               </div>
+              <div style={{marginTop: '6px'}}></div>
             </div>
             
             {/* Rich Text Editor */}
@@ -969,15 +977,16 @@ const FormPage: React.FC = () => {
               onChange={(field) => handleCheckboxChange('dl', field)}
               colors={colors}
             />
+            <div style={{marginTop: '10px'}}></div>
           </div>
 
           <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4 mt-16">
-            <button
+            {/* <button
               type="submit"
               className="w-full sm:w-auto bg-red-700 text-white px-6 py-2 rounded-md hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
             >
               {t('genera_documento')}
-            </button>
+            </button> */}
             
             <button
               type="button"
@@ -986,7 +995,7 @@ const FormPage: React.FC = () => {
             >
               {t('esporta_cache')}
             </button>
-            
+            &nbsp;&nbsp;
             <button
               type="button"
               onClick={() => setShowDraftsList(!showDraftsList)}
@@ -994,7 +1003,7 @@ const FormPage: React.FC = () => {
             >
               {t('bozze_salvate')} ({cachedDrafts.length})
             </button>
-            
+            &nbsp;&nbsp;
             <button
               type="button"
               onClick={handleImportDraft}
@@ -1002,7 +1011,7 @@ const FormPage: React.FC = () => {
             >
               {t('importa_cache')}
             </button>
-            
+            &nbsp;&nbsp;
             <button
               type="button"
               onClick={() => window.location.reload()}
@@ -1079,7 +1088,7 @@ const FormPage: React.FC = () => {
         </div>
       )}
     
-      {formData && activeTab === 'dati' && (
+      {formData && (
         <div className="text-center" style={{ marginTop: 40 }}>
           <PDFDownloadButton
             data={formData}

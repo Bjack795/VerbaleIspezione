@@ -28,45 +28,63 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
         {/* Pulsante Italiano */}
         <button
           onClick={() => onLanguageChange('it')}
-          className={`flex items-center gap-2 px-3 py-2 text-sm font-medium transition-colors duration-200 ${
+          className={`flex items-center justify-center transition-colors duration-200 ${
             currentLanguage === 'it' 
               ? 'shadow-sm' 
               : 'hover:opacity-80'
           }`}
           style={{
             backgroundColor: currentLanguage === 'it' ? colors.primary : colors.surface,
-            color: currentLanguage === 'it' ? '#ffffff' : colors.on_surface,
+            padding: '2px',
+            width: '50px',
+            height: '40px'
           }}
           title="Italiano"
         >
-          <span className="text-lg">🇮🇹</span>
-          <span>IT</span>
+          <img 
+            src={`${import.meta.env.BASE_URL}ita.png`}
+            alt="Italiano"
+            style={{ 
+              width: '40px', 
+              height: '32px', 
+              objectFit: 'cover', 
+              borderRadius: '1px' 
+            }}
+          />
         </button>
 
-        {/* Separatore */}
-        <div 
-          className="w-px" 
-          style={{ backgroundColor: colors.outline_variant }}
-        />
+        &nbsp;
+        &nbsp;
 
         {/* Pulsante Inglese */}
         <button
           onClick={() => onLanguageChange('en')}
-          className={`flex items-center gap-2 px-3 py-2 text-sm font-medium transition-colors duration-200 ${
+          className={`flex items-center justify-center transition-colors duration-200 ${
             currentLanguage === 'en' 
               ? 'shadow-sm' 
               : 'hover:opacity-80'
           }`}
           style={{
             backgroundColor: currentLanguage === 'en' ? colors.primary : colors.surface,
-            color: currentLanguage === 'en' ? '#ffffff' : colors.on_surface,
+            padding: '2px',
+            width: '50px',
+            height: '40px'
           }}
           title="English"
         >
-          <span className="text-lg">🇬🇧</span>
-          <span>EN</span>
+          <img 
+            src={`${import.meta.env.BASE_URL}uk.png`}
+            alt="English"
+            style={{ 
+              width: '40px', 
+              height: '32px', 
+              objectFit: 'cover', 
+              borderRadius: '1px' 
+            }}
+          />
         </button>
       </div>
+      <br />
     </div>
   )
 }
