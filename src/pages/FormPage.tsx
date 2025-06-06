@@ -244,6 +244,7 @@ const FormPage: React.FC = () => {
         data: data,
         timestamp: Date.now(),
         nomeProgettoCompleto: `${data.numeroCommessa || 'XXXXX'} - ${data.nomeProgetto || 'Progetto senza nome'}`,
+        numeroVerbale: data.numero || '001',
         dataCreazione: new Date().toLocaleString('it-IT')
       }
       
@@ -265,6 +266,7 @@ const FormPage: React.FC = () => {
             data: dataWithoutImages,
             timestamp: Date.now(),
             nomeProgettoCompleto: `${data.numeroCommessa || 'XXXXX'} - ${data.nomeProgetto || 'Progetto senza nome'}`,
+            numeroVerbale: data.numero || '001',
             dataCreazione: new Date().toLocaleString('it-IT')
           }
           
@@ -489,10 +491,29 @@ const FormPage: React.FC = () => {
       const text = await file.text()
       const loadedData = JSON.parse(text)
       
-      await importCache(loadedData)
+      // Verifica se è una bozza singola o un export completo
+      if (loadedData.bozze && Array.isArray(loadedData.bozze)) {
+        // È un export completo della cache
+        await importCache(loadedData)
+      } else if (loadedData.data && loadedData.nomeProgetto) {
+        // È una bozza singola - importa solo questa bozza
+        const db = await openDB()
+        const transaction = db.transaction(['bozze'], 'readwrite')
+        const store = transaction.objectStore('bozze')
+        
+        await store.put(loadedData)
+        
+        // Aggiorna la lista delle bozze
+        const updatedDrafts = await loadDraftsFromCache()
+        setCachedDrafts(updatedDrafts)
+        
+        alert('Bozza importata con successo!')
+      } else {
+        throw new Error('Formato file non riconosciuto')
+      }
     } catch (error) {
       console.error('Errore nel caricamento:', error)
-      alert('Errore durante il caricamento del file cache. Assicurati che il file sia valido.')
+      alert('Errore durante il caricamento del file. Assicurati che il file sia valido.')
     }
   }
 
@@ -716,6 +737,64 @@ const FormPage: React.FC = () => {
       editor.innerHTML = htmlContent
     }
   }, [])
+
+  // Funzione per scaricare la bozza corrente come JSON
+  const downloadCurrentDraft = async () => {
+    try {
+      const dataToSave = await prepareDataForSave()
+      
+      // SALVA AUTOMATICAMENTE IN CACHE (come per il PDF)
+      await saveDraftToCache(dataToSave)
+      // Aggiorna la lista delle bozze
+      const updatedDrafts = await loadDraftsFromCache()
+      setCachedDrafts(updatedDrafts)
+      
+      // Usa il numero commessa come identificatore
+      const projectPrefix = (dataToSave.numeroCommessa || 'XXXXX').toUpperCase()
+      
+      const draftData = {
+        nomeProgetto: projectPrefix,
+        data: dataToSave,
+        timestamp: Date.now(),
+        nomeProgettoCompleto: `${dataToSave.numeroCommessa || 'XXXXX'} - ${dataToSave.nomeProgetto || 'Progetto senza nome'}`,
+        numeroVerbale: dataToSave.numero || '001',
+        dataCreazione: new Date().toLocaleString('it-IT')
+      }
+      
+      const jsonData = JSON.stringify(draftData, null, 2)
+      const fileName = `Bozza_${projectPrefix}_${new Date().toISOString().split('T')[0]}.json`
+
+      // Prova prima con File System Access API (desktop Chrome/Edge)
+      if ('showSaveFilePicker' in window) {
+        const fileHandle = await (window as any).showSaveFilePicker({
+          suggestedName: fileName,
+          types: [{
+            description: 'Bozza Verbale',
+            accept: { 'application/json': ['.json'] }
+          }]
+        })
+        const writable = await fileHandle.createWritable()
+        await writable.write(jsonData)
+        await writable.close()
+        alert('Bozza scaricata e salvata in cache con successo!')
+      } else {
+        // Fallback per PWA e altri browser
+        const blob = new Blob([jsonData], { type: 'application/json' })
+        const url = URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = url
+        link.download = fileName
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        URL.revokeObjectURL(url)
+        alert('Bozza scaricata e salvata in cache con successo!')
+      }
+    } catch (error) {
+      console.error('Errore nel download della bozza:', error)
+      alert('Errore durante il download della bozza')
+    }
+  }
 
   return (
     <FormLayout colors={colors} styling={styling}>
@@ -981,19 +1060,20 @@ const FormPage: React.FC = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4 mt-16">
-            {/* <button
-              type="submit"
-              className="w-full sm:w-auto bg-red-700 text-white px-6 py-2 rounded-md hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-            >
-              {t('genera_documento')}
-            </button> */}
-            
             <button
               type="button"
               onClick={() => saveDataToFile(false)}
               className="w-full sm:w-auto bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
               {t('esporta_cache')}
+            </button>
+            &nbsp;&nbsp;
+            <button
+              type="button"
+              onClick={downloadCurrentDraft}
+              className="w-full sm:w-auto bg-orange-600 text-white px-6 py-2 rounded-md hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+            >
+              {t('scarica_bozza')}
             </button>
             &nbsp;&nbsp;
             <button
@@ -1039,7 +1119,7 @@ const FormPage: React.FC = () => {
                       <div className="flex-1">
                         <div className="font-medium">{draft.nomeProgettoCompleto}</div>
                         <div className="text-sm text-gray-500">
-                          {t('salvato_il')}: {draft.dataCreazione}
+                          {t('numero')}: {draft.numeroVerbale || '001'} | {t('salvato_il')}: {draft.dataCreazione}
                         </div>
                       </div>
                       <div className="flex space-x-2">

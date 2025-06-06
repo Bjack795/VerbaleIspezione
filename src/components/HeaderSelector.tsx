@@ -38,7 +38,7 @@ const HeaderSelector: React.FC<HeaderSelectorProps> = ({
             backgroundColor: currentHeader === 'redesco' ? colors.primary : colors.surface,
             color: currentHeader === 'redesco' ? '#ffffff' : colors.on_surface,
           }}
-          title="Redesco Progetti srl"
+          title=""
         >
           <span>Redesco</span>
         </button>

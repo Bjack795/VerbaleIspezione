@@ -445,7 +445,7 @@ const styles = StyleSheet.create({
 
   },
   logo: {
-    width: 40, // Dimensione aggiustata per evitare deformazione
+    width: 100, // Dimensione aggiustata per evitare deformazione
     height: 'auto', // Altezza automatica per mantenere proporzioni
     marginRight: 10,
   },
@@ -678,7 +678,7 @@ interface PDFDocumentProps {
 const PDFDocument: React.FC<PDFDocumentProps> = ({ data, compressedImages, language = 'it', headerType = 'redesco' }) => {
   // Configurazione header basata sul tipo selezionato
   const logoPath = headerType === 'maestrale' ? 'logo_mae.png' : 'logo.png'
-  const companyName = headerType === 'maestrale' ? 'Maestrale Srl' : 'Redesco Progetti srl'
+  const companyName = headerType === 'maestrale' ? 'Maestrale Srl' : ' '
   
   // Fallback alle immagini originali se non sono fornite immagini compresse
   const imagesToUse = compressedImages || {

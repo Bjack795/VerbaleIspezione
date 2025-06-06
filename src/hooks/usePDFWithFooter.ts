@@ -121,8 +121,11 @@ export const usePDFWithFooter = () => {
         const totalPages = totalMainPages + Math.ceil(processedImages.length / 2);
         const companyName = headerType === 'maestrale' ? 'Maestrale Srl' : 'Redesco Progetti srl'
         const footerText = language === 'en' 
-          ? `${companyName} - Verification Form | Page ${pageNumber} of ${totalPages}`
+          ? `${companyName} - Inspection Report | Page ${pageNumber} of ${totalPages}`
           : `${companyName} - Scheda di Verifica | Pagina ${pageNumber} di ${totalPages}`;
+        const footerDetails = headerType == 'maestrale' 
+          ? `amministrazione@maestrale.mi.it`
+          : `www.redesco.it - redesco@redesco.it`;
         
         const { width } = page.getSize();
         
@@ -137,6 +140,16 @@ export const usePDFWithFooter = () => {
         // Testo del footer
         page.drawText(footerText, {
           x: 30,
+          y: 25,
+          size: 8,
+          font,
+          color: rgb(0.4, 0.4, 0.4),
+        });
+
+        // Rimuovo 'align: right' e calcolo la posizione X manualmente
+        const footerDetailsWidth = font.widthOfTextAtSize(footerDetails, 8);
+        page.drawText(footerDetails, {
+          x: width - 30 - footerDetailsWidth, // Allineamento a destra manuale
           y: 25,
           size: 8,
           font,
@@ -161,7 +174,7 @@ export const usePDFWithFooter = () => {
           const logoImage = await pdfDoc.embedPng(logoBytes);
           
           // Calcola le dimensioni del logo mantenendo le proporzioni (come height: auto)
-          const logoWidth = headerType === 'maestrale' ? 70 : 40; // Logo più grande per Maestrale
+          const logoWidth = headerType === 'maestrale' ? 70 : 100; // Logo più grande per Maestrale
           const logoAspectRatio = logoImage.width / logoImage.height;
           const logoHeight = logoWidth / logoAspectRatio;
           
@@ -190,7 +203,7 @@ export const usePDFWithFooter = () => {
           });
           
           // Testo company name con font weight bold e posizionamento corretto
-          const companyNameForHeader = headerType === 'maestrale' ? 'Maestrale Srl' : 'Redesco Progetti srl'
+          const companyNameForHeader = headerType === 'maestrale' ? 'Maestrale Srl' : ''
           imagePage.drawText(companyNameForHeader, {
             x: 30 + logoWidth + 10, // 10 è il marginRight del logo
             y: logoY + logoHeight/2 - 2, // centrato verticalmente rispetto al logo

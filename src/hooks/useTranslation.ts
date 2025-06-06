@@ -137,23 +137,27 @@ const translations: Translations = {
   
   // DL Labels
   'dl_generale': {
-    it: 'D.L. Generale',
+    it: 'DLG',
     en: 'Gen. COW'
   },
   'dl_strutture': {
-    it: 'D.L. Strutture',
+    it: 'DLS',
     en: 'Struct. COW'
   },
+  'collaudatore': {
+    it: 'Collaudatore',
+    en: 'Static Tester'
+  },
   'dl_facciate': {
-    it: 'D.L. Facciate',
+    it: 'DL Facciate',
     en: 'Facades COW'
   },
   'dl_elettrici': {
-    it: 'D.L. Imp. Elettrici/Speciali',
+    it: 'DLI Ele.',
     en: 'Elec. COW'
   },
   'dl_meccanici': {
-    it: 'D.L. Imp. Meccanici',
+    it: 'DLI Mec.',
     en: 'Mech. COW'
   },
   
@@ -257,6 +261,10 @@ const translations: Translations = {
   'importa_cache': {
     it: 'Importa Cache',
     en: 'Import Cache'
+  },
+  'scarica_bozza': {
+    it: 'Scarica Bozza',
+    en: 'Download Draft'
   },
   'cancella_campi': {
     it: 'Cancella Campi',
