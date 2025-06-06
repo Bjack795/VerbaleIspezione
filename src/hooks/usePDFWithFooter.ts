@@ -5,6 +5,30 @@ import { ImageData } from '../types/form';
 import { compressAllReportImages } from '../utils/imageCompression';
 import { ultraCompactImageConfig } from '../config/imageCompression';
 
+// Polyfill per Buffer (necessario per pdf-lib nel browser)
+if (typeof global === 'undefined') {
+  // @ts-ignore
+  globalThis.global = globalThis;
+}
+if (typeof Buffer === 'undefined') {
+  // @ts-ignore
+  globalThis.Buffer = class Buffer extends Uint8Array {
+    static from(data: any) {
+      if (typeof data === 'string') {
+        return new Uint8Array(new TextEncoder().encode(data));
+      }
+      return new Uint8Array(data);
+    }
+    static alloc(size: number) {
+      return new Uint8Array(size);
+    }
+    static isBuffer(obj: any) {
+      return obj instanceof Uint8Array || obj instanceof ArrayBuffer || 
+             (obj && typeof obj.constructor === 'function' && obj.constructor.name === 'Buffer');
+    }
+  };
+}
+
 // Funzione per convertire data URL in File
 const dataURLToFile = async (dataURL: string, filename: string): Promise<File> => {
   const response = await fetch(dataURL);
