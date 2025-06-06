@@ -5,34 +5,16 @@ import FormLayout from '../components/FormLayout'
 import Tabs from '../components/Tabs'
 import PDFDownloadButton from '../components/PDFDownloadButton'
 import ImageManager from '../components/ImageManager'
+import LanguageSelector from '../components/LanguageSelector'
+import HeaderSelector from '../components/HeaderSelector'
 import { FormInputs, ImageData } from '../types/form'
 import { colors, styling } from '../constants/theme'
+import { useTranslation } from '../hooks/useTranslation'
+import { useHeaderSelection } from '../hooks/useHeaderSelection'
 
-const tabs = [
-  { id: 'dati', label: 'Dati' },
-  { id: 'immagini', label: 'Immagini' }
-]
+// Nota: le tabs sono ora definite dentro il componente per usare la traduzione
 
-const tipoIspezioneOptions = [
-  { id: 'visivo', label: 'Visivo' },
-  { id: 'rilievo', label: 'Rilievo/Verifica misure' },
-  { id: 'test', label: 'Test/Collaudo' },
-  { id: 'altro', label: 'Altro' }
-]
-
-const esitoOptions = [
-  { id: 'conforme', label: 'Conforme/Positivo' },
-  { id: 'nonConforme', label: 'Non conforme' },
-  { id: 'osservazione', label: 'Osservazione' }
-]
-
-const dlOptions = [
-  { id: 'DLG', label: 'D.L. Generale' },
-  { id: 'DLS', label: 'D.L. Strutture' },
-  { id: 'DL_FACCIATE', label: 'D.L. Facciate' },
-  { id: 'DL_ELETTRICI', label: 'D.L. Imp. Elettrici/Speciali' },
-  { id: 'DL_MECCANICI', label: 'D.L. Imp. Meccanici' }
-]
+// Nota: le opzioni sono ora definite dentro il componente per usare la traduzione
 
 const getTodayDate = (): string => {
   const today = new Date();
@@ -43,6 +25,37 @@ const getTodayDate = (): string => {
 };
 
 const FormPage: React.FC = () => {
+  const { language, changeLanguage, t } = useTranslation()
+  const { headerType, changeHeader } = useHeaderSelection()
+  
+  // Tabs con traduzioni
+  const tabs = [
+    { id: 'dati', label: t('tab_dati') },
+    { id: 'immagini', label: t('tab_immagini') }
+  ]
+  
+  // Opzioni con traduzioni
+  const tipoIspezioneOptions = [
+    { id: 'visivo', label: t('visivo') },
+    { id: 'rilievo', label: t('rilievo_misure') },
+    { id: 'test', label: t('test_collaudo') },
+    { id: 'altro', label: t('altro') }
+  ]
+
+  const esitoOptions = [
+    { id: 'conforme', label: t('conforme_positivo') },
+    { id: 'nonConforme', label: t('non_conforme') },
+    { id: 'osservazione', label: t('osservazione') }
+  ]
+
+  const dlOptions = [
+    { id: 'DLG', label: t('dl_generale') },
+    { id: 'DLS', label: t('dl_strutture') },
+    { id: 'DL_FACCIATE', label: t('dl_facciate') },
+    { id: 'DL_ELETTRICI', label: t('dl_elettrici') },
+    { id: 'DL_MECCANICI', label: t('dl_meccanici') }
+  ]
+  
   const [formData, setFormData] = useState<FormInputs>({
     dataIspezione: getTodayDate(),
     dataVerbale: getTodayDate(),
@@ -702,9 +715,25 @@ const FormPage: React.FC = () => {
 
   return (
     <FormLayout colors={colors} styling={styling}>
-      <h2 className="text-2xl font-bold mb-8 text-center" style={{ color: colors.primary }}>
-        Verbale di Ispezione
-      </h2>
+      <div className="flex justify-between items-center mb-8">
+        <h2 className="text-2xl font-bold text-center flex-1" style={{ color: colors.primary }}>
+          {t('verbale_ispezione')}
+        </h2>
+        <div className="flex gap-4">
+          <HeaderSelector
+            currentHeader={headerType}
+            onHeaderChange={changeHeader}
+            t={t}
+            colors={colors}
+          />
+          <LanguageSelector
+            currentLanguage={language}
+            onLanguageChange={changeLanguage}
+            t={t}
+            colors={colors}
+          />
+        </div>
+      </div>
 
       <Tabs
         tabs={tabs}
@@ -717,7 +746,7 @@ const FormPage: React.FC = () => {
         <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
             <FormInput
-              label="Data Ispezione"
+              label={t('data_ispezione')}
               name="dataIspezione"
               value={formData.dataIspezione}
               onChange={handleInputChange}
@@ -728,7 +757,7 @@ const FormPage: React.FC = () => {
             />
 
             <FormInput
-              label="Data Verbale"
+              label={t('data_verbale')}
               name="dataVerbale"
               value={formData.dataVerbale}
               onChange={handleInputChange}
@@ -739,7 +768,7 @@ const FormPage: React.FC = () => {
             />
 
             <FormInput
-              label="Numero"
+              label={t('numero')}
               name="numero"
               value={formData.numero}
               onChange={handleInputChange}
@@ -749,7 +778,7 @@ const FormPage: React.FC = () => {
             />
 
             <FormInput
-              label="Nome Progetto"
+              label={t('nome_progetto')}
               name="nomeProgetto"
               value={formData.nomeProgetto}
               onChange={handleInputChange}
@@ -759,7 +788,7 @@ const FormPage: React.FC = () => {
             />
 
             <FormInput
-              label="Lavorazione Verificata"
+              label={t('lavorazione_verificata_label')}
               name="lavorazioneVerificata"
               value={formData.lavorazioneVerificata}
               onChange={handleInputChange}
@@ -769,7 +798,7 @@ const FormPage: React.FC = () => {
             />
 
             <FormInput
-              label="Verifica Materiale"
+              label={t('verifica_materiale_label')}
               name="verificaMateriale"
               value={formData.verificaMateriale}
               onChange={handleInputChange}
@@ -779,7 +808,7 @@ const FormPage: React.FC = () => {
             />
 
             <FormInput
-              label="Riferimento Progetto"
+              label={t('riferimento_progetto_label')}
               name="riferimentoProgetto"
               value={formData.riferimentoProgetto}
               onChange={handleInputChange}
@@ -789,7 +818,7 @@ const FormPage: React.FC = () => {
             />
 
             <FormInput
-              label="Ubicazione"
+              label={t('ubicazione_label')}
               name="ubicazione"
               value={formData.ubicazione}
               onChange={handleInputChange}
@@ -799,7 +828,7 @@ const FormPage: React.FC = () => {
             />
 
             <FormInput
-              label="Scheda Controllo"
+              label={t('scheda_controllo_label')}
               name="schedaControllo"
               value={formData.schedaControllo}
               onChange={handleInputChange}
@@ -808,7 +837,7 @@ const FormPage: React.FC = () => {
               styling={styling}
             />
             <FormInput
-              label="Ispettore"
+              label={t('ispettore_label')}
               name="ispettore"
               value={formData.ispettore}
               onChange={handleInputChange}
@@ -822,7 +851,7 @@ const FormPage: React.FC = () => {
             {/* Pulsanti di formattazione */}
             <div className="mb-4">
               <label className="block text-sm font-medium mb-2" style={{ color: colors.on_surface }}>
-                Oggetto del Sopralluogo
+                {t('oggetto_sopralluogo_label')}
               </label>
               <div className="flex space-x-2 mb-2">
                 <button
@@ -834,7 +863,7 @@ const FormPage: React.FC = () => {
                     color: colors.on_surface,
                     backgroundColor: activeFormats.bold ? '#fbbf24' : colors.surface_variant
                   }}
-                  title="Grassetto"
+                  title={t('grassetto')}
                 >
                   B
                 </button>
@@ -847,7 +876,7 @@ const FormPage: React.FC = () => {
                     color: colors.on_surface,
                     backgroundColor: activeFormats.italic ? '#fbbf24' : colors.surface_variant
                   }}
-                  title="Corsivo"
+                  title={t('corsivo')}
                 >
                   I
                 </button>
@@ -860,7 +889,7 @@ const FormPage: React.FC = () => {
                     color: colors.on_surface,
                     backgroundColor: activeFormats.underline ? '#fbbf24' : colors.surface_variant
                   }}
-                  title="Sottolineato"
+                  title={t('sottolineato')}
                 >
                   U
                 </button>
@@ -906,7 +935,7 @@ const FormPage: React.FC = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-4 mt-8">
             <CheckboxGroup
-              title="Tipo Ispezione"
+              title={t('tipo_ispezione')}
               options={tipoIspezioneOptions}
               values={formData.tipoIspezione}
               onChange={(field) => handleCheckboxChange('tipoIspezione', field)}
@@ -914,7 +943,7 @@ const FormPage: React.FC = () => {
             />
 
             <CheckboxGroup
-              title="Esito"
+              title={t('esito')}
               options={esitoOptions}
               values={formData.esito}
               onChange={(field) => handleCheckboxChange('esito', field)}
@@ -922,7 +951,7 @@ const FormPage: React.FC = () => {
             />
 
             <CheckboxGroup
-              title="D.L."
+              title={t('dl')}
               options={dlOptions}
               values={formData.dl}
               onChange={(field) => handleCheckboxChange('dl', field)}
@@ -935,7 +964,7 @@ const FormPage: React.FC = () => {
               type="submit"
               className="w-full sm:w-auto bg-red-700 text-white px-6 py-2 rounded-md hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
             >
-              Genera Documento
+              {t('genera_documento')}
             </button>
             
             <button
@@ -943,7 +972,7 @@ const FormPage: React.FC = () => {
               onClick={() => saveDataToFile(false)}
               className="w-full sm:w-auto bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
-              Esporta Cache
+              {t('esporta_cache')}
             </button>
             
             <button
@@ -951,7 +980,7 @@ const FormPage: React.FC = () => {
               onClick={() => setShowDraftsList(!showDraftsList)}
               className="w-full sm:w-auto bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
             >
-              Bozze Salvate ({cachedDrafts.length})
+              {t('bozze_salvate')} ({cachedDrafts.length})
             </button>
             
             <button
@@ -959,7 +988,7 @@ const FormPage: React.FC = () => {
               onClick={handleImportDraft}
               className="w-full sm:w-auto bg-purple-600 text-white px-6 py-2 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
             >
-              Importa Cache
+              {t('importa_cache')}
             </button>
             
             <button
@@ -967,7 +996,7 @@ const FormPage: React.FC = () => {
               onClick={() => window.location.reload()}
               className="w-full sm:w-auto bg-gray-200 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
             >
-              Cancella Campi
+              {t('cancella_campi')}
             </button>
           </div>
           
@@ -975,10 +1004,10 @@ const FormPage: React.FC = () => {
           {showDraftsList && (
             <div className="mt-8 p-4 border border-gray-300 rounded-md bg-gray-50">
               <h3 className="text-lg font-semibold mb-4" style={{ color: colors.primary }}>
-                Bozze Salvate in Cache
+                {t('bozze_salvate_cache')}
               </h3>
               {cachedDrafts.length === 0 ? (
-                <p className="text-gray-500">Nessuna bozza salvata</p>
+                <p className="text-gray-500">{t('nessuna_bozza')}</p>
               ) : (
                 <div className="space-y-2">
                   {cachedDrafts.map((draft) => (
@@ -989,7 +1018,7 @@ const FormPage: React.FC = () => {
                       <div className="flex-1">
                         <div className="font-medium">{draft.nomeProgettoCompleto}</div>
                         <div className="text-sm text-gray-500">
-                          Salvato il: {draft.dataCreazione}
+                          {t('salvato_il')}: {draft.dataCreazione}
                         </div>
                       </div>
                       <div className="flex space-x-2">
@@ -997,7 +1026,7 @@ const FormPage: React.FC = () => {
                           onClick={() => loadDraftFromCache(draft.nomeProgetto)}
                           className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700"
                         >
-                          Carica
+                          {t('carica')}
                         </button>
                         <button
                           onClick={async () => {
@@ -1007,7 +1036,7 @@ const FormPage: React.FC = () => {
                           }}
                           className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700"
                         >
-                          Elimina
+                          {t('elimina')}
                         </button>
                       </div>
                     </div>
@@ -1043,9 +1072,12 @@ const FormPage: React.FC = () => {
           <PDFDownloadButton
             data={formData}
             onDownload={() => saveDataToFile(true)}
+            language={language}
+            headerType={headerType}
+            t={t}
             className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
           >
-            Scarica PDF
+            {t('scarica_pdf')}
           </PDFDownloadButton>
         </div>
       )}

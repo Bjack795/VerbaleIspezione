@@ -78,7 +78,7 @@ export const usePDFWithFooter = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const generatePDFWithFooter = useCallback(async (reactPdfDocument: any, images: ImageData[] = []) => {
+  const generatePDFWithFooter = useCallback(async (reactPdfDocument: any, images: ImageData[] = [], language: 'it' | 'en' = 'it', headerType: 'redesco' | 'maestrale' = 'redesco') => {
     try {
       setIsLoading(true);
       setError(null);
@@ -119,7 +119,10 @@ export const usePDFWithFooter = () => {
       pages.forEach((page, index) => {
         const pageNumber = index + 1;
         const totalPages = totalMainPages + Math.ceil(processedImages.length / 2);
-        const footerText = `Redesco Progetti srl - Scheda di Verifica | Pagina ${pageNumber} di ${totalPages}`;
+        const companyName = headerType === 'maestrale' ? 'Maestrale Srl' : 'Redesco Progetti srl'
+        const footerText = language === 'en' 
+          ? `${companyName} - Verification Form | Page ${pageNumber} of ${totalPages}`
+          : `${companyName} - Scheda di Verifica | Pagina ${pageNumber} di ${totalPages}`;
         
         const { width } = page.getSize();
         
@@ -152,8 +155,9 @@ export const usePDFWithFooter = () => {
           const totalPages = totalMainPages + Math.ceil(processedImages.length / 2);
           
           // HEADER UGUALE ALLE ALTRE PAGINE - con logo e company name
-          // Carica il logo
-          const logoBytes = await fetch(`${import.meta.env.BASE_URL}logo.png`).then(r => r.arrayBuffer());
+          // Carica il logo dinamicamente
+          const logoPath = headerType === 'maestrale' ? 'logo_mae.png' : 'logo.png'
+          const logoBytes = await fetch(`${import.meta.env.BASE_URL}${logoPath}`).then(r => r.arrayBuffer());
           const logoImage = await pdfDoc.embedPng(logoBytes);
           
           // Calcola le dimensioni del logo mantenendo le proporzioni (come height: auto)
@@ -186,7 +190,8 @@ export const usePDFWithFooter = () => {
           });
           
           // Testo company name con font weight bold e posizionamento corretto
-          imagePage.drawText('Redesco Progetti srl', {
+          const companyNameForHeader = headerType === 'maestrale' ? 'Maestrale Srl' : 'Redesco Progetti srl'
+          imagePage.drawText(companyNameForHeader, {
             x: 30 + logoWidth + 10, // 10 è il marginRight del logo
             y: logoY + logoHeight/2 - 2, // centrato verticalmente rispetto al logo
             size: 10,
@@ -204,16 +209,19 @@ export const usePDFWithFooter = () => {
           
           // Prima immagine (in alto) - margini ridotti
           if (processedImages[i]) {
-            await addImageToPage(imagePage, processedImages[i], 'top', font, pdfDoc, i);
+            await addImageToPage(imagePage, processedImages[i], 'top', font, pdfDoc, i, language);
           }
           
           // Seconda immagine (in basso) - margini ridotti
           if (processedImages[i + 1]) {
-            await addImageToPage(imagePage, processedImages[i + 1], 'bottom', font, pdfDoc, i + 1);
+            await addImageToPage(imagePage, processedImages[i + 1], 'bottom', font, pdfDoc, i + 1, language);
           }
           
           // Footer
-          const footerText = `Redesco Progetti srl - Scheda di Verifica | Pagina ${currentPageNumber} di ${totalPages}`;
+          const companyNameForFooter = headerType === 'maestrale' ? 'Maestrale Srl' : 'Redesco Progetti srl'
+          const footerText = language === 'en' 
+            ? `${companyNameForFooter} - Verification Form | Page ${currentPageNumber} of ${totalPages}`
+            : `${companyNameForFooter} - Scheda di Verifica | Pagina ${currentPageNumber} di ${totalPages}`;
           
           imagePage.drawLine({
             start: { x: 30, y: 40 },
@@ -264,7 +272,8 @@ const addImageToPage = async (
   position: 'top' | 'bottom', 
   font: any,
   pdfDoc: PDFDocument,
-  imageIndex: number
+  imageIndex: number,
+  language: 'it' | 'en' = 'it'
 ) => {
   try {
     const { width: pageWidth, height: pageHeight } = page.getSize();
@@ -346,9 +355,10 @@ const addImageToPage = async (
     
     // Genera didascalia automatica
     const figureNumber = imageIndex + 1;
+    const figureText = language === 'en' ? 'Figure' : 'Figura';
     const captionText = imageData.caption 
-      ? `Figura ${figureNumber} - ${imageData.caption}`
-      : `Figura ${figureNumber}`;
+      ? `${figureText} ${figureNumber} - ${imageData.caption}`
+      : `${figureText} ${figureNumber}`;
     
     // DIDASCALIA CENTRATA
     const textWidth = font.widthOfTextAtSize(captionText, 10);

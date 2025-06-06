@@ -2,25 +2,33 @@ import React from 'react';
 import { usePDFWithFooter } from '../hooks/usePDFWithFooter';
 import PDFDocument from './PDFDocument';
 import { FormInputs } from '../types/form';
+import { Language } from '../hooks/useTranslation';
+import { HeaderType } from '../hooks/useHeaderSelection';
 
 interface PDFDownloadButtonProps {
   data: FormInputs;
   className?: string;
   children?: React.ReactNode;
   onDownload?: () => void; // Callback chiamata dopo il download
+  language?: Language;
+  headerType?: HeaderType;
+  t?: (key: string) => string;
 }
 
 const PDFDownloadButton: React.FC<PDFDownloadButtonProps> = ({ 
   data, 
   className = '', 
   children = 'Scarica PDF',
-  onDownload
+  onDownload,
+  language = 'it',
+  headerType = 'redesco',
+  t
 }) => {
   const { generatePDFWithFooter, isLoading, error } = usePDFWithFooter();
 
   const handleDownload = async () => {
     try {
-      const pdfBlob = await generatePDFWithFooter(<PDFDocument data={data} />, data.images);
+      const pdfBlob = await generatePDFWithFooter(<PDFDocument data={data} language={language} headerType={headerType} />, data.images, language, headerType);
       
       // Crea URL e scarica il file
       const url = URL.createObjectURL(pdfBlob);
@@ -55,7 +63,7 @@ const PDFDownloadButton: React.FC<PDFDownloadButtonProps> = ({
       disabled={isLoading}
       className={`${className} ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
     >
-      {isLoading ? 'Generazione PDF...' : children}
+      {isLoading ? (t ? t('generazione_pdf') : 'Generazione PDF...') : children}
     </button>
   );
 };

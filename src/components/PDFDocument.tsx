@@ -3,28 +3,59 @@ import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/render
 import { FormInputs } from '../types/form'
 import { colors } from '../constants/theme'
 import { format } from 'date-fns'
-import { it } from 'date-fns/locale'
+import { it, enUS } from 'date-fns/locale'
+import { Language } from '../hooks/useTranslation'
+import { HeaderType } from '../hooks/useHeaderSelection'
 
-// Mappatura delle label corrette
-const tipoIspezioneLabels: Record<string, string> = {
-  'visivo': 'Visivo',
-  'rilievo': 'Rilievo/Verifica misure',
-  'test': 'Test/Collaudo',
-  'altro': 'Altro'
+// Mappatura delle label corrette per lingue
+const tipoIspezioneLabels: Record<string, Record<Language, string>> = {
+  'visivo': { it: 'Visivo', en: 'Visual' },
+  'rilievo': { it: 'Rilievo/Verifica misure', en: 'Survey/Measurement verification' },
+  'test': { it: 'Test/Collaudo', en: 'Test/Commissioning' },
+  'altro': { it: 'Altro', en: 'Other' }
 }
 
-const esitoLabels: Record<string, string> = {
-  'conforme': 'Conforme/Positivo',
-  'nonConforme': 'Non conforme',
-  'osservazione': 'Osservazione'
+const esitoLabels: Record<string, Record<Language, string>> = {
+  'conforme': { it: 'Conforme/Positivo', en: 'Compliant/Positive' },
+  'nonConforme': { it: 'Non conforme', en: 'Non-compliant' },
+  'osservazione': { it: 'Osservazione', en: 'Observation' }
 }
 
-const dlLabels: Record<string, string> = {
-  'DLG': 'D.L. Generale',
-  'DLS': 'D.L. Strutture',
-  'DL_FACCIATE': 'D.L. Facciate',
-  'DL_ELETTRICI': 'D.L. Imp. Elettrici/Speciali',
-  'DL_MECCANICI': 'D.L. Imp. Meccanici'
+const dlLabels: Record<string, Record<Language, string>> = {
+  'DLG': { it: 'D.L. Generale', en: 'General D.L.' },
+  'DLS': { it: 'D.L. Strutture', en: 'Structures D.L.' },
+  'DL_FACCIATE': { it: 'D.L. Facciate', en: 'Facades D.L.' },
+  'DL_ELETTRICI': { it: 'D.L. Imp. Elettrici/Speciali', en: 'D.L. Electrical/Special Systems' },
+  'DL_MECCANICI': { it: 'D.L. Imp. Meccanici', en: 'D.L. Mechanical Systems' }
+}
+
+// Funzione per ottenere traduzioni
+const getTranslation = (key: string, language: Language): string => {
+  const translations: Record<string, Record<Language, string>> = {
+    'scheda_verifica': { it: 'SCHEDA DI VERIFICA', en: 'VERIFICATION FORM' },
+    'posa_installazione': { it: 'Posa/Installazione/Lavoro', en: 'Installation/Work' },
+    'progetto': { it: 'PROGETTO', en: 'PROJECT' },
+    'metodo_verifica': { it: 'METODO DI VERIFICA', en: 'VERIFICATION METHOD' },
+    'oggetto_sopralluogo': { it: 'OGGETTO DEL SOPRALLUOGO', en: 'INSPECTION SUBJECT' },
+    'esito_controllo': { it: 'ESITO CONTROLLO', en: 'CONTROL RESULT' },
+    'data_ispezione': { it: 'Data ispezione', en: 'Inspection date' },
+    'n_progressivo': { it: 'N. progressivo', en: 'Progressive number' },
+    'lavorazione_verificata': { it: 'Lavorazione Verificata', en: 'Verified Work' },
+    'verifica_materiale': { it: 'Verifica materiale previsto', en: 'Expected material verification' },
+    'riferimento_progetto': { it: 'Riferimento Progetto costruttivo', en: 'Constructive project reference' },
+    'ubicazione': { it: 'Ubicazione - Localizzazione', en: 'Location - Localization' },
+    'scheda_controllo': { it: 'Scheda controllo lavorazione', en: 'Work control sheet' },
+    'nota_osservazione': { it: '* Tale osservazione è da considerarsi prescrittiva – da ottemperare', en: '* This observation is to be considered mandatory – to be complied with' },
+    'data_verbale': { it: 'Data verbale', en: 'Report date' },
+    'ispettore': { it: 'Ispettore', en: 'Inspector' },
+    'per_conto_di': { it: 'Per conto di', en: 'On behalf of' },
+    'firma': { it: 'Firma', en: 'Signature' },
+    'footer_pdf': { it: 'Redesco Progetti srl - Scheda di Verifica | Pagina', en: 'Redesco Progetti srl - Verification Form | Page' },
+    'di': { it: 'di', en: 'of' },
+    'figura': { it: 'Figura', en: 'Figure' }
+  }
+  
+  return translations[key]?.[language] || key
 }
 
 // Funzione per calcolare il numero stimato di pagine
@@ -176,38 +207,38 @@ const renderFormattedText = (text: string, baseStyle: any) => {
 };
 
 // Funzione per creare il contenuto suddiviso per pagine
-const createPagedContent = (data: FormInputs, compressedImages: Record<string, string>) => {
+const createPagedContent = (data: FormInputs, compressedImages: Record<string, string>, language: Language = 'it') => {
   const totalPages = calculateExpectedPages(data);
   
   // Contenuto principale (quello che hai già)
   const mainContent = (
     <>
-      <Text style={styles.title}>SCHEDA DI VERIFICA</Text>
-      <Text style={styles.subtitle}>Posa/Installazione/Lavoro</Text>
+      <Text style={styles.title}>{getTranslation('scheda_verifica', language)}</Text>
+      <Text style={styles.subtitle}>{getTranslation('posa_installazione', language)}</Text>
       <View style={styles.headerDividerThin}></View>
 
       {/* Sezione PROGETTO */}
       <View style={[styles.sectionWrapper, { position: 'relative' }]} wrap={false}>
         <View style={styles.grayBackground}>
-           <Text style={styles.sectionTitle}>PROGETTO: {data.nomeProgetto}</Text>
+           <Text style={styles.sectionTitle}>{getTranslation('progetto', language)}: {data.nomeProgetto}</Text>
         </View>
         <View style={styles.sectionLine}></View>
          <View style={styles.sectionRowLast}>
            <View style={[styles.sectionColumn, styles.verticalDivider]}>
              <View style={styles.verticalDividerLine}></View>
-             <Text style={styles.sectionSubtitle}>Data ispezione</Text>
+             <Text style={styles.sectionSubtitle}>{getTranslation('data_ispezione', language)}</Text>
              <Text style={styles.value}>
-               {format(new Date(data.dataIspezione), 'dd/MM/yyyy', { locale: it })}
+               {format(new Date(data.dataIspezione), 'dd/MM/yyyy', { locale: language === 'en' ? enUS : it })}
              </Text>
            </View>
            <View style={[styles.sectionColumn, styles.verticalDivider]}>
              <View style={styles.verticalDividerLine}></View>
-             <Text style={styles.sectionSubtitle}>N. progressivo</Text>
+             <Text style={styles.sectionSubtitle}>{getTranslation('n_progressivo', language)}</Text>
              <Text style={styles.value}>{data.numero}</Text>
            </View>
            <View style={styles.sectionColumn}>
               {Object.entries(data.dl).map(([key, value]) => value && 
-                <Text key={key} style={styles.sectionSubtitle}>{dlLabels[key] || key}</Text>
+                <Text key={key} style={styles.sectionSubtitle}>{dlLabels[key]?.[language] || key}</Text>
               )}
            </View>
          </View>
@@ -223,7 +254,7 @@ const createPagedContent = (data: FormInputs, compressedImages: Record<string, s
           <View style={styles.sectionRow}>
             <View style={[styles.sectionColumn, styles.verticalDivider]}>
               <View style={styles.verticalDividerLine}></View>
-              <Text style={styles.label}>Lavorazione Verificata</Text>
+              <Text style={styles.label}>{getTranslation('lavorazione_verificata', language)}</Text>
             </View>
             <View style={styles.sectionColumn}>
               <Text style={styles.value}>{data.lavorazioneVerificata}</Text>
@@ -233,7 +264,7 @@ const createPagedContent = (data: FormInputs, compressedImages: Record<string, s
            <View style={styles.sectionRow}>
             <View style={[styles.sectionColumn, styles.verticalDivider]}>
               <View style={styles.verticalDividerLine}></View>
-              <Text style={styles.label}>Verifica materiale previsto</Text>
+              <Text style={styles.label}>{getTranslation('verifica_materiale', language)}</Text>
             </View>
             <View style={styles.sectionColumn}>
               <Text style={styles.value}>{data.verificaMateriale}</Text>
@@ -243,7 +274,7 @@ const createPagedContent = (data: FormInputs, compressedImages: Record<string, s
            <View style={styles.sectionRow}>
             <View style={[styles.sectionColumn, styles.verticalDivider]}>
               <View style={styles.verticalDividerLine}></View>
-              <Text style={styles.label}>Riferimento Progetto costruttivo</Text>
+              <Text style={styles.label}>{getTranslation('riferimento_progetto', language)}</Text>
             </View>
             <View style={styles.sectionColumn}>
               <Text style={styles.value}>{data.riferimentoProgetto}</Text>
@@ -253,7 +284,7 @@ const createPagedContent = (data: FormInputs, compressedImages: Record<string, s
            <View style={styles.sectionRow}>
             <View style={[styles.sectionColumn, styles.verticalDivider]}>
               <View style={styles.verticalDividerLine}></View>
-              <Text style={styles.label}>Ubicazione - Localizzazione</Text>
+              <Text style={styles.label}>{getTranslation('ubicazione', language)}</Text>
             </View>
             <View style={styles.sectionColumn}>
               <Text style={styles.value}>{data.ubicazione}</Text>
@@ -263,7 +294,7 @@ const createPagedContent = (data: FormInputs, compressedImages: Record<string, s
            <View style={styles.sectionRowLast}>
             <View style={[styles.sectionColumn, styles.verticalDivider]}>
               <View style={styles.verticalDividerLine}></View>
-              <Text style={styles.label}>Scheda controllo lavorazione</Text>
+              <Text style={styles.label}>{getTranslation('scheda_controllo', language)}</Text>
             </View>
             <View style={styles.sectionColumn}>
               <Text style={styles.value}>{data.schedaControllo}</Text>
@@ -278,7 +309,7 @@ const createPagedContent = (data: FormInputs, compressedImages: Record<string, s
 
       {/* Sezione METODO DI VERIFICA */}
       <View style={styles.unBorderedSection} wrap={false}>
-         <Text style={styles.sectionTitle}>METODO DI VERIFICA</Text>
+         <Text style={styles.sectionTitle}>{getTranslation('metodo_verifica', language)}</Text>
          <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: 12, gap: 20 , alignItems: 'center' }}>
            {Object.entries(data.tipoIspezione).map(([key, value]) => (
              <View key={key} style={{ flexDirection: 'row'}}>
@@ -287,7 +318,7 @@ const createPagedContent = (data: FormInputs, compressedImages: Record<string, s
                  style={{ width: 12, height: 12, marginRight: 6 }}
                />
                <Text style={styles.checkboxOption}>
-                 {tipoIspezioneLabels[key] || key}
+                 {tipoIspezioneLabels[key]?.[language] || key}
                </Text>
              </View>
            ))}
@@ -296,14 +327,14 @@ const createPagedContent = (data: FormInputs, compressedImages: Record<string, s
 
       {/* Sezione OGGETTO DEL SOPRALLUOGO E ESITO CONTROLLO*/}
       <View style={[styles.sectionWrapper, { position: 'relative' }]}>
-         <Text style={styles.sectionTitle}>OGGETTO DEL SOPRALLUOGO</Text>
+         <Text style={styles.sectionTitle}>{getTranslation('oggetto_sopralluogo', language)}</Text>
          <View style={styles.sectionRowLast}>
            <View style={styles.sectionColumnFull}>
               {renderFormattedText(data.oggettoSopralluogo, styles.value)}
            </View>
          </View>
 
-         <Text style={styles.sectionTitle}>ESITO CONTROLLO</Text>
+         <Text style={styles.sectionTitle}>{getTranslation('esito_controllo', language)}</Text>
          <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: 12, gap: 20 , alignItems: 'center' }} wrap={false}>
            {Object.entries(data.esito).map(([key, value]) => (
              <View key={key} style={{ flexDirection: 'row'}}>
@@ -312,12 +343,12 @@ const createPagedContent = (data: FormInputs, compressedImages: Record<string, s
                  style={{ width: 12, height: 12, marginRight: 6 }}
                />
                <Text style={styles.checkboxOption}>
-                 {esitoLabels[key] || key}
+                 {esitoLabels[key]?.[language] || key}
                </Text>
              </View>
            ))}
          </View>
-          <Text style={styles.noteText}>* Tale osservazione è da considerarsi prescrittiva – da ottemperare</Text>
+          <Text style={styles.noteText}>{getTranslation('nota_osservazione', language)}</Text>
          {/* Bordi esterni - renderizzati per ultimi */}
          <View style={styles.sectionBorderTop}></View>
          <View style={styles.sectionBorderBottom}></View>
@@ -329,19 +360,19 @@ const createPagedContent = (data: FormInputs, compressedImages: Record<string, s
          <View style={styles.sectionRowLast}>
            <View style={[styles.sectionColumnCentered, styles.verticalDivider]}>
              <View style={styles.verticalDividerLine}></View>
-             <Text style={styles.value}>Data verbale</Text>
+             <Text style={styles.value}>{getTranslation('data_verbale', language)}</Text>
            </View>
            <View style={[styles.sectionColumnCentered, styles.verticalDivider]}>
              <View style={styles.verticalDividerLine}></View>
-             <Text style={styles.value}>Ispettore</Text>
+             <Text style={styles.value}>{getTranslation('ispettore', language)}</Text>
            </View>
            <View style={[styles.sectionColumnCentered, styles.verticalDivider]}>
              <View style={styles.verticalDividerLine}></View>
-             <Text style={styles.value}>Per conto di</Text>
+             <Text style={styles.value}>{getTranslation('per_conto_di', language)}</Text>
            </View>
            <View style={[styles.sectionColumnCentered, styles.verticalDivider]}>
              <View style={styles.verticalDividerLine}></View>
-             <Text style={styles.value}>Firma</Text>
+             <Text style={styles.value}>{getTranslation('firma', language)}</Text>
            </View>
          </View>
          <View style={styles.sectionLineLight}></View>
@@ -349,7 +380,7 @@ const createPagedContent = (data: FormInputs, compressedImages: Record<string, s
            <View style={[styles.sectionColumnCentered, styles.verticalDivider]}>
               <View style={styles.verticalDividerLine}></View>
               <Text style={styles.value}>
-                  {format(new Date(data.dataVerbale), 'dd/MM/yyyy', { locale: it })}
+                  {format(new Date(data.dataVerbale), 'dd/MM/yyyy', { locale: language === 'en' ? enUS : it })}
               </Text>
            </View>
            <View style={[styles.sectionColumnCentered, styles.verticalDivider]}>
@@ -633,23 +664,25 @@ const styles = StyleSheet.create({
 
 interface PDFDocumentProps {
   data: FormInputs;
-}
-
-interface PDFDocumentProps {
-  data: FormInputs;
   compressedImages?: Record<string, string>;
+  language?: Language;
+  headerType?: HeaderType;
 }
 
-const PDFDocument: React.FC<PDFDocumentProps> = ({ data, compressedImages }) => {
+const PDFDocument: React.FC<PDFDocumentProps> = ({ data, compressedImages, language = 'it', headerType = 'redesco' }) => {
+  // Configurazione header basata sul tipo selezionato
+  const logoPath = headerType === 'maestrale' ? 'logo_mae.png' : 'logo.png'
+  const companyName = headerType === 'maestrale' ? 'Maestrale Srl' : 'Redesco Progetti srl'
+  
   // Fallback alle immagini originali se non sono fornite immagini compresse
   const imagesToUse = compressedImages || {
-    logo: `${import.meta.env.BASE_URL}logo.png`,
+    logo: `${import.meta.env.BASE_URL}${logoPath}`,
     firma: `${import.meta.env.BASE_URL}firma.jpg`,
     checkbox_checked: `${import.meta.env.BASE_URL}images/checkbox_checked.png`,
     checkbox_unchecked: `${import.meta.env.BASE_URL}images/checkbox_unchecked.png`
   };
 
-  const { mainContent } = createPagedContent(data, imagesToUse);
+  const { mainContent } = createPagedContent(data, imagesToUse, language);
 
   return (
     <Document>
@@ -661,7 +694,7 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data, compressedImages }) => 
               src={imagesToUse.logo}
               style={styles.logo}
             />
-            <Text style={styles.companyName}>Redesco Progetti srl</Text>
+            <Text style={styles.companyName}>{companyName}</Text>
           </View>
           {/* Linea sotto header - COMPATIBILE */}
           <View style={styles.headerLine}></View>
