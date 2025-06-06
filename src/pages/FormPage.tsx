@@ -60,7 +60,8 @@ const FormPage: React.FC = () => {
     dataIspezione: getTodayDate(),
     dataVerbale: getTodayDate(),
     numero: '001',
-    nomeProgetto: 'XXXXX - Progetto di esempio',
+    numeroCommessa: 'XXXXX',
+    nomeProgetto: 'Progetto di esempio',
     lavorazioneVerificata: '-',
     verificaMateriale: '-',
     riferimentoProgetto: '-',
@@ -233,14 +234,14 @@ const FormPage: React.FC = () => {
       const transaction = db.transaction(['bozze'], 'readwrite')
       const store = transaction.objectStore('bozze')
       
-      // Usa i primi 5 caratteri del nome progetto come identificatore
-      const projectPrefix = (data.nomeProgetto || 'XXXXX').substring(0, 5).toUpperCase()
+      // Usa il numero commessa come identificatore
+      const projectPrefix = (data.numeroCommessa || 'XXXXX').toUpperCase()
       
       const draftData = {
         nomeProgetto: projectPrefix, // Questa è ora la chiave primaria
         data: data,
         timestamp: Date.now(),
-        nomeProgettoCompleto: data.nomeProgetto || 'Progetto senza nome',
+        nomeProgettoCompleto: `${data.numeroCommessa || 'XXXXX'} - ${data.nomeProgetto || 'Progetto senza nome'}`,
         dataCreazione: new Date().toLocaleString('it-IT')
       }
       
@@ -258,10 +259,10 @@ const FormPage: React.FC = () => {
         try {
           const dataWithoutImages = { ...data, images: [] }
           const draftDataBackup = {
-            nomeProgetto: (data.nomeProgetto || 'XXXXX').substring(0, 5).toUpperCase(),
+            nomeProgetto: (data.numeroCommessa || 'XXXXX').toUpperCase(),
             data: dataWithoutImages,
             timestamp: Date.now(),
-            nomeProgettoCompleto: data.nomeProgetto || 'Progetto senza nome',
+            nomeProgettoCompleto: `${data.numeroCommessa || 'XXXXX'} - ${data.nomeProgetto || 'Progetto senza nome'}`,
             dataCreazione: new Date().toLocaleString('it-IT')
           }
           
@@ -541,6 +542,7 @@ const FormPage: React.FC = () => {
       'dataIspezione',
       'dataVerbale',
       'numero',
+      'numeroCommessa',
       'nomeProgetto',
       'lavorazioneVerificata',
       'verificaMateriale',
@@ -773,6 +775,16 @@ const FormPage: React.FC = () => {
               value={formData.numero}
               onChange={handleInputChange}
               error={errors.numero}
+              colors={colors}
+              styling={styling}
+            />
+
+            <FormInput
+              label={t('numero_commessa')}
+              name="numeroCommessa"
+              value={formData.numeroCommessa}
+              onChange={handleInputChange}
+              error={errors.numeroCommessa}
               colors={colors}
               styling={styling}
             />

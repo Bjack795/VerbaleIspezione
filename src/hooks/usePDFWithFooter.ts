@@ -161,7 +161,7 @@ export const usePDFWithFooter = () => {
           const logoImage = await pdfDoc.embedPng(logoBytes);
           
           // Calcola le dimensioni del logo mantenendo le proporzioni (come height: auto)
-          const logoWidth = 40;
+          const logoWidth = headerType === 'maestrale' ? 70 : 40; // Logo più grande per Maestrale
           const logoAspectRatio = logoImage.width / logoImage.height;
           const logoHeight = logoWidth / logoAspectRatio;
           

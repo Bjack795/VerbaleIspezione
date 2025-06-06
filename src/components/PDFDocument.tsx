@@ -220,7 +220,7 @@ const createPagedContent = (data: FormInputs, compressedImages: Record<string, s
       {/* Sezione PROGETTO */}
       <View style={[styles.sectionWrapper, { position: 'relative' }]} wrap={false}>
         <View style={styles.grayBackground}>
-           <Text style={styles.sectionTitle}>{getTranslation('progetto', language)}: {data.nomeProgetto}</Text>
+           <Text style={styles.sectionTitle}>{getTranslation('progetto', language)}: {data.numeroCommessa} - {data.nomeProgetto}</Text>
         </View>
         <View style={styles.sectionLine}></View>
          <View style={styles.sectionRowLast}>
@@ -445,6 +445,11 @@ const styles = StyleSheet.create({
   },
   logo: {
     width: 40, // Dimensione aggiustata per evitare deformazione
+    height: 'auto', // Altezza automatica per mantenere proporzioni
+    marginRight: 10,
+  },
+  logoMaestrale: {
+    width: 70, // Logo più grande per Maestrale
     height: 'auto', // Altezza automatica per mantenere proporzioni
     marginRight: 10,
   },
@@ -692,7 +697,7 @@ const PDFDocument: React.FC<PDFDocumentProps> = ({ data, compressedImages, langu
           <View style={styles.logoRow}>
             <Image
               src={imagesToUse.logo}
-              style={styles.logo}
+              style={headerType === 'maestrale' ? styles.logoMaestrale : styles.logo}
             />
             <Text style={styles.companyName}>{companyName}</Text>
           </View>

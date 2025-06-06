@@ -180,6 +180,10 @@ const translations: Translations = {
     it: 'Numero',
     en: 'Number'
   },
+  'numero_commessa': {
+    it: 'Numero Commessa',
+    en: 'Order Number'
+  },
   'nome_progetto': {
     it: 'Nome Progetto',
     en: 'Project Name'

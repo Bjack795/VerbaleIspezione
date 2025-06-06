@@ -11,6 +11,7 @@ export interface FormInputs {
   dataIspezione: string;
   dataVerbale: string;
   numero: string;
+  numeroCommessa: string;
   nomeProgetto: string;
   lavorazioneVerificata: string;
   verificaMateriale: string;
