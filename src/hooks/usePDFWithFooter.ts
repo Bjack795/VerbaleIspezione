@@ -259,6 +259,9 @@ export const usePDFWithFooter = () => {
           const footerText = language === 'en' 
             ? `${companyNameForFooter} - Inspection Report | Page ${currentPageNumber} of ${totalPages}`
             : `${companyNameForFooter} - Scheda di Verifica | Pagina ${currentPageNumber} di ${totalPages}`;
+          const footerDetails = headerType == 'maestrale' 
+            ? `amministrazione@maestrale.mi.it`
+            : `www.redesco.it - redesco@redesco.it`;
           
           imagePage.drawLine({
             start: { x: 30, y: 40 },
@@ -269,6 +272,16 @@ export const usePDFWithFooter = () => {
           
           imagePage.drawText(footerText, {
             x: 30,
+            y: 25,
+            size: 8,
+            font,
+            color: rgb(0.4, 0.4, 0.4),
+          });
+
+          // Aggiunge i dettagli del footer (email/website) allineati a destra
+          const footerDetailsWidth = font.widthOfTextAtSize(footerDetails, 8);
+          imagePage.drawText(footerDetails, {
+            x: pageWidth - 30 - footerDetailsWidth, // Allineamento a destra manuale
             y: 25,
             size: 8,
             font,
