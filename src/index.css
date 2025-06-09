@@ -155,10 +155,11 @@ input[type="file"] {
 
   /* Stili per i bottoni di controllo immagini su mobile */
   .image-control-btn {
-    min-width: 40px !important;
-    min-height: 40px !important;
-    padding: 8px !important;
-    font-size: 18px !important;
+    min-width: 36px !important;
+    min-height: 36px !important;
+    padding: 6px !important;
+    font-size: 16px !important;
+    margin: 0 1px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -171,8 +172,13 @@ input[type="file"] {
     display: flex !important;
     flex-direction: row !important;
     align-items: center !important;
-    gap: 4px !important;
+    gap: 2px !important;
     flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
   }
 
   /* Container principale dei controlli immagini */
@@ -181,6 +187,53 @@ input[type="file"] {
     justify-content: space-between !important;
     align-items: center !important;
     flex-wrap: nowrap !important;
+    margin-bottom: 8px !important;
+  }
+
+  /* Ottimizzazioni specifiche per mobile - container immagini */
+  .relative.mb-6.flex.justify-center {
+    margin-bottom: 12px !important;
+    margin-top: 8px !important;
+    min-height: auto !important;
+    padding: 0 10px !important;
+  }
+
+  /* Container dell'immagine ottimizzato per mobile */
+  .relative.rounded-md.flex.items-center.justify-center {
+    width: fit-content !important;
+    height: fit-content !important;
+    max-width: calc(100vw - 60px) !important;
+    padding: 12px !important;
+    margin: 10px auto !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    overflow: hidden !important;
+  }
+
+  /* Immagini ridimensionate per mobile - incluse quelle ruotate */
+  .relative.rounded-md.flex.items-center.justify-center img {
+    max-width: calc(100vw - 150px) !important;
+    max-height: 140px !important;
+    width: auto !important;
+    height: auto !important;
+    object-fit: contain !important;
+    display: block !important;
+    margin: 0 auto !important;
+    transform-origin: center center !important;
+  }
+
+  /* Immagini ruotate su mobile - dimensioni speciali */
+  .relative.rounded-md.flex.items-center.justify-center img[style*="rotate(90deg)"],
+  .relative.rounded-md.flex.items-center.justify-center img[style*="rotate(270deg)"],
+  .relative.rounded-md.flex.items-center.justify-center img[style*="rotate(-90deg)"] {
+    max-width: 120px !important;
+    max-height: calc(100vw - 150px) !important;
+  }
+
+  .flex.gap-1:has(.image-control-btn)::-webkit-scrollbar {
+    display: none !important;
   }
 }
 
@@ -308,6 +361,48 @@ input[type="file"] {
     align-items: center !important;
     flex-wrap: nowrap !important;
   }
+
+  /* Container immagini ottimizzato per tablet */
+  .relative.mb-6.flex.justify-center {
+    margin-bottom: 16px !important;
+    margin-top: 6px !important;
+    min-height: auto !important;
+    padding: 0 15px !important;
+  }
+
+  .relative.rounded-md.flex.items-center.justify-center {
+    width: fit-content !important;
+    height: fit-content !important;
+    max-width: calc(100vw - 80px) !important;
+    padding: 15px !important;
+    margin: 8px auto !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    overflow: hidden !important;
+  }
+
+  .relative.rounded-md.flex.items-center.justify-center img {
+    max-width: calc(100vw - 160px) !important;
+    max-height: 200px !important;
+    display: block !important;
+    margin: 0 auto !important;
+    transform-origin: center center !important;
+  }
+
+  /* Immagini ruotate su tablet - dimensioni speciali */
+  .relative.rounded-md.flex.items-center.justify-center img[style*="rotate(90deg)"],
+  .relative.rounded-md.flex.items-center.justify-center img[style*="rotate(270deg)"],
+  .relative.rounded-md.flex.items-center.justify-center img[style*="rotate(-90deg)"] {
+    max-width: 180px !important;
+    max-height: calc(100vw - 160px) !important;
+  }
+
+  /* Container principale dei controlli immagini su tablet */
+  .flex.justify-between.items-center:has(.image-control-btn) {
+    margin-bottom: 6px !important;
+  }
 }
 
 /* Stili base per i bottoni di controllo immagini (desktop e tutti i dispositivi) */
@@ -339,4 +434,50 @@ input[type="file"] {
   justify-content: space-between !important;
   align-items: center !important;
   flex-wrap: nowrap !important;
+}
+
+/* Stili per il container dell'anteprima immagine */
+.relative.mb-6.flex.justify-center {
+  margin-bottom: 24px !important;
+  min-height: auto !important;
+}
+
+/* Container dell'immagine con gestione rotazioni - adattivo */
+.relative.rounded-md.flex.items-center.justify-center {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  overflow: hidden !important;
+  width: fit-content !important;
+  height: fit-content !important;
+  max-width: 100% !important;
+  padding: 18px !important;
+  box-sizing: border-box !important;
+  margin: 0 auto !important;
+}
+
+/* Centraggio immagini desktop */
+.relative.rounded-md.flex.items-center.justify-center img {
+  display: block !important;
+  margin: 0 auto !important;
+  transform-origin: center center !important;
+}
+
+/* Gestione immagini ruotate - dimensioni flessibili desktop */
+img[style*="rotate"] {
+  max-width: 250px !important;
+  max-height: 250px !important;
+  width: auto !important;
+  height: auto !important;
+  object-fit: contain !important;
+  transform-origin: center center !important;
+}
+
+/* Immagini ruotate desktop - dimensioni speciali per 90°/270° */
+.relative.rounded-md.flex.items-center.justify-center img[style*="rotate(90deg)"],
+.relative.rounded-md.flex.items-center.justify-center img[style*="rotate(270deg)"],
+.relative.rounded-md.flex.items-center.justify-center img[style*="rotate(-90deg)"] {
+  max-width: 250px !important;
+  max-height: 350px !important;
 } 

@@ -284,13 +284,16 @@ const ImageManager: React.FC<ImageManagerProps> = ({ images, onImagesChange, col
                 className="border rounded-lg p-4 bg-white shadow-sm"
                 style={{ borderColor: colors.outline }}
               >
-                {/* Intestazione con controlli */}
-                <div className="flex  items-center mb-3" style={{ marginTop: '15px' }}>
+                                {/* Intestazione */}
+                <div className="mb-2">
                   <span className="text-sm font-medium" style={{ color: colors.on_surface }}>
                     Immagine {index + 1}
                   </span>
-                  
-                  <div className="flex gap-1 justify-between">
+                </div>
+                
+                {/* Controlli */}
+                <div className="flex justify-between items-center mb-3">
+                  <div className="flex gap-1">
                     {/* Pulsanti riordino */}
                     <button
                       onClick={() => moveImage(image.id, 'up')}
@@ -335,15 +338,11 @@ const ImageManager: React.FC<ImageManagerProps> = ({ images, onImagesChange, col
                     </button>
                   </div>
                 </div>
-                <br />
                 {/* Anteprima immagine */}
-                <div className="relative mb-3 flex justify-center">
+                <div className="relative mb-6 flex justify-center">
                   <div 
-                    className="relative overflow-hidden rounded-md flex items-center justify-center"
+                    className="relative rounded-md flex items-center justify-center"
                     style={{
-                      width: '100%',
-                      maxWidth: '300px',
-                      height: '200px',
                       backgroundColor: '#f8f9fa'
                     }}
                   >
@@ -352,11 +351,6 @@ const ImageManager: React.FC<ImageManagerProps> = ({ images, onImagesChange, col
                       alt={`Anteprima ${index + 1}`}
                       className="rounded-md"
                       style={{
-                        maxWidth: '90%',
-                        maxHeight: '90%',
-                        width: 'auto',
-                        height: 'auto',
-                        objectFit: 'contain',
                         transform: `rotate(${image.rotation}deg)`,
                         transition: 'transform 0.3s ease'
                       }}
