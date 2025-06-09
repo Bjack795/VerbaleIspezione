@@ -10,14 +10,6 @@
 /build
 /dist
 
-# Electron
-/electron-dist
-*.dmg
-*.exe
-*.deb
-*.rpm
-*.AppImage
-
 # Misc
 .DS_Store
 .env.local

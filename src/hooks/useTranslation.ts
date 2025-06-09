@@ -136,15 +136,15 @@ const translations: Translations = {
   },
   
   // DL Labels
-  'dl_generale': {
+  'DLG': {
     it: 'DLG',
     en: 'Gen. COW'
   },
-  'dl_strutture': {
+  'DLS': {
     it: 'DLS',
     en: 'Struct. COW'
   },
-  'collaudatore': {
+  'Collaudatore': {
     it: 'Collaudatore',
     en: 'Static Tester'
   },
@@ -231,8 +231,8 @@ const translations: Translations = {
     en: 'Result'
   },
   'dl': {
-    it: 'D.L.',
-    en: 'D.L.'
+    it: 'In qualità di',
+    en: 'As'
   },
   
   // Tab
