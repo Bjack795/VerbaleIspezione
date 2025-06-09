@@ -827,6 +827,7 @@ const FormPage: React.FC = () => {
 
       {activeTab === 'dati' && (
         <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
+          <div style={{marginTop: '10px'}}></div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
             <FormInput
               label={t('data_ispezione')}

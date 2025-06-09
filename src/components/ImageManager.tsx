@@ -237,7 +237,7 @@ const ImageManager: React.FC<ImageManagerProps> = ({ images, onImagesChange, col
           <div className="flex flex-col sm:flex-row gap-2 justify-center">
             <label
               htmlFor={processing ? undefined : "gallery-upload"}
-              className={`px-4 py-2 rounded-md transition-colors ${
+              className={`image-upload-btn px-4 py-2 rounded-md transition-colors ${
                 processing 
                   ? 'bg-gray-400 cursor-not-allowed text-white' 
                   : 'cursor-pointer bg-blue-600 text-white hover:bg-blue-700'
@@ -245,11 +245,11 @@ const ImageManager: React.FC<ImageManagerProps> = ({ images, onImagesChange, col
             >
               {processing ? '⏳ Elaborazione...' : '📂 Carica da Galleria'}
             </label>
-            
+            <br /> <br />
             {/* Pulsante fotocamera per mobile */}
             <label
               htmlFor={processing ? undefined : "camera-capture"}
-              className={`px-4 py-2 rounded-md transition-colors ${
+              className={`image-upload-btn px-4 py-2 rounded-md transition-colors ${
                 processing 
                   ? 'bg-gray-400 cursor-not-allowed text-white' 
                   : 'cursor-pointer bg-green-600 text-white hover:bg-green-700'
@@ -285,17 +285,17 @@ const ImageManager: React.FC<ImageManagerProps> = ({ images, onImagesChange, col
                 style={{ borderColor: colors.outline }}
               >
                 {/* Intestazione con controlli */}
-                <div className="flex justify-between items-center mb-3">
+                <div className="flex  items-center mb-3" style={{ marginTop: '15px' }}>
                   <span className="text-sm font-medium" style={{ color: colors.on_surface }}>
                     Immagine {index + 1}
                   </span>
                   
-                  <div className="flex gap-1">
+                  <div className="flex gap-1 justify-between">
                     {/* Pulsanti riordino */}
                     <button
                       onClick={() => moveImage(image.id, 'up')}
                       disabled={index === 0}
-                      className="p-1 text-gray-500 hover:text-gray-700 disabled:opacity-30"
+                      className="image-control-btn p-1 text-gray-500 hover:text-gray-700 disabled:opacity-30"
                       title="Sposta su"
                     >
                       ⬆️
@@ -303,7 +303,7 @@ const ImageManager: React.FC<ImageManagerProps> = ({ images, onImagesChange, col
                     <button
                       onClick={() => moveImage(image.id, 'down')}
                       disabled={index === images.length - 1}
-                      className="p-1 text-gray-500 hover:text-gray-700 disabled:opacity-30"
+                      className="image-control-btn p-1 text-gray-500 hover:text-gray-700 disabled:opacity-30"
                       title="Sposta giù"
                     >
                       ⬇️
@@ -312,14 +312,14 @@ const ImageManager: React.FC<ImageManagerProps> = ({ images, onImagesChange, col
                     {/* Pulsanti rotazione */}
                     <button
                       onClick={() => rotateImage(image.id, 'left')}
-                      className="p-1 text-blue-600 hover:text-blue-800"
+                      className="image-control-btn p-1 text-blue-600 hover:text-blue-800"
                       title="Ruota a sinistra"
                     >
                       ↺
                     </button>
                     <button
                       onClick={() => rotateImage(image.id, 'right')}
-                      className="p-1 text-blue-600 hover:text-blue-800"
+                      className="image-control-btn p-1 text-blue-600 hover:text-blue-800"
                       title="Ruota a destra"
                     >
                       ↻
@@ -328,14 +328,14 @@ const ImageManager: React.FC<ImageManagerProps> = ({ images, onImagesChange, col
                     {/* Pulsante rimozione */}
                     <button
                       onClick={() => removeImage(image.id)}
-                      className="p-1 text-red-600 hover:text-red-800"
+                      className="image-control-btn p-1 text-red-600 hover:text-red-800"
                       title="Rimuovi"
                     >
                       🗑️
                     </button>
                   </div>
                 </div>
-
+                <br />
                 {/* Anteprima immagine */}
                 <div className="relative mb-3 flex justify-center">
                   <div 

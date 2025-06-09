@@ -29,7 +29,7 @@ const HeaderSelector: React.FC<HeaderSelectorProps> = ({
         {/* Pulsante Redesco */}
         <button
           onClick={() => onHeaderChange('redesco')}
-          className={`flex items-center gap-2 px-3 py-2 text-sm font-medium transition-colors duration-200 ${
+          className={`header-selector-btn flex items-center gap-2 px-3 py-2 text-sm font-medium transition-colors duration-200 ${
             currentHeader === 'redesco' 
               ? 'shadow-sm' 
               : 'hover:opacity-80'
@@ -48,7 +48,7 @@ const HeaderSelector: React.FC<HeaderSelectorProps> = ({
         {/* Pulsante Maestrale */}
         <button
           onClick={() => onHeaderChange('maestrale')}
-          className={`flex items-center gap-2 px-3 py-2 text-sm font-medium transition-colors duration-200 ${
+          className={`header-selector-btn flex items-center gap-2 px-3 py-2 text-sm font-medium transition-colors duration-200 ${
             currentHeader === 'maestrale' 
               ? 'shadow-sm' 
               : 'hover:opacity-80'

@@ -20,7 +20,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   colors
 }) => {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2" style={{ marginTop: '10px' }}>
       <span className="text-sm font-medium" style={{ color: colors.on_surface }}>
         {t('lingua')}:
       </span>
@@ -28,7 +28,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
         {/* Pulsante Italiano */}
         <button
           onClick={() => onLanguageChange('it')}
-          className={`flex items-center justify-center transition-colors duration-200 ${
+          className={`language-selector-btn flex items-center justify-center transition-colors duration-200 ${
             currentLanguage === 'it' 
               ? 'shadow-sm' 
               : 'hover:opacity-80'
@@ -59,7 +59,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
         {/* Pulsante Inglese */}
         <button
           onClick={() => onLanguageChange('en')}
-          className={`flex items-center justify-center transition-colors duration-200 ${
+          className={`language-selector-btn flex items-center justify-center transition-colors duration-200 ${
             currentLanguage === 'en' 
               ? 'shadow-sm' 
               : 'hover:opacity-80'
