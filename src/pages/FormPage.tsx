@@ -718,8 +718,10 @@ const FormPage: React.FC = () => {
     }, 0)
   }
 
-  // Inizializza il contenuto dell'editor quando il componente viene montato
+  // Inizializza il contenuto dell'editor quando il componente viene montato o quando si torna alla tab dati
   React.useEffect(() => {
+    if (activeTab !== 'dati') return
+    
     const editor = richTextRef.current
     if (!editor || !formData.oggettoSopralluogo || formData.oggettoSopralluogo === '-') return
 
@@ -736,7 +738,7 @@ const FormPage: React.FC = () => {
       
       editor.innerHTML = htmlContent
     }
-  }, [])
+  }, [activeTab, formData.oggettoSopralluogo])
 
   // Funzione per scaricare la bozza corrente come JSON
   const downloadCurrentDraft = async () => {
@@ -796,6 +798,35 @@ const FormPage: React.FC = () => {
     }
   }
 
+  // Funzione per gestire il cambio di tab salvando il contenuto dell'editor prima del cambio e lo ripristina dopo
+  const handleTabChange = (newTab: string) => {
+    // Se stiamo uscendo dalla tab "dati", salva il contenuto dell'editor
+    if (activeTab === 'dati' && newTab !== 'dati') {
+      updateFormDataFromEditor()
+    }
+    
+    setActiveTab(newTab)
+    
+    // Se stiamo entrando nella tab "dati", ripristina il contenuto dell'editor
+    if (newTab === 'dati' && activeTab !== 'dati') {
+      setTimeout(() => {
+        const editor = richTextRef.current
+        if (editor && formData.oggettoSopralluogo && formData.oggettoSopralluogo !== '-') {
+          const htmlContent = formData.oggettoSopralluogo
+            .replace(/<b>/g, '<strong>')
+            .replace(/<\/b>/g, '</strong>')
+            .replace(/<i>/g, '<em>')
+            .replace(/<\/i>/g, '</em>')
+            .replace(/<u>/g, '<span style="text-decoration: underline;">')
+            .replace(/<\/u>/g, '</span>')
+            .replace(/\n/g, '<br>')
+          
+          editor.innerHTML = htmlContent
+        }
+      }, 50) // Piccolo delay per assicurarsi che l'editor sia stato renderizzato
+    }
+  }
+
   return (
     <FormLayout colors={colors} styling={styling}>
       <div className="flex justify-between items-center mb-8">
@@ -821,7 +852,7 @@ const FormPage: React.FC = () => {
       <Tabs
         tabs={tabs}
         activeTab={activeTab}
-        onTabChange={setActiveTab}
+        onTabChange={handleTabChange}
         colors={colors}
       />
 
