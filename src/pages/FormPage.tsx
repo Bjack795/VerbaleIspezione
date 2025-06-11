@@ -740,6 +740,43 @@ const FormPage: React.FC = () => {
     }
   }, [activeTab, formData.oggettoSopralluogo])
 
+  // Funzione per generare il nome del file JSON (uguale al PDF)
+  const generateJsonFileName = () => {
+    // Formato data: yymmgg
+    const today = new Date();
+    const yy = today.getFullYear().toString().slice(-2);
+    const mm = (today.getMonth() + 1).toString().padStart(2, '0');
+    const dd = today.getDate().toString().padStart(2, '0');
+    const datePrefix = `${yy}${mm}${dd}`;
+    
+    // Numero verbale
+    const numeroVerbale = formData.numero || '001';
+    
+    // Tipo documento basato sulla lingua
+    const documentType = language === 'en' ? 'INSPECTION REPORT' : 'SCHEDA DI VERIFICA';
+    
+    // Trova il DL selezionato
+    let dlType = 'DLG'; // default
+    if (formData.dl) {
+      const selectedDL = Object.keys(formData.dl).find(key => formData.dl[key as keyof typeof formData.dl]);
+      if (selectedDL) {
+        // Mappa i nomi interni ai nomi per il file
+        const dlMap: { [key: string]: string } = {
+          'DLG': 'ARC',
+          'DLS': 'DLS', 
+          'COLLAUDATORE': 'COLL',
+          'DL_FACCIATE': 'FAC',
+          'DL_ELETTRICI': 'ELE',
+          'DL_MECCANICI': 'MEC'
+        };
+        dlType = dlMap[selectedDL] || selectedDL;
+      }
+    }
+    
+    // Formato finale: yymmgg_numeroVerbale_DOCUMENT TYPE_DL.json
+    return `${datePrefix}_${numeroVerbale}_${documentType}_${dlType}.json`;
+  };
+
   // Funzione per scaricare la bozza corrente come JSON
   const downloadCurrentDraft = async () => {
     try {
@@ -764,7 +801,7 @@ const FormPage: React.FC = () => {
       }
       
       const jsonData = JSON.stringify(draftData, null, 2)
-      const fileName = `Bozza_${projectPrefix}_${new Date().toISOString().split('T')[0]}.json`
+      const fileName = generateJsonFileName()
 
       // Prova prima con File System Access API (desktop Chrome/Edge)
       if ('showSaveFilePicker' in window) {
