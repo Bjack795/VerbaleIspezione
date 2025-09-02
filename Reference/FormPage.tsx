@@ -718,16 +718,16 @@ const FormPage: React.FC = () => {
     }, 0)
   }
 
-  const handleInsertPhi = () => {
-    const editor = richTextRef.current
-    if (!editor) return
-    editor.focus()
-    document.execCommand('insertText', false, 'Φ')
-    updateFormDataFromEditor()
-    setTimeout(() => {
-      checkActiveFormats()
-    }, 0)
-  }
+  // const handleInsertPhi = () => {
+  //   const editor = richTextRef.current
+  //   if (!editor) return
+  //   editor.focus()
+  //   document.execCommand('insertText', false, 'Φ')
+  //   updateFormDataFromEditor()
+  //   setTimeout(() => {
+  //     checkActiveFormats()
+  //   }, 0)
+  // }
 
   // Inizializza il contenuto dell'editor quando il componente viene montato o quando si torna alla tab dati
   React.useEffect(() => {
@@ -1071,7 +1071,7 @@ const FormPage: React.FC = () => {
                 >
                   U
                 </button>
-                &nbsp;
+                {/* &nbsp;
                 &nbsp;
                 <button
                   type="button"
@@ -1085,7 +1085,7 @@ const FormPage: React.FC = () => {
                   title="Φ"
                 >
                   Φ
-                </button>
+                </button> */}
                 
               </div>
               <div style={{marginTop: '6px'}}></div>

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Document, Page, Text, View, StyleSheet, Image, Font } from '@react-pdf/renderer'
+import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer'
 import { FormInputs } from '../types/form'
 import { colors } from '../constants/theme'
 import { format } from 'date-fns'
@@ -105,7 +105,7 @@ const calculateExpectedPages = (data: FormInputs): number => {
   return Math.max(1, pages); // Almeno 1 pagina
 };
 
-// Funzione per parsare e renderizzare il testo con formattazione HTML (ripristinata)
+// Funzione per parsare e renderizzare il testo con formattazione HTML
 const renderFormattedText = (text: string, baseStyle: any) => {
   if (!text) return <Text style={baseStyle}></Text>;
 
@@ -117,35 +117,8 @@ const renderFormattedText = (text: string, baseStyle: any) => {
     .replace(/&nbsp;/g, ' ')
     .replace(/[ \t\f\v\u00A0]+/g, ' ');
 
-  const renderWithPhiFallback = (str: string, style: any, keyPrefix: string) => {
-    const nodes: React.ReactNode[] = [];
-    if (!str) return nodes;
-    const parts = str.split('Φ');
-    parts.forEach((part, idx) => {
-      if (part) {
-        nodes.push(
-          <Text key={`${keyPrefix}-plain-${idx}`} style={style}>
-            {part}
-          </Text>
-        );
-      }
-      if (idx < parts.length - 1) {
-        nodes.push(
-          <Text key={`${keyPrefix}-phi-${idx}`} style={{ ...style, fontFamily: 'GreekFallback' }}>
-            Φ
-          </Text>
-        );
-      }
-    });
-    return nodes;
-  };
-
   if (!normalized.includes('<') || !normalized.includes('>')) {
-    return (
-      <Text style={baseStyle}>
-        {renderWithPhiFallback(normalized, baseStyle, 'simple')}
-      </Text>
-    );
+    return <Text style={baseStyle}>{normalized}</Text>;
   }
 
   const withComposedFontFamily = (style: any) => {
@@ -169,7 +142,9 @@ const renderFormattedText = (text: string, baseStyle: any) => {
         const plain = input.slice(lastIndex, start);
         if (plain) {
           segments.push(
-            ...renderWithPhiFallback(plain, style, `plain-${lastIndex}-${start}`)
+            <Text key={`plain-${lastIndex}-${start}`} style={style}>
+              {plain}
+            </Text>
           );
         }
       }
@@ -187,7 +162,9 @@ const renderFormattedText = (text: string, baseStyle: any) => {
         segments.push(...inner);
       } else {
         segments.push(
-          ...renderWithPhiFallback(content, nextStyle, `leaf-${start}-${end}`)
+          <Text key={`leaf-${start}-${end}`} style={nextStyle}>
+            {content}
+          </Text>
         );
       }
 
@@ -198,7 +175,9 @@ const renderFormattedText = (text: string, baseStyle: any) => {
       const tail = input.slice(lastIndex);
       if (tail) {
         segments.push(
-          ...renderWithPhiFallback(tail, style, `tail-${lastIndex}-${input.length}`)
+          <Text key={`tail-${lastIndex}-${input.length}`} style={style}>
+            {tail}
+          </Text>
         );
       }
     }
@@ -346,10 +325,7 @@ const createPagedContent = (data: FormInputs, compressedImages: Record<string, s
              <Text style={styles.sectionTitle}>{getTranslation('oggetto_sopralluogo', language)}</Text>
              <View style={styles.sectionRowLast}>
                <View style={styles.sectionColumnFull}>
-                 {(() => {
-                  console.log('PDFDocument - BEFORE renderFormattedText:', JSON.stringify(data.oggettoSopralluogo));
-                  return renderFormattedText(data.oggettoSopralluogo, styles.value);
-                })()}
+                 {renderFormattedText(data.oggettoSopralluogo, styles.value)}
                </View>
              </View>
            </View>
@@ -432,15 +408,6 @@ const createPagedContent = (data: FormInputs, compressedImages: Record<string, s
 
 // Registra un font (opzionale, dipende se vuoi usare un font specifico)
 // Font.register({ family: 'Roboto', src: '/fonts/Roboto-Regular.ttf' });
-Font.register({
-  family: 'GreekFallback',
-  fonts: [
-    { src: `${import.meta.env.BASE_URL}fonts/DejaVuSans.ttf`, fontWeight: 'normal', fontStyle: 'normal' },
-    { src: `${import.meta.env.BASE_URL}fonts/DejaVuSans-Bold.ttf`, fontWeight: 'bold', fontStyle: 'normal' },
-    { src: `${import.meta.env.BASE_URL}fonts/DejaVuSans-Oblique.ttf`, fontWeight: 'normal', fontStyle: 'italic' },
-    { src: `${import.meta.env.BASE_URL}fonts/DejaVuSans-BoldOblique.ttf`, fontWeight: 'bold', fontStyle: 'italic' },
-  ],
-});
 
 const styles = StyleSheet.create({
   page: {
