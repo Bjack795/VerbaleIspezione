@@ -9,6 +9,7 @@ interface FormInputProps {
   type?: 'text' | 'date';
   multiline?: boolean;
   rows?: number;
+  fullWidth?: boolean; // Nuova prop
   colors: {
     on_surface: string;
     outline: string;
@@ -33,6 +34,7 @@ const FormInput = React.forwardRef<HTMLTextAreaElement | HTMLInputElement, FormI
   type = 'text',
   multiline = false,
   rows = 1,
+  fullWidth = false, // Default false per non rompere gli altri input
   colors,
   styling
 }, ref) => {
@@ -45,8 +47,9 @@ const FormInput = React.forwardRef<HTMLTextAreaElement | HTMLInputElement, FormI
     color: colors.on_surface,
     outline: 'none',
     transition: 'all 0.2s',
-    marginLeft: styling.margin,
+    marginLeft: fullWidth ? 0 : styling.margin, // Rimuovi margine se fullWidth
     marginBottom: styling.margin
+    
   }
 
   return (
@@ -61,7 +64,7 @@ const FormInput = React.forwardRef<HTMLTextAreaElement | HTMLInputElement, FormI
           value={value}
           onChange={onChange}
           rows={rows}
-          className="mt-1 ml-3 block w-full rounded-md shadow-sm focus:border-red-500 focus:ring-red-500"
+          className={`mt-1 block w-full rounded-md shadow-sm focus:border-red-500 focus:ring-red-500 ${fullWidth ? '' : 'ml-3'}`}
           style={inputStyle}
         />
       ) : (
@@ -71,7 +74,7 @@ const FormInput = React.forwardRef<HTMLTextAreaElement | HTMLInputElement, FormI
           name={name}
           value={value}
           onChange={onChange}
-          className="mt-1 ml-3 block w-full rounded-md shadow-sm focus:border-red-500 focus:ring-red-500"
+          className={`mt-1 block w-full rounded-md shadow-sm focus:border-red-500 focus:ring-red-500 ${fullWidth ? '' : 'ml-3'}`}
           style={inputStyle}
         />
       )}
@@ -86,4 +89,4 @@ const FormInput = React.forwardRef<HTMLTextAreaElement | HTMLInputElement, FormI
 
 FormInput.displayName = 'FormInput'
 
-export default FormInput 
+export default FormInput

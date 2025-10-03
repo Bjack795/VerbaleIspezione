@@ -70,6 +70,7 @@ const FormPage: React.FC = () => {
     schedaControllo: '-',
     oggettoSopralluogo: '-',
     ispettore:'Nome Cognome',
+    testoOsservazione:'Tale osservazione è da considerarsi prescrittiva – da ottemperare',
     images: [],
     tipoIspezione: {
       visivo: true,
@@ -573,7 +574,8 @@ const FormPage: React.FC = () => {
       'ubicazione',
       'schedaControllo',
       'oggettoSopralluogo',
-      'ispettore'
+      'ispettore',
+      'testoOsservazione'
     ]
 
     requiredFields.forEach(field => {
@@ -1153,6 +1155,16 @@ const generateJsonFileName = () => {
               onChange={(field) => handleCheckboxChange('esito', field)}
               colors={colors}
             />
+            <FormInput
+              label={t('*')}
+              name="testoOsservazione"
+              value={formData.testoOsservazione}
+              onChange={handleInputChange}
+              error={errors.testoOsservazione}
+              colors={colors}
+              styling={styling}
+              multiline={true}
+            />
 
             <CheckboxGroup
               title={t('dl')}
@@ -1163,6 +1175,8 @@ const generateJsonFileName = () => {
             />
             <div style={{marginTop: '10px'}}></div>
           </div>
+ 
+
 
           <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4 mt-16">
             <button

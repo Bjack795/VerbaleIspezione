@@ -97,8 +97,8 @@ const translations: Translations = {
     en: 'Non-conformant'
   },
   'osservazione': {
-    it: 'Osservazione',
-    en: 'Observation'
+    it: 'Osservazione*',
+    en: 'Observation*'
   },
   
   // Note
