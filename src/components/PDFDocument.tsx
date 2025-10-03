@@ -371,7 +371,7 @@ const createPagedContent = (data: FormInputs, compressedImages: Record<string, s
              </View>
            ))}
          </View>
-          <Text style={styles.noteText}>{data.testoOsservazione}</Text>
+          <Text style={styles.noteText}>{'* '+ data.testoOsservazione}</Text>
       </View>
       
       <View style={[styles.sectionWrapper, { position: 'relative' }]} wrap={false}>
