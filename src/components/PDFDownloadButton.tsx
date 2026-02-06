@@ -89,7 +89,7 @@ const generateFileName = () => {
       }
       
       if (isTauri) {
-        // Ambiente Tauri - usa API ufficiali
+        // Ambiente Tauri - usa API ufficiali (Tauri v2 plugins)
         console.log('🎯 Rilevato ambiente Tauri, usando dialog Salva con nome...');
         try {
           const [{ save }, fs] = await Promise.all([
@@ -104,12 +104,12 @@ const generateFileName = () => {
 
           if (filePath) {
             const arrayBuffer = await pdfBlob.arrayBuffer();
-            await fs.writeFile(filePath as string, new Uint8Array(arrayBuffer));
+            await fs.writeFile(filePath, new Uint8Array(arrayBuffer));
             console.log('✅ PDF salvato con successo in:', filePath);
-            alert('PDF salvato con successo!')
+            alert('PDF salvato con successo!');
           } else {
             console.log('❌ Utente ha annullato il salvataggio');
-            alert('❌ Utente ha annullato il salvataggio')
+            alert('Salvataggio annullato.');
           }
         } catch (tauriError) {
           console.error('❌ Errore Tauri nel salvataggio:', tauriError);
