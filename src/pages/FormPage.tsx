@@ -70,6 +70,7 @@ const FormPage: React.FC = () => {
     schedaControllo: '-',
     oggettoSopralluogo: '-',
     ispettore:'Nome Cognome',
+    testoOsservazione:'Tale osservazione è da considerarsi prescrittiva – da ottemperare',
     images: [],
     tipoIspezione: {
       visivo: true,
@@ -397,7 +398,7 @@ const FormPage: React.FC = () => {
     loadDraftsFromCache().then(setCachedDrafts)
   }, [])
 
-  // Funzione per salvare i dati come file .sav
+  // Funzione per salvare i dati
   const saveDataToFile = async (automatic: boolean = false) => {
     const dataToSave = await prepareDataForSave()
 
@@ -573,7 +574,8 @@ const FormPage: React.FC = () => {
       'ubicazione',
       'schedaControllo',
       'oggettoSopralluogo',
-      'ispettore'
+      'ispettore',
+      'testoOsservazione'
     ]
 
     requiredFields.forEach(field => {
@@ -752,41 +754,50 @@ const FormPage: React.FC = () => {
   }, [activeTab, formData.oggettoSopralluogo])
 
   // Funzione per generare il nome del file JSON (uguale al PDF)
-  const generateJsonFileName = () => {
-    // Formato data: yymmgg
+ // Funzione per generare il nome del file JSON (uguale al PDF)
+const generateJsonFileName = () => {
+  // Prova a usare la data ispezione (attesa come YYYY-MM-DD)
+  let datePrefix: string;
+  const insp = formData.dataIspezione;
+  if (insp && /^\d{4}-\d{2}-\d{2}$/.test(insp)) {
+    const [yyyy, mm, dd] = insp.split('-');
+    datePrefix = `${yyyy.slice(-2)}${mm}${dd}`;
+  } else {
+    // Fallback: data odierna (yymmgg)
     const today = new Date();
     const yy = today.getFullYear().toString().slice(-2);
     const mm = (today.getMonth() + 1).toString().padStart(2, '0');
     const dd = today.getDate().toString().padStart(2, '0');
-    const datePrefix = `${yy}${mm}${dd}`;
-    
-    // Numero verbale
-    const numeroVerbale = formData.numero || '001';
-    
-    // Tipo documento basato sulla lingua
-    const documentType = language === 'en' ? 'INSPECTION REPORT' : 'SCHEDA DI VERIFICA';
-    
-    // Trova il DL selezionato
-    let dlType = 'DLG'; // default
-    if (formData.dl) {
-      const selectedDL = Object.keys(formData.dl).find(key => formData.dl[key as keyof typeof formData.dl]);
-      if (selectedDL) {
-        // Mappa i nomi interni ai nomi per il file
-        const dlMap: { [key: string]: string } = {
-          'DLG': 'ARC',
-          'DLS': 'DLS', 
-          'COLLAUDATORE': 'COLL',
-          'DL_FACCIATE': 'FAC',
-          'DL_ELETTRICI': 'ELE',
-          'DL_MECCANICI': 'MEC'
-        };
-        dlType = dlMap[selectedDL] || selectedDL;
-      }
+    datePrefix = `${yy}${mm}${dd}`;
+  }
+  
+  // Numero verbale
+  const numeroVerbale = formData.numero || '001';
+  
+  // Tipo documento basato sulla lingua
+  const documentType = language === 'en' ? 'INSPECTION REPORT' : 'SCHEDA DI VERIFICA';
+  
+  // Trova il DL selezionato
+  let dlType = 'DLG'; // default
+  if (formData.dl) {
+    const selectedDL = Object.keys(formData.dl).find(key => formData.dl[key as keyof typeof formData.dl]);
+    if (selectedDL) {
+      // Mappa i nomi interni ai nomi per il file
+      const dlMap: { [key: string]: string } = {
+        'DLG': 'ARC',
+        'DLS': 'DLS', 
+        'COLLAUDATORE': 'COLL',
+        'DL_FACCIATE': 'FAC',
+        'DL_ELETTRICI': 'ELE',
+        'DL_MECCANICI': 'MEC'
+      };
+      dlType = dlMap[selectedDL] || selectedDL;
     }
-    
-    // Formato finale: yymmgg_numeroVerbale_DOCUMENT TYPE_DL.json
-    return `${datePrefix}_${numeroVerbale}_${documentType}_${dlType}.json`;
-  };
+  }
+  
+  // Formato finale: yymmgg_numeroVerbale_DOCUMENT TYPE_DL.json
+  return `${datePrefix}_${numeroVerbale}_${documentType}_${dlType}.json`;
+};
 
   // Funzione per scaricare la bozza corrente come JSON
   const downloadCurrentDraft = async () => {
@@ -1144,6 +1155,16 @@ const FormPage: React.FC = () => {
               onChange={(field) => handleCheckboxChange('esito', field)}
               colors={colors}
             />
+            <FormInput
+              label={t('*')}
+              name="testoOsservazione"
+              value={formData.testoOsservazione}
+              onChange={handleInputChange}
+              error={errors.testoOsservazione}
+              colors={colors}
+              styling={styling}
+              multiline={true}
+            />
 
             <CheckboxGroup
               title={t('dl')}
@@ -1154,6 +1175,8 @@ const FormPage: React.FC = () => {
             />
             <div style={{marginTop: '10px'}}></div>
           </div>
+ 
+
 
           <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4 mt-16">
             <button
